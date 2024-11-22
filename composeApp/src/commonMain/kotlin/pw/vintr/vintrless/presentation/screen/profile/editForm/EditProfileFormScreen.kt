@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.domain.profile.model.ProfileField
 import pw.vintr.vintrless.domain.profile.model.ProfileType
 import pw.vintr.vintrless.presentation.theme.Gilroy18
@@ -22,6 +23,7 @@ import pw.vintr.vintrless.presentation.uikit.input.AppDropdownField
 import pw.vintr.vintrless.presentation.uikit.input.AppTextField
 import pw.vintr.vintrless.presentation.uikit.input.DropdownPayload
 import pw.vintr.vintrless.presentation.uikit.input.SwitchField
+import pw.vintr.vintrless.presentation.uikit.layout.ScreenStateLayout
 import pw.vintr.vintrless.presentation.uikit.toolbar.ToolbarRegular
 import pw.vintr.vintrless.tools.extensions.isBoolean
 import pw.vintr.vintrless.tools.extensions.stringValue
@@ -39,14 +41,15 @@ fun EditProfileFormScreen(
 
     @Composable
     fun RenderFields(
-        fields: List<ProfileField>
+        fields: List<ProfileField>,
+        data: ProfileData
     ) {
         fields.forEachIndexed { index, profileField ->
-            val fieldValue = screenState.value.data.getField(profileField)
+            val fieldValue = data.getField(profileField)
 
             Field(
                 profileField = profileField,
-                value = screenState.value.data.getField(profileField)
+                value = data.getField(profileField)
             ) { viewModel.setValue(profileField, it) }
 
             if (index != fields.lastIndex) {
@@ -55,7 +58,7 @@ fun EditProfileFormScreen(
 
             profileField.subfieldsByValue[fieldValue]?.let { subfields ->
                 Spacer(modifier = Modifier.height(16.dp))
-                RenderFields(subfields)
+                RenderFields(subfields, data)
             }
         }
     }
@@ -71,38 +74,44 @@ fun EditProfileFormScreen(
         RestrictedWidthLayout(
             restrictionWidth = 800.dp
         ) {
-            Column(
+            ScreenStateLayout(
                 modifier = Modifier
                     .padding(scaffoldPadding)
-                    .fillMaxSize()
-            ) {
-                Column (
+                    .fillMaxSize(),
+                state = screenState.value
+            ) { state ->
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 28.dp, vertical = 20.dp),
+                        .fillMaxSize()
                 ) {
-                    screenState.value.form.fieldGroups.forEachIndexed { index, profileFieldGroup ->
-                        Text(
-                            text = stringResource(profileFieldGroup.titleRes),
-                            color = VintrlessExtendedTheme.colors.textRegular,
-                            style = Gilroy18()
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        RenderFields(profileFieldGroup.fields)
+                    Column (
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 28.dp, vertical = 20.dp),
+                    ) {
+                        state.payload.form.fieldGroups.forEachIndexed { index, profileFieldGroup ->
+                            Text(
+                                text = stringResource(profileFieldGroup.titleRes),
+                                color = VintrlessExtendedTheme.colors.textRegular,
+                                style = Gilroy18()
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
+                            RenderFields(profileFieldGroup.fields, state.payload.data)
 
-                        if (index != screenState.value.form.fieldGroups.lastIndex) {
-                            Spacer(modifier = Modifier.height(48.dp))
+                            if (index != state.payload.form.fieldGroups.lastIndex) {
+                                Spacer(modifier = Modifier.height(48.dp))
+                            }
                         }
                     }
-                }
-                ButtonRegular(
-                    modifier = Modifier
-                        .padding(start = 28.dp, end = 28.dp, top = 12.dp, bottom = 20.dp),
-                    text = stringResource(Res.string.common_save),
-                ) {
-                    viewModel.save()
+                    ButtonRegular(
+                        modifier = Modifier
+                            .padding(start = 28.dp, end = 28.dp, top = 12.dp, bottom = 20.dp),
+                        text = stringResource(Res.string.common_save),
+                    ) {
+                        viewModel.save()
+                    }
                 }
             }
         }

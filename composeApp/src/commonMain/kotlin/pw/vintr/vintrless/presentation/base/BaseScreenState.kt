@@ -12,7 +12,7 @@ interface BaseScreenState<T> {
     class Empty<T> : BaseScreenState<T>
 
     data class Loaded<T>(
-        val data: T,
+        val payload: T,
         val isRefreshing: Boolean = false,
     ) : BaseScreenState<T>
 }

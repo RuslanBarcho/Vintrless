@@ -30,6 +30,36 @@ sealed class ProfileForm {
      */
     abstract val fieldGroups: List<ProfileFieldGroup>
 
+    fun getDefaultData(): Map<String, String> {
+        val data = mutableMapOf<String, String>()
+
+        fieldGroups.flatMap { group ->
+            group.fields.unpackDefault()
+        }.forEach { field ->
+            val initialValue = field.initialValue
+
+            if (initialValue != null) {
+                data[field.key] = initialValue
+            }
+        }
+
+        return data
+    }
+
+    private fun List<ProfileField>.unpackDefault(): List<ProfileField> {
+        return flatMap {
+            val subfields = it.subfieldsByValue[it.initialValue].orEmpty()
+
+            if (subfields.isNotEmpty()) {
+                val unpackedInternal = subfields.unpackDefault()
+
+                listOf(it, *unpackedInternal.toTypedArray())
+            } else {
+                listOf(it)
+            }
+        }
+    }
+
     @Serializable
     data object Vless : ProfileForm() {
 

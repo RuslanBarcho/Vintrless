@@ -57,7 +57,7 @@ abstract class BaseViewModel(
         val lockedValue = value
 
         if (lockedValue is BaseScreenState.Loaded) {
-            value = BaseScreenState.Loaded(lockedValue.data, isRefreshing = true)
+            value = BaseScreenState.Loaded(lockedValue.payload, isRefreshing = true)
             value = BaseScreenState.Loaded(block())
         }
     }

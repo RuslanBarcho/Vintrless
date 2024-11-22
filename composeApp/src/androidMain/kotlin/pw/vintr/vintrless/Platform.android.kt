@@ -12,7 +12,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.navigation.Navigator
+import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.SharedPreferencesSettings
+import com.russhwolf.settings.coroutines.FlowSettings
+import com.russhwolf.settings.coroutines.toFlowSettings
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
+import pw.vintr.vintrless.tools.AppContext
 
 class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
@@ -48,3 +53,6 @@ actual fun applyThemeOnView(darkTheme: Boolean) {
 actual fun NativePaint.setMaskFilter(blurRadius: Float) {
     maskFilter = BlurMaskFilter(blurRadius, BlurMaskFilter.Blur.NORMAL)
 }
+
+@OptIn(ExperimentalSettingsApi::class)
+actual fun FlowSettings() = SharedPreferencesSettings.Factory(AppContext.get()).create().toFlowSettings()

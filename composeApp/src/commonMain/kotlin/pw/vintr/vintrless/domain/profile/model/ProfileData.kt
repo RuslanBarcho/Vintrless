@@ -1,6 +1,7 @@
 package pw.vintr.vintrless.domain.profile.model
 
 import kotlinx.serialization.Serializable
+import pw.vintr.vintrless.data.profile.model.ProfileDataStorageObject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -10,6 +11,14 @@ data class ProfileData @OptIn(ExperimentalUuidApi::class) constructor(
     val type: ProfileType,
     val data: Map<String, String?> = mapOf()
 ) {
+
+    companion object {
+        fun fromStorageObject(cacheObject: ProfileDataStorageObject) = ProfileData(
+            id = cacheObject.id,
+            type = ProfileType.getByCode(cacheObject.typeCode),
+            data = cacheObject.data,
+        )
+    }
 
     fun setField(field: ProfileField, value: String?): ProfileData {
         return copy(
@@ -31,4 +40,10 @@ data class ProfileData @OptIn(ExperimentalUuidApi::class) constructor(
     }
 
     fun getField(field: ProfileField): String? = data[field.key]
+
+    fun toStorageObject() = ProfileDataStorageObject(
+        id = id,
+        typeCode = type.code,
+        data = data,
+    )
 }

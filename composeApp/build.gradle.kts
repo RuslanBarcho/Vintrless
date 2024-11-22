@@ -63,6 +63,11 @@ kotlin {
 
             // Serialization
             implementation(libs.kotlinx.serialization.json)
+
+            // Key-value storage
+            implementation(libs.multiplatform.settings)
+            implementation(libs.multiplatform.settings.no.arg)
+            implementation(libs.multiplatform.settings.coroutines)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -93,9 +98,6 @@ android {
         }
     }
     buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
         getByName("debug") {
             isMinifyEnabled = false
         }
