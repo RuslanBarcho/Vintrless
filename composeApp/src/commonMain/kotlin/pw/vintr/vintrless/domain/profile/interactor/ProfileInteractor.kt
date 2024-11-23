@@ -13,11 +13,23 @@ class ProfileInteractor(
     val profileFlow: Flow<List<ProfileData>> = repository.profileFlow
         .map { cacheList -> cacheList.map { ProfileData.fromStorageObject(it) } }
 
+    val selectedProfileFlow: Flow<ProfileData?> = repository.selectedProfileFlow
+        .map { selectedProfile -> selectedProfile?.let { ProfileData.fromStorageObject(it) } }
+
     suspend fun saveProfile(profile: ProfileData) {
         repository.saveProfile(profile.toStorageObject())
     }
 
     suspend fun getProfile(id: String) {
         repository.getProfile(id)
+    }
+
+    suspend fun setSelectedProfile(id: String) {
+        repository.setSelectedProfile(id)
+    }
+
+    suspend fun getSelectedProfile(): ProfileData? {
+        return repository.getSelectedProfile()
+            ?.let { ProfileData.fromStorageObject(it) }
     }
 }

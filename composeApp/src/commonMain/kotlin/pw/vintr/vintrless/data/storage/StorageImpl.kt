@@ -1,14 +1,8 @@
 package pw.vintr.vintrless.data.storage
 
 import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.FlowSettings
-import com.russhwolf.settings.coroutines.SuspendSettings
-import com.russhwolf.settings.coroutines.toBlockingSettings
-import com.russhwolf.settings.get
-import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -45,8 +39,19 @@ class StorageImpl(
     override fun <T: StorageObject> getCollectionFlow(key: String): Flow<List<T>> {
         return settings
             .getStringOrNullFlow(key)
-            .filterNotNull()
-            .map { it.mapToCollection<T>().values.toList() }
+            .map { it?.mapToCollection<T>()?.values?.toList().orEmpty() }
+    }
+
+    override suspend fun saveString(key: String, value: String) {
+        settings.putString(key, value)
+    }
+
+    override suspend fun getString(key: String): String? {
+        return settings.getStringOrNull(key)
+    }
+
+    override fun getStringFlow(key: String): Flow<String?> {
+        return settings.getStringOrNullFlow(key)
     }
 
     override suspend fun remove(key: String) {

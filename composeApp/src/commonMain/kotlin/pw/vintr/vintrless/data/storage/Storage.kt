@@ -12,5 +12,11 @@ interface Storage {
 
     fun <T: StorageObject> getCollectionFlow(key: String): Flow<List<T>>
 
+    suspend fun saveString(key: String, value: String)
+
+    suspend fun getString(key: String): String?
+
+    fun getStringFlow(key: String): Flow<String?>
+
     suspend fun remove(key: String)
 }
