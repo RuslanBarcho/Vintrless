@@ -40,6 +40,10 @@ data class VintrlessColors(
     val regularButtonContent: Color = Color.Unspecified,
     val regularButtonDisabledBackground: Color = Color.Unspecified,
     val regularButtonDisabledContent: Color = Color.Unspecified,
+    // Radio button
+    val radioBackground: Color = Color.Unspecified,
+    val radioStroke: Color = Color.Unspecified,
+    val radioSelected: Color = Color.Unspecified,
 )
 
 val LocalVintrColors = staticCompositionLocalOf { VintrlessColors() }
@@ -74,6 +78,10 @@ val darkVintrColors = VintrlessColors(
     regularButtonContent = AppColor.White,
     regularButtonDisabledBackground = AppColor.MineShaft,
     regularButtonDisabledContent = AppColor.Waterloo,
+    // Radio button
+    radioBackground = AppColor.MineShaft,
+    radioStroke = AppColor.Jumbo,
+    radioSelected = AppColor.White,
 )
 
 val lightVintrColors = VintrlessColors(
@@ -101,6 +109,10 @@ val lightVintrColors = VintrlessColors(
     switchActiveBackgroundColor = AppColor.ChargedBlue,
     switchInactiveBackgroundColor = AppColor.White,
     switchInactiveThumbColor = AppColor.ChargedBlue,
+    // Radio button
+    radioBackground = AppColor.AthensGray,
+    radioStroke = AppColor.SilverChalice,
+    radioSelected = AppColor.Black,
 )
 
 private val darkColorScheme = darkColorScheme(

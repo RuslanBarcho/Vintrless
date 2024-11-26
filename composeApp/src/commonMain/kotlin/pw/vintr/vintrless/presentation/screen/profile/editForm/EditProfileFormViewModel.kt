@@ -61,12 +61,20 @@ class EditProfileFormViewModel(
     fun save() {
         launch {
             _screenState.withLoaded { state ->
+                val profile = state.data
+
                 withLoading(
                     setLoadingCallback = { isLoading ->
                         _screenState.updateLoaded { it.copy(isSaving = isLoading) }
                     },
                     action = {
-                        profileInteractor.saveProfile(state.data)
+                        // Save to persistent storage
+                        profileInteractor.saveProfile(profile)
+
+                        // Set as selected if none is selected now
+                        if (profileInteractor.getSelectedProfile() == null) {
+                            profileInteractor.setSelectedProfile(profile.id)
+                        }
                     }
                 )
             }

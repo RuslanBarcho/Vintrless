@@ -44,4 +44,6 @@
     <string name="profile_field_spider_x">SpiderX</string>
     <string name="profile_field_alpn">ALPN</string>
     <string name="profile_field_allow_insecure">Allow insecure</string>
+    <string name="action_edit">Edit</string>
+    <string name="profile_list_title">Profiles</string>
 </resources>

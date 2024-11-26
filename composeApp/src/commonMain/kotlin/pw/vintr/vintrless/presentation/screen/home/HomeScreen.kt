@@ -21,8 +21,10 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.vintr.vintrless.domain.connection.model.ConnectionState
+import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.presentation.theme.*
 import pw.vintr.vintrless.presentation.uikit.button.SwitchButton
+import pw.vintr.vintrless.presentation.uikit.layout.ScreenStateLayout
 import pw.vintr.vintrless.presentation.uikit.navbar.NAV_BAR_HEIGHT_DP
 import pw.vintr.vintrless.presentation.uikit.navbar.NAV_BAR_PADDING_DP
 import pw.vintr.vintrless.tools.extensions.cardBackground
@@ -54,90 +56,101 @@ fun HomeScreen(
             .background(VintrlessExtendedTheme.colors.screenBackgroundColor),
         contentAlignment = Alignment.TopCenter,
     ) {
-        Column(
+        ScreenStateLayout(
             modifier = Modifier
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            BoxWithConstraints(
+            state = screenState.value,
+        ) { state ->
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Crossfade(targetState = screenState.value.connectionState) {
-                    when (it) {
-                        ConnectionState.Disconnected -> {
-                            Image(
-                                modifier = Modifier
-                                    .fillMaxWidthRestricted(1170.dp)
-                                    .fillMaxHeightRestricted(578.dp),
-                                painter = painterResource(Res.drawable.map_red),
-                                contentScale = ContentScale.Crop,
-                                contentDescription = null,
-                            )
-                        }
-                        ConnectionState.Connecting,
-                        ConnectionState.Connected -> {
-                            Image(
-                                modifier = Modifier
-                                    .fillMaxWidthRestricted(1170.dp)
-                                    .fillMaxHeightRestricted(578.dp),
-                                painter = painterResource(Res.drawable.map_blue),
-                                contentScale = ContentScale.Crop,
-                                contentDescription = null,
-                            )
-                        }
-                    }
-                }
-
-                Column(
+                BoxWithConstraints(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
                 ) {
-                    val pulsating: Boolean
-                    val firstColor: Color
-                    val secondColor: Color
-
-                    when (screenState.value.connectionState) {
-                        ConnectionState.Disconnected -> {
-                            pulsating = false
-                            firstColor = AppColor.Siren
-                            secondColor = AppColor.Carmine
-                        }
-                        ConnectionState.Connecting -> {
-                            pulsating = true
-                            firstColor = AppColor.Cerulean
-                            secondColor = AppColor.Cyan
-                        }
-                        ConnectionState.Connected -> {
-                            pulsating = false
-                            firstColor = AppColor.Cerulean
-                            secondColor = AppColor.Cyan
+                    Crossfade(targetState = state.payload.connectionState) {
+                        when (it) {
+                            ConnectionState.Disconnected -> {
+                                Image(
+                                    modifier = Modifier
+                                        .fillMaxWidthRestricted(1170.dp)
+                                        .fillMaxHeightRestricted(578.dp),
+                                    painter = painterResource(Res.drawable.map_red),
+                                    contentScale = ContentScale.Crop,
+                                    contentDescription = null,
+                                )
+                            }
+                            ConnectionState.Connecting,
+                            ConnectionState.Connected -> {
+                                Image(
+                                    modifier = Modifier
+                                        .fillMaxWidthRestricted(1170.dp)
+                                        .fillMaxHeightRestricted(578.dp),
+                                    painter = painterResource(Res.drawable.map_blue),
+                                    contentScale = ContentScale.Crop,
+                                    contentDescription = null,
+                                )
+                            }
                         }
                     }
 
-                    Spacer(modifier = Modifier.weight(1f))
-                    SwitchButton(
-                        pulsating = pulsating,
-                        firstColor = firstColor,
-                        secondColor = secondColor,
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        viewModel.toggle()
+                        val pulsating: Boolean
+                        val firstColor: Color
+                        val secondColor: Color
+
+                        when (state.payload.connectionState) {
+                            ConnectionState.Disconnected -> {
+                                pulsating = false
+                                firstColor = AppColor.Siren
+                                secondColor = AppColor.Carmine
+                            }
+                            ConnectionState.Connecting -> {
+                                pulsating = true
+                                firstColor = AppColor.Cerulean
+                                secondColor = AppColor.Cyan
+                            }
+                            ConnectionState.Connected -> {
+                                pulsating = false
+                                firstColor = AppColor.Cerulean
+                                secondColor = AppColor.Cyan
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+                        SwitchButton(
+                            pulsating = pulsating,
+                            firstColor = firstColor,
+                            secondColor = secondColor,
+                        ) {
+                            viewModel.toggle()
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        ConnectionStateLabel(
+                            connectionState = state.payload.connectionState
+                        )
+                        Spacer(Modifier.height(64.dp))
                     }
-                    Spacer(modifier = Modifier.weight(1f))
-                    ConnectionStateLabel(
-                        connectionState = screenState.value.connectionState
-                    )
-                    Spacer(Modifier.height(64.dp))
                 }
-            }
-            ConfigCard(
-                modifier = Modifier
-                    .fillMaxWidthRestricted(640.dp)
-            ) {
-                viewModel.openCreateNewProfile()
+                ConfigCard(
+                    modifier = Modifier
+                        .fillMaxWidthRestricted(640.dp),
+                    selectedProfile = state.payload.selectedProfile,
+                ) {
+                    if (state.payload.selectedProfile != null) {
+                        viewModel.openProfileList()
+                    } else {
+                        viewModel.openCreateNewProfile()
+                    }
+                }
             }
         }
     }
@@ -219,6 +232,7 @@ fun ConnectionStateLabel(
 @Composable
 fun ConfigCard(
     modifier: Modifier = Modifier,
+    selectedProfile: ProfileData?,
     onClick: () -> Unit,
 ) {
     Box(
@@ -254,21 +268,13 @@ fun ConfigCard(
                     color = VintrlessExtendedTheme.colors.textRegular,
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    text = stringResource(Res.string.no_config),
-                    style = Gilroy16(),
-                    color = VintrlessExtendedTheme.colors.textRegular,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    text = stringResource(Res.string.no_config_description),
-                    style = Gilroy14(),
-                    color = VintrlessExtendedTheme.colors.textSecondary,
-                )
+                if (selectedProfile != null) {
+                    SelectedProfileInfo(
+                        profileData = selectedProfile
+                    )
+                } else {
+                    NoProfileSelectedInfo()
+                }
             }
             Spacer(modifier = Modifier.width(20.dp))
             Icon(
@@ -276,5 +282,54 @@ fun ConfigCard(
                 contentDescription = null,
             )
         }
+    }
+}
+
+@Composable
+private fun NoProfileSelectedInfo(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth(),
+            text = stringResource(Res.string.no_config),
+            style = Gilroy16(),
+            color = VintrlessExtendedTheme.colors.textRegular,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth(),
+            text = stringResource(Res.string.no_config_description),
+            style = Gilroy14(),
+            color = VintrlessExtendedTheme.colors.textSecondary,
+        )
+    }
+}
+
+@Composable
+private fun SelectedProfileInfo(
+    modifier: Modifier = Modifier,
+    profileData: ProfileData
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = profileData.name,
+            color = VintrlessExtendedTheme.colors.textRegular,
+            style = Gilroy16(),
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = profileData.ip,
+            color = VintrlessExtendedTheme.colors.textSecondary,
+            style = Gilroy16(),
+        )
     }
 }

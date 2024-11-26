@@ -109,6 +109,7 @@ fun EditProfileFormScreen(
                         modifier = Modifier
                             .padding(start = 28.dp, end = 28.dp, top = 12.dp, bottom = 20.dp),
                         text = stringResource(Res.string.common_save),
+                        isLoading = state.payload.isSaving,
                     ) {
                         viewModel.save()
                     }

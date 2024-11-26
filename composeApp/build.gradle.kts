@@ -68,6 +68,9 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.no.arg)
             implementation(libs.multiplatform.settings.coroutines)
+
+            // Logging
+            api(libs.logging)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

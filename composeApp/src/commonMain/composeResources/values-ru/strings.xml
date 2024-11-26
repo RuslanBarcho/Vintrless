@@ -44,4 +44,6 @@
     <string name="profile_field_spider_x">SpiderX</string>
     <string name="profile_field_alpn">ALPN</string>
     <string name="profile_field_allow_insecure">Разрешить небезопасное подключение</string>
+    <string name="action_edit">Редактировать</string>
+    <string name="profile_list_title">Профили</string>
 </resources>

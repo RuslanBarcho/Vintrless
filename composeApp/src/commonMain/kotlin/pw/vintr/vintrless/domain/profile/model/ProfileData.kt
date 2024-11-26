@@ -20,6 +20,10 @@ data class ProfileData @OptIn(ExperimentalUuidApi::class) constructor(
         )
     }
 
+    val name: String get() = getField(ProfileField.Name).orEmpty()
+
+    val ip: String get() = getField(ProfileField.IP).orEmpty()
+
     fun setField(field: ProfileField, value: String?): ProfileData {
         return copy(
             data = data.toMutableMap().also { mutableData ->

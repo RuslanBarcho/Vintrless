@@ -18,6 +18,7 @@ object AppColor {
     val GraySuit = Color(0xFFBABACC)
     val FrenchGray = Color(0xFFBCBCC6)
     val BrightGray = Color(0xFFE5E5ED)
+    val Jumbo = Color(0xFF7C7C89)
     val SilverChalice = Color(0xFFA6A6A6)
 
     val Lipstick = Color(0xFFB60149)

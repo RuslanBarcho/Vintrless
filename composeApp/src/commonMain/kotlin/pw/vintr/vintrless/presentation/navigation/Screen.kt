@@ -29,4 +29,7 @@ sealed class AppScreen : Screen {
         val profileType: ProfileType
             get() = ProfileType.entries[profileTypeOrdinal]
     }
+
+    @Serializable
+    data object ProfileList : AppScreen()
 }
