@@ -20,8 +20,9 @@ class ProfileInteractor(
         repository.saveProfile(profile.toStorageObject())
     }
 
-    suspend fun getProfile(id: String) {
-        repository.getProfile(id)
+    suspend fun getProfile(id: String): ProfileData? {
+        return repository.getProfile(id)
+            ?.let { ProfileData.fromStorageObject(it) }
     }
 
     suspend fun setSelectedProfile(id: String) {
@@ -31,5 +32,9 @@ class ProfileInteractor(
     suspend fun getSelectedProfile(): ProfileData? {
         return repository.getSelectedProfile()
             ?.let { ProfileData.fromStorageObject(it) }
+    }
+
+    suspend fun removeProfile(id: String) {
+        repository.removeProfile(id)
     }
 }

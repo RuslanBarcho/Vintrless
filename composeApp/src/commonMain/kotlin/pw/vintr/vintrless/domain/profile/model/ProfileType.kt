@@ -4,11 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class ProfileType(
-    val profileName: String,
+    val protocolName: String,
     val code: String,
 ) {
     VLESS(
-        profileName = "VLESS",
+        protocolName = "VLESS",
         code = "vless"
     );
 

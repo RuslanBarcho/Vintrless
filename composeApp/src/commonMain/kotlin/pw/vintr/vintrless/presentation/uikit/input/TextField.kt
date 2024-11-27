@@ -69,7 +69,7 @@ fun AppTextField(
             value = value,
             modifier = textFieldModifier
                 .fillMaxWidth()
-                .cardShadow(cornersRadius = 8.dp)
+                .textFieldShadow(cornersRadius = 8.dp)
                 .cardBackground(cornerRadius = 8.dp)
                 .defaultMinSize(
                     minWidth = 64.dp,

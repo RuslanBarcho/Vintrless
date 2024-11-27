@@ -11,5 +11,7 @@ interface CollectionStorage<T: StorageObject> {
 
     suspend fun getFromCollection(key: String, id: String): T?
 
+    suspend fun removeFromCollection(key: String, id: String)
+
     fun getCollectionFlow(key: String): Flow<List<T>>
 }

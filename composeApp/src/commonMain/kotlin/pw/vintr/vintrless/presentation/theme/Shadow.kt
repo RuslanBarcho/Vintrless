@@ -78,10 +78,22 @@ private class DropShadowNode(
     }
 }
 
-fun Modifier.cardShadow(cornersRadius: Dp = 0.dp) = composed {
+fun Modifier.cardShadow(
+    cornersRadius: Dp = 0.dp,
+    color: Color? = null,
+) = composed {
     dropShadow(
         shape = RoundedCornerShape(cornersRadius),
-        color = VintrlessExtendedTheme.colors.shadow.copy(alpha = 0.25f),
+        color = color ?: VintrlessExtendedTheme.colors.shadow.copy(alpha = 0.25f),
+        blur = 15.dp,
+        offsetY = 5.dp
+    )
+}
+
+fun Modifier.textFieldShadow(cornersRadius: Dp = 0.dp) = composed {
+    dropShadow(
+        shape = RoundedCornerShape(cornersRadius),
+        color = VintrlessExtendedTheme.colors.textFieldShadow,
         blur = 15.dp,
         offsetY = 5.dp
     )

@@ -6,9 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.lighthousegames.logging.logging
 import pw.vintr.vintrless.data.profile.model.ProfileDataStorageObject
-import pw.vintr.vintrless.data.storage.StorageObject
 
 @OptIn(ExperimentalSettingsApi::class)
 class ProfileDataStorage(
@@ -38,6 +36,19 @@ class ProfileDataStorage(
     override suspend fun getFromCollection(key: String, id: String): ProfileDataStorageObject? {
         val json: String? = settings.getStringOrNull(key)
         return json.mapToCollection()[id]
+    }
+
+    override suspend fun removeFromCollection(key: String, id: String) {
+        val currentCollection = getCollection(key)
+
+        val modifiedCollection = currentCollection
+            .toMutableList()
+            .also {
+                it.removeAll { obj -> obj.id == id }
+            }
+            .associateBy { it.id }
+
+        settings.putString(key, Json.encodeToString(modifiedCollection))
     }
 
     override fun getCollectionFlow(key: String): Flow<List<ProfileDataStorageObject>> {

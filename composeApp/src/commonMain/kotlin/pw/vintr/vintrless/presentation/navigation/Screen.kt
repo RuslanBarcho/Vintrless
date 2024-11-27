@@ -32,4 +32,7 @@ sealed class AppScreen : Screen {
 
     @Serializable
     data object ProfileList : AppScreen()
+
+    @Serializable
+    data object ConfirmDeleteProfile : AppScreen()
 }

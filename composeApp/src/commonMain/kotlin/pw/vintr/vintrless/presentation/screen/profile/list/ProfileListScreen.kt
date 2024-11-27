@@ -24,13 +24,22 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.presentation.theme.Gilroy16
+import pw.vintr.vintrless.presentation.theme.RubikMedium14
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
+import pw.vintr.vintrless.presentation.theme.cardShadow
+import pw.vintr.vintrless.presentation.uikit.button.ButtonSecondary
+import pw.vintr.vintrless.presentation.uikit.button.ButtonSecondarySize
 import pw.vintr.vintrless.presentation.uikit.container.RestrictedWidthLayout
 import pw.vintr.vintrless.presentation.uikit.layout.ScreenStateLayout
 import pw.vintr.vintrless.presentation.uikit.selector.AppRadioButton
 import pw.vintr.vintrless.presentation.uikit.toolbar.ToolbarRegular
+import pw.vintr.vintrless.tools.extensions.Dot
+import pw.vintr.vintrless.tools.extensions.Space
 import vintrless.composeapp.generated.resources.Res
+import vintrless.composeapp.generated.resources.action_edit
 import vintrless.composeapp.generated.resources.ic_add
+import vintrless.composeapp.generated.resources.ic_share
+import vintrless.composeapp.generated.resources.ic_delete
 import vintrless.composeapp.generated.resources.profile_list_title
 
 @Composable
@@ -88,6 +97,15 @@ fun ProfileListScreen(
                             selected = profile == state.payload.selectedProfile,
                             onSelectClick = {
                                 viewModel.selectProfile(profile)
+                            },
+                            onEditClick = {
+                                viewModel.openEditProfile(profile)
+                            },
+                            onShareClick = {
+                                viewModel.onShareClick(profile)
+                            },
+                            onDeleteClick = {
+                                viewModel.onDeleteClick(profile)
                             }
                         )
                     }
@@ -103,6 +121,9 @@ private fun ProfileCard(
     profileData: ProfileData,
     selected: Boolean,
     onSelectClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onShareClick: () -> Unit,
+    onDeleteClick: () -> Unit,
 ) {
     val borderColor = animateColorAsState(
         targetValue = if (selected) {
@@ -111,10 +132,18 @@ private fun ProfileCard(
             VintrlessExtendedTheme.colors.cardStrokeColor
         }
     )
+    val shadowColor = animateColorAsState(
+        targetValue = if (selected) {
+            VintrlessExtendedTheme.colors.navBarSelected
+        } else {
+            VintrlessExtendedTheme.colors.shadow
+        }
+    )
 
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .cardShadow(12.dp, color = shadowColor.value.copy(alpha = 0.25f))
             .clip(RoundedCornerShape(12.dp))
             .background(VintrlessExtendedTheme.colors.cardBackgroundColor)
             .border(BorderStroke(1.dp, borderColor.value), RoundedCornerShape(12.dp))
@@ -137,9 +166,13 @@ private fun ProfileCard(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = profileData.ip,
+                    text = profileData.ip +
+                            String.Space +
+                            String.Dot +
+                            String.Space +
+                            profileData.type.protocolName,
                     color = VintrlessExtendedTheme.colors.textSecondary,
-                    style = Gilroy16(),
+                    style = RubikMedium14(),
                 )
             }
             Spacer(Modifier.width(20.dp))
@@ -147,6 +180,47 @@ private fun ProfileCard(
                 selected = selected,
                 onClick = { onSelectClick() }
             )
+        }
+        Spacer(Modifier.height(24.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            ButtonSecondary(
+                modifier = Modifier
+                    .weight(1f),
+                text = stringResource(Res.string.action_edit),
+                size = ButtonSecondarySize.MEDIUM,
+            ) { onEditClick() }
+            Spacer(Modifier.width(8.dp))
+            ButtonSecondary(
+                wrapContentWidth = true,
+                size = ButtonSecondarySize.MEDIUM,
+                content = {
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp),
+                        painter = painterResource(Res.drawable.ic_share),
+                        tint = VintrlessExtendedTheme.colors.secondaryButtonContent,
+                        contentDescription = null
+                    )
+                }
+            ) { onShareClick() }
+            Spacer(Modifier.width(8.dp))
+            ButtonSecondary(
+                wrapContentWidth = true,
+                size = ButtonSecondarySize.MEDIUM,
+                content = {
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp),
+                        painter = painterResource(Res.drawable.ic_delete),
+                        tint = VintrlessExtendedTheme.colors.secondaryButtonContent,
+                        contentDescription = null
+                    )
+                }
+            ) { onDeleteClick() }
         }
     }
 }

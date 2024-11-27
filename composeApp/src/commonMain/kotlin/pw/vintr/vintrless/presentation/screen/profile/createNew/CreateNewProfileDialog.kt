@@ -100,7 +100,7 @@ fun CreateNewProfileDialog(
             Spacer(modifier = Modifier.height(10.dp))
             screenState.value.availableForms.mapIndexed { index, form ->
                 Action(
-                    title = form.type.profileName,
+                    title = form.type.protocolName,
                 ) {
                     viewModel.openFillProfileForm(form)
                 }

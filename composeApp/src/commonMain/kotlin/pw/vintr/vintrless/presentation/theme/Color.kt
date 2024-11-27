@@ -31,4 +31,7 @@ object AppColor {
     val ShojinBlue = Color(0xFF0CB1DF)
     val Spray = Color(0xFF80D5ED)
     val ChargedBlue = Color(0xFF0CACD8)
+
+    val Red3 = Color(0xFFAA213D)
+    val Green0 = Color(0xFF1ABE49)
 }

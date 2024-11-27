@@ -1,5 +1,8 @@
 <resources>
     <string name="common_save">Сохранить</string>
+    <string name="common_cancel">Отмена</string>
+    <string name="common_ok">Ок</string>
+    <string name="common_delete">Удалить</string>
     <string name="current_config">Текущий профиль</string>
     <string name="no_config">Нет профиля</string>
     <string name="no_config_description">Добавьте новый профиль VPN, чтобы начать использовать приложение</string>
@@ -46,4 +49,10 @@
     <string name="profile_field_allow_insecure">Разрешить небезопасное подключение</string>
     <string name="action_edit">Редактировать</string>
     <string name="profile_list_title">Профили</string>
+    <string name="profile_delete_title">Удалить профиль</string>
+    <string name="profile_delete_text">Вы действительно хотите удалить профиль? Отменить это будет невозможно</string>
+    <string name="profile_save_success_title">Профиль сохранен!</string>
+    <string name="profile_save_success_message">Теперь его можно использовать для подключения :)</string>
+    <string name="error_alert_title">Произошла ошибка :(</string>
+    <string name="error_alert_server_message">Это ошибка сервера - попробуйте, пожалуйста, позже</string>
 </resources>

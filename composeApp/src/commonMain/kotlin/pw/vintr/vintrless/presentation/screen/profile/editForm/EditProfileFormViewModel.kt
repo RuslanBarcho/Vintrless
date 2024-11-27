@@ -2,8 +2,9 @@ package pw.vintr.vintrless.presentation.screen.profile.editForm
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
+import pw.vintr.vintrless.domain.alert.model.AlertModel
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.domain.profile.model.ProfileField
@@ -20,6 +21,7 @@ class EditProfileFormViewModel(
     private val profileType: ProfileType,
     private val dataId: String? = null,
     private val profileInteractor: ProfileInteractor,
+    private val alertInteractor: AlertInteractor,
 ) : BaseViewModel(navigator) {
 
     private val _screenState = MutableStateFlow<BaseScreenState<EditProfileFormState>>(
@@ -36,9 +38,11 @@ class EditProfileFormViewModel(
             val form = ProfileForm.getByType(profileType)
 
             if (dataId != null) {
+                val data = profileInteractor.getProfile(dataId)
+
                 EditProfileFormState(
                     form = form,
-                    data = ProfileData(type = profileType)
+                    data = requireNotNull(data)
                 )
             } else {
                 EditProfileFormState(
@@ -75,6 +79,10 @@ class EditProfileFormViewModel(
                         if (profileInteractor.getSelectedProfile() == null) {
                             profileInteractor.setSelectedProfile(profile.id)
                         }
+
+                        // Show success message and exit
+                        alertInteractor.showAlert(AlertModel.ProfileSaveSucceed())
+                        navigateBack()
                     }
                 )
             }

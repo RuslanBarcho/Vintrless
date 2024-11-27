@@ -12,6 +12,9 @@ val String.Companion.Comma: String
 val String.Companion.Dash: String
     get() = "–"
 
+val String.Companion.Dot: String
+    get() = "•"
+
 fun String.isBoolean(): Boolean {
     return this == "true" || this == "false"
 }

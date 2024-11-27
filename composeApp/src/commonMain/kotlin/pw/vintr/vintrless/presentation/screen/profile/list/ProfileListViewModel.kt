@@ -9,6 +9,7 @@ import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
 import pw.vintr.vintrless.presentation.navigation.AppScreen
 import pw.vintr.vintrless.presentation.navigation.NavigatorType
+import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmResult
 
 class ProfileListViewModel(
     navigator: AppNavigator,
@@ -32,8 +33,32 @@ class ProfileListViewModel(
     }
 
     fun openCreateNewProfile() {
-        navigator.switchNavigatorType(NavigatorType.Root)
         navigator.forward(AppScreen.CreateNewProfile)
+    }
+
+    fun openEditProfile(profile: ProfileData) {
+        navigator.forward(
+            AppScreen.EditProfileForm(
+                profileTypeOrdinal = profile.type.ordinal,
+                dataId = profile.id
+            )
+        )
+    }
+
+    fun onShareClick(profile: ProfileData) {
+        // TODO: share logic
+    }
+
+    fun onDeleteClick(profile: ProfileData) {
+        navigator.forwardWithResult<ConfirmResult>(
+            screen = AppScreen.ConfirmDeleteProfile,
+            type = NavigatorType.Root,
+            resultKey = ConfirmResult.KEY,
+        ) {
+            if (it == ConfirmResult.ACCEPT) {
+                launch { profileInteractor.removeProfile(profile.id) }
+            }
+        }
     }
 }
 

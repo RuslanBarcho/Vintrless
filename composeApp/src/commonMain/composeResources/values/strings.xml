@@ -1,5 +1,8 @@
 <resources>
     <string name="common_save">Save</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_ok">OK</string>
+    <string name="common_delete">Delete</string>
     <string name="current_config">Current config</string>
     <string name="no_config">No config</string>
     <string name="no_config_description">Add new VPN configuration to start using app</string>
@@ -46,4 +49,10 @@
     <string name="profile_field_allow_insecure">Allow insecure</string>
     <string name="action_edit">Edit</string>
     <string name="profile_list_title">Profiles</string>
+    <string name="profile_delete_title">Delete profile</string>
+    <string name="profile_delete_text">Are you sure you want to delete your profile? It will be impossible to undo this</string>
+    <string name="profile_save_success_title">Profile saved!</string>
+    <string name="profile_save_success_message">It can now be used to connect :)</string>
+    <string name="error_alert_title">An error has occurred :(</string>
+    <string name="error_alert_server_message">This is a server error - please try again later</string>
 </resources>

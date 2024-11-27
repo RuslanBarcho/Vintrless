@@ -66,7 +66,7 @@ fun EditProfileFormScreen(
     Scaffold(
         topBar = {
             ToolbarRegular(
-                title = profileType.profileName,
+                title = profileType.protocolName,
                 onBackPressed = { viewModel.navigateBack() }
             )
         },

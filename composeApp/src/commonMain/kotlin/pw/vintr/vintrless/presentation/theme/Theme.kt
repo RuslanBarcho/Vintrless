@@ -23,6 +23,7 @@ data class VintrlessColors(
     // Text field
     val textFieldContent: Color = Color.Unspecified,
     val textFieldHint: Color = Color.Unspecified,
+    val textFieldShadow: Color = Color.Unspecified,
     // Nav bar
     val navBarSelected: Color = Color.Unspecified,
     val navBarUnselected: Color = Color.Unspecified,
@@ -40,10 +41,22 @@ data class VintrlessColors(
     val regularButtonContent: Color = Color.Unspecified,
     val regularButtonDisabledBackground: Color = Color.Unspecified,
     val regularButtonDisabledContent: Color = Color.Unspecified,
+    // Secondary button
+    val secondaryButtonBackground: Color = Color.Unspecified,
+    val secondaryButtonStroke: Color = Color.Unspecified,
+    val secondaryButtonContent: Color = Color.Unspecified,
+    val secondaryButtonDisabledBackground: Color = Color.Unspecified,
+    val secondaryButtonDisabledContent: Color = Color.Unspecified,
+    // Text button
+    val textButtonContent: Color = Color.Unspecified,
+    val textButtonDisabledContent: Color = Color.Unspecified,
     // Radio button
     val radioBackground: Color = Color.Unspecified,
     val radioStroke: Color = Color.Unspecified,
     val radioSelected: Color = Color.Unspecified,
+    // Alert
+    val negative: Color = Color.Unspecified,
+    val positive: Color = Color.Unspecified,
 )
 
 val LocalVintrColors = staticCompositionLocalOf { VintrlessColors() }
@@ -61,6 +74,7 @@ val darkVintrColors = VintrlessColors(
     // Text field
     textFieldContent = AppColor.White,
     textFieldHint = AppColor.Abbey,
+    textFieldShadow = AppColor.Black.copy(alpha = 0.25f),
     // Nav bar
     navBarSelected = AppColor.BrightTurquoise,
     navBarUnselected = AppColor.White,
@@ -78,10 +92,22 @@ val darkVintrColors = VintrlessColors(
     regularButtonContent = AppColor.White,
     regularButtonDisabledBackground = AppColor.MineShaft,
     regularButtonDisabledContent = AppColor.Waterloo,
+    // Secondary button
+    secondaryButtonBackground = AppColor.Black,
+    secondaryButtonStroke = AppColor.Abbey,
+    secondaryButtonContent = AppColor.White,
+    secondaryButtonDisabledBackground = AppColor.Black,
+    secondaryButtonDisabledContent = AppColor.GraySuit,
+    // Text button
+    textButtonContent = AppColor.White,
+    textButtonDisabledContent = AppColor.Abbey,
     // Radio button
     radioBackground = AppColor.MineShaft,
     radioStroke = AppColor.Jumbo,
     radioSelected = AppColor.White,
+    // Alert
+    negative = AppColor.Red3,
+    positive = AppColor.Green0
 )
 
 val lightVintrColors = VintrlessColors(
@@ -97,6 +123,7 @@ val lightVintrColors = VintrlessColors(
     // Text field
     textFieldContent = AppColor.Black,
     textFieldHint = AppColor.GraySuit,
+    textFieldShadow = AppColor.FrenchGray.copy(alpha = 0.1f),
     // Nav bar
     navBarSelected = AppColor.ShojinBlue,
     navBarUnselected = AppColor.GunPowder,
@@ -109,10 +136,27 @@ val lightVintrColors = VintrlessColors(
     switchActiveBackgroundColor = AppColor.ChargedBlue,
     switchInactiveBackgroundColor = AppColor.White,
     switchInactiveThumbColor = AppColor.ChargedBlue,
+    // Regular button
+    regularButtonBackground = AppColor.ChargedBlue,
+    regularButtonContent = AppColor.White,
+    regularButtonDisabledBackground = AppColor.MineShaft,
+    regularButtonDisabledContent = AppColor.Waterloo,
+    // Secondary button
+    secondaryButtonBackground = AppColor.White,
+    secondaryButtonStroke = AppColor.SilverChalice,
+    secondaryButtonContent = AppColor.Black,
+    secondaryButtonDisabledBackground = AppColor.White,
+    secondaryButtonDisabledContent = AppColor.GraySuit,
+    // Text button
+    textButtonContent = AppColor.Black,
+    textButtonDisabledContent = AppColor.SilverChalice,
     // Radio button
     radioBackground = AppColor.AthensGray,
     radioStroke = AppColor.SilverChalice,
-    radioSelected = AppColor.Black,
+    radioSelected = AppColor.ShojinBlue,
+    // Alert
+    negative = AppColor.Red3,
+    positive = AppColor.Green0
 )
 
 private val darkColorScheme = darkColorScheme(
