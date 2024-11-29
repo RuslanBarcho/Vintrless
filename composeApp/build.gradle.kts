@@ -37,6 +37,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(files("libs/libv2ray.aar"))
         }
         commonMain.dependencies {
             // Common
@@ -94,6 +95,20 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        multiDexEnabled = true
+
+        splits {
+            abi {
+                isEnable = true
+                include(
+                    "arm64-v8a",
+                    "armeabi-v7a",
+                    "x86_64",
+                    "x86"
+                )
+                isUniversalApk = true
+            }
+        }
     }
     packaging {
         resources {
@@ -108,6 +123,43 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDirs("libs")
+        }
+    }
+    applicationVariants.all {
+        val variant = this
+        val versionCodes = mapOf(
+            "armeabi-v7a" to 4,
+            "arm64-v8a" to 4,
+            "x86" to 4,
+            "x86_64" to 4,
+            "universal" to 4
+        )
+
+        variant.outputs
+            .map { it as com.android.build.gradle.internal.api.ApkVariantOutputImpl }
+            .forEach { output ->
+                val abi = if (output.getFilter("ABI") != null)
+                    output.getFilter("ABI")
+                else
+                    "universal"
+
+                output.outputFileName = "v2rayNG_${variant.versionName}_${abi}.apk"
+                if (versionCodes.containsKey(abi)) {
+                    output.versionCodeOverride =
+                        (1000000 * versionCodes[abi]!!).plus(variant.versionCode)
+                } else {
+                    return@forEach
+                }
+            }
+    }
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 }
 

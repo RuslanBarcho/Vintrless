@@ -1,7 +1,7 @@
 package pw.vintr.vintrless.presentation.navigation
 
 import kotlinx.serialization.Serializable
-import pw.vintr.vintrless.domain.profile.model.ProfileType
+import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 
 interface Screen
 
@@ -26,8 +26,8 @@ sealed class AppScreen : Screen {
         val dataId: String? = null,
     ) : AppScreen() {
 
-        val profileType: ProfileType
-            get() = ProfileType.entries[profileTypeOrdinal]
+        val protocolType: ProtocolType
+            get() = ProtocolType.entries[profileTypeOrdinal]
     }
 
     @Serializable

@@ -9,7 +9,7 @@ import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.domain.profile.model.ProfileField
 import pw.vintr.vintrless.domain.profile.model.ProfileForm
-import pw.vintr.vintrless.domain.profile.model.ProfileType
+import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
@@ -18,7 +18,7 @@ import pw.vintr.vintrless.tools.extensions.withLoaded
 
 class EditProfileFormViewModel(
     navigator: AppNavigator,
-    private val profileType: ProfileType,
+    private val protocolType: ProtocolType,
     private val dataId: String? = null,
     private val profileInteractor: ProfileInteractor,
     private val alertInteractor: AlertInteractor,
@@ -35,7 +35,7 @@ class EditProfileFormViewModel(
 
     private fun loadData() {
         _screenState.loadWithStateHandling {
-            val form = ProfileForm.getByType(profileType)
+            val form = ProfileForm.getByType(protocolType)
 
             if (dataId != null) {
                 val data = profileInteractor.getProfile(dataId)
@@ -48,7 +48,7 @@ class EditProfileFormViewModel(
                 EditProfileFormState(
                     form = form,
                     data = ProfileData(
-                        type = profileType,
+                        type = protocolType,
                         data = form.getDefaultData()
                     )
                 )

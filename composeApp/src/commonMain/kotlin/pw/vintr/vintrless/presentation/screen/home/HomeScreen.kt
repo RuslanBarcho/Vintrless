@@ -20,16 +20,14 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pw.vintr.vintrless.domain.connection.model.ConnectionState
+import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.presentation.theme.*
 import pw.vintr.vintrless.presentation.uikit.button.SwitchButton
 import pw.vintr.vintrless.presentation.uikit.layout.ScreenStateLayout
 import pw.vintr.vintrless.presentation.uikit.navbar.NAV_BAR_HEIGHT_DP
 import pw.vintr.vintrless.presentation.uikit.navbar.NAV_BAR_PADDING_DP
-import pw.vintr.vintrless.tools.extensions.cardBackground
-import pw.vintr.vintrless.tools.extensions.fillMaxHeightRestricted
-import pw.vintr.vintrless.tools.extensions.fillMaxWidthRestricted
+import pw.vintr.vintrless.tools.extensions.*
 import vintrless.composeapp.generated.resources.Res
 import vintrless.composeapp.generated.resources.current_config
 import vintrless.composeapp.generated.resources.no_config
@@ -327,9 +325,13 @@ private fun SelectedProfileInfo(
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = profileData.ip,
+            text = profileData.ip +
+                    String.Space +
+                    String.Dot +
+                    String.Space +
+                    profileData.type.protocolName,
             color = VintrlessExtendedTheme.colors.textSecondary,
-            style = Gilroy16(),
+            style = RubikMedium16(),
         )
     }
 }

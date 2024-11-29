@@ -1,6 +1,7 @@
 package pw.vintr.vintrless.domain.profile.model
 
 import kotlinx.serialization.Serializable
+import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import vintrless.composeapp.generated.resources.Res
 import vintrless.composeapp.generated.resources.profile_group_server
 import vintrless.composeapp.generated.resources.profile_group_profile
@@ -13,9 +14,16 @@ sealed class ProfileForm {
     companion object {
         val allForms: List<ProfileForm> = listOf(Vless)
 
-        fun getByType(type: ProfileType): ProfileForm {
+        fun getByType(type: ProtocolType): ProfileForm {
             return when (type) {
-                ProfileType.VLESS -> Vless
+                ProtocolType.VLESS -> Vless
+                ProtocolType.VMESS -> Vless
+                ProtocolType.SHADOWSOCKS -> Vless
+                ProtocolType.SOCKS -> Vless
+                ProtocolType.TROJAN -> Vless
+                ProtocolType.WIREGUARD -> Vless
+                ProtocolType.HYSTERIA2 -> Vless
+                ProtocolType.HTTP -> Vless
             }
         }
     }
@@ -23,7 +31,7 @@ sealed class ProfileForm {
     /**
      * Profile type name
      */
-    abstract val type: ProfileType
+    abstract val type: ProtocolType
 
     /**
      * Available fields for profile type
@@ -63,7 +71,7 @@ sealed class ProfileForm {
     @Serializable
     data object Vless : ProfileForm() {
 
-        override val type = ProfileType.VLESS
+        override val type = ProtocolType.VLESS
 
         override val fieldGroups = listOf(
             ProfileFieldGroup(

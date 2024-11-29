@@ -14,7 +14,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.domain.profile.model.ProfileField
-import pw.vintr.vintrless.domain.profile.model.ProfileType
+import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import pw.vintr.vintrless.presentation.theme.Gilroy18
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
 import pw.vintr.vintrless.presentation.uikit.button.ButtonRegular
@@ -33,9 +33,9 @@ import vintrless.composeapp.generated.resources.field_not_specified
 
 @Composable
 fun EditProfileFormScreen(
-    profileType: ProfileType,
+    protocolType: ProtocolType,
     dataId: String? = null,
-    viewModel: EditProfileFormViewModel = koinViewModel { parametersOf(profileType, dataId) },
+    viewModel: EditProfileFormViewModel = koinViewModel { parametersOf(protocolType, dataId) },
 ) {
     val screenState = viewModel.screenState.collectAsState()
 
@@ -66,7 +66,7 @@ fun EditProfileFormScreen(
     Scaffold(
         topBar = {
             ToolbarRegular(
-                title = profileType.protocolName,
+                title = protocolType.protocolName,
                 onBackPressed = { viewModel.navigateBack() }
             )
         },

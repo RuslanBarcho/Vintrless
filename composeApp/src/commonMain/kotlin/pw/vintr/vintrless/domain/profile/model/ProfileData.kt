@@ -2,20 +2,21 @@ package pw.vintr.vintrless.domain.profile.model
 
 import kotlinx.serialization.Serializable
 import pw.vintr.vintrless.data.profile.model.ProfileDataStorageObject
+import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @Serializable
 data class ProfileData @OptIn(ExperimentalUuidApi::class) constructor(
     val id: String = Uuid.random().toString(),
-    val type: ProfileType,
+    val type: ProtocolType,
     val data: Map<String, String?> = mapOf()
 ) {
 
     companion object {
         fun fromStorageObject(cacheObject: ProfileDataStorageObject) = ProfileData(
             id = cacheObject.id,
-            type = ProfileType.getByCode(cacheObject.typeCode),
+            type = ProtocolType.getByCode(cacheObject.typeCode),
             data = cacheObject.data,
         )
     }

@@ -46,7 +46,7 @@ val appModule = module {
     viewModel { params ->
         EditProfileFormViewModel(
             navigator = get(),
-            profileType = params.get(),
+            protocolType = params.get(),
             dataId = params.getOrNull(),
             profileInteractor = get(),
             alertInteractor = get()

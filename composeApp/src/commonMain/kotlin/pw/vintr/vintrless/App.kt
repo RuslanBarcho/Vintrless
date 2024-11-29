@@ -147,7 +147,7 @@ fun Navigation(
             val route: AppScreen.EditProfileForm = it.toRoute()
 
             EditProfileFormScreen(
-                profileType = route.profileType,
+                protocolType = route.protocolType,
                 dataId = route.dataId,
             )
         }

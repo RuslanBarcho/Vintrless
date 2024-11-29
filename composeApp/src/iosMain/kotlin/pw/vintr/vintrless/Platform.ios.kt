@@ -8,20 +8,15 @@ import com.russhwolf.settings.NSUserDefaultsSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import org.jetbrains.skia.FilterBlurMode
 import org.jetbrains.skia.MaskFilter
-import platform.UIKit.UIDevice
+import pw.vintr.vintrless.domain.v2ray.interactor.V2rayInteractor
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
-
-class IOSPlatform: Platform {
-    override val name: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
-}
+import pw.vintr.vintrless.v2ray.CupertinoV2rayInteractor
 
 class IOSBottomSheetNavigator(sheetState: ModalBottomSheetState) : BottomSheetNavigator(sheetState)
 
 actual fun getBottomSheetNavigator(
     sheetState: ModalBottomSheetState
 ): BottomSheetNavigator = IOSBottomSheetNavigator(sheetState)
-
-actual fun getPlatform(): Platform = IOSPlatform()
 
 @Composable
 actual fun applyThemeOnView(darkTheme: Boolean) {}
@@ -32,3 +27,5 @@ actual fun NativePaint.setMaskFilter(blurRadius: Float) {
 
 @OptIn(ExperimentalSettingsApi::class)
 actual fun FlowSettings() = NSUserDefaultsSettings.Factory().create().toFlowSettings()
+
+actual fun V2rayInteractor(): V2rayInteractor = CupertinoV2rayInteractor

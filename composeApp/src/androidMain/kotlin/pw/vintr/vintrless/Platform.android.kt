@@ -2,7 +2,6 @@ package pw.vintr.vintrless
 
 import android.app.Activity
 import android.graphics.BlurMaskFilter
-import android.os.Build
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -14,16 +13,11 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.Navigator
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.SharedPreferencesSettings
-import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
+import pw.vintr.vintrless.domain.v2ray.interactor.V2rayInteractor
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
 import pw.vintr.vintrless.tools.AppContext
-
-class AndroidPlatform : Platform {
-    override val name: String = "Android ${Build.VERSION.SDK_INT}"
-}
-
-actual fun getPlatform(): Platform = AndroidPlatform()
+import pw.vintr.vintrless.v2ray.interactor.AndroidV2rayInteractor
 
 @Navigator.Name("AndroidBottomSheetNavigator")
 class AndroidBottomSheetNavigator(sheetState: ModalBottomSheetState) : BottomSheetNavigator(sheetState)
@@ -56,3 +50,5 @@ actual fun NativePaint.setMaskFilter(blurRadius: Float) {
 
 @OptIn(ExperimentalSettingsApi::class)
 actual fun FlowSettings() = SharedPreferencesSettings.Factory(AppContext.get()).create().toFlowSettings()
+
+actual fun V2rayInteractor(): V2rayInteractor = AndroidV2rayInteractor

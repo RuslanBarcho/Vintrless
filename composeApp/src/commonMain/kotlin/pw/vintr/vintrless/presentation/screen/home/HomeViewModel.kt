@@ -1,14 +1,12 @@
 package pw.vintr.vintrless.presentation.screen.home
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import pw.vintr.vintrless.domain.connection.model.ConnectionState
+import pw.vintr.vintrless.V2rayInteractor
+import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.model.ProfileData
+import pw.vintr.vintrless.domain.v2ray.interactor.V2rayInteractor
+import pw.vintr.vintrless.domain.v2ray.model.V2rayConfig
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
@@ -18,9 +16,11 @@ import pw.vintr.vintrless.presentation.navigation.NavigatorType
 class HomeViewModel(
     navigator: AppNavigator,
     profileInteractor: ProfileInteractor,
+    private val v2rayInteractor: V2rayInteractor = V2rayInteractor()
 ) : BaseViewModel(navigator) {
 
-    private val connectionState = MutableStateFlow(ConnectionState.Disconnected)
+    private val connectionState = v2rayInteractor.connectionState
+        .stateInThis(ConnectionState.Disconnected)
 
     val screenState = combine(
         connectionState,
@@ -45,15 +45,11 @@ class HomeViewModel(
     }
 
     private fun connect() {
-        launch {
-            connectionState.update { ConnectionState.Connecting }
-            delay(1000)
-            connectionState.update { ConnectionState.Connected }
-        }
+        v2rayInteractor.startV2ray(V2rayConfig())
     }
 
     private fun disconnect() {
-        connectionState.update { ConnectionState.Disconnected }
+        v2rayInteractor.stopV2ray()
     }
 
     fun openCreateNewProfile() {
