@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Vintrless</string>
+    <string name="app_name" translatable="false">Vintrless</string>
+    <string name="service_stop_action">Stop</string>
+    <string name="service_connected_to">Connected to %1s</string>
 </resources>

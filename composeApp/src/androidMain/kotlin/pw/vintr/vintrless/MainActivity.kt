@@ -17,9 +17,10 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import pw.vintr.vintrless.broadcast.BroadcastController
-import pw.vintr.vintrless.tools.AppContext
+import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.v2ray.interactor.AndroidV2rayInteractor
 import pw.vintr.vintrless.v2ray.service.V2RayServiceController
+import pw.vintr.vintrless.v2ray.storage.V2RayConfigStorage
 
 class MainActivity : ComponentActivity() {
 
@@ -84,7 +85,7 @@ class MainActivity : ComponentActivity() {
             AndroidV2rayInteractor.event.collect { event ->
                 when (event) {
                     is AndroidV2rayInteractor.Event.StartV2RayViaActivity -> {
-                        startV2ray()
+                        startV2ray(event.config)
                     }
                     is AndroidV2rayInteractor.Event.StopV2RayViaActivity -> {
                         stopV2Ray()
@@ -94,9 +95,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun startV2ray() {
-        val context = AppContext.get()
-        val prepareIntent = VpnService.prepare(context)
+    private fun startV2ray(config: V2RayEncodedConfig) {
+        // Save config
+        V2RayConfigStorage.saveConfig(applicationContext, config)
+
+        // Start service
+        val prepareIntent = VpnService.prepare(applicationContext)
 
         if (prepareIntent != null) {
             requestVpnPermission.launch(prepareIntent)

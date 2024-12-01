@@ -1,7 +1,7 @@
 package pw.vintr.vintrless.domain.v2ray.model
 
 import kotlinx.serialization.Serializable
-import pw.vintr.vintrless.domain.v2ray.Constants
+import pw.vintr.vintrless.domain.v2ray.V2RayConfigDefaults
 
 @Serializable
 enum class ProtocolType(
@@ -12,42 +12,42 @@ enum class ProtocolType(
     VLESS(
         protocolName = "VLESS",
         code = "vless",
-        protocolScheme = Constants.VLESS,
+        protocolScheme = V2RayConfigDefaults.VLESS,
     ),
     VMESS(
         protocolName = "VMESS",
         code = "vmess",
-        protocolScheme = Constants.VMESS,
+        protocolScheme = V2RayConfigDefaults.VMESS,
     ),
     SHADOWSOCKS(
         protocolName = "Shadowsocks",
         code = "shadowsocks",
-        protocolScheme = Constants.SHADOWSOCKS
+        protocolScheme = V2RayConfigDefaults.SHADOWSOCKS
     ),
     SOCKS(
         protocolName = "Socks",
         code = "socks",
-        protocolScheme = Constants.SOCKS
+        protocolScheme = V2RayConfigDefaults.SOCKS
     ),
     TROJAN(
         protocolName = "Trojan",
         code = "trojan",
-        protocolScheme = Constants.TROJAN
+        protocolScheme = V2RayConfigDefaults.TROJAN
     ),
     WIREGUARD(
         protocolName = "Wireguard",
         code = "wireguard",
-        protocolScheme = Constants.WIREGUARD
+        protocolScheme = V2RayConfigDefaults.WIREGUARD
     ),
     HYSTERIA2(
         protocolName = "Hysteria2",
         code = "hysteria2",
-        protocolScheme = Constants.HYSTERIA2
+        protocolScheme = V2RayConfigDefaults.HYSTERIA2
     ),
     HTTP(
         protocolName = "HTTP",
         code = "http",
-        protocolScheme = Constants.HTTP
+        protocolScheme = V2RayConfigDefaults.HTTP
     );
 
     companion object {

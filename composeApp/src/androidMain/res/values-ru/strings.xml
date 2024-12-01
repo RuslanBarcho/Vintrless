@@ -1,0 +1,4 @@
+<resources>
+    <string name="service_stop_action">Отключить</string>
+    <string name="service_connected_to">Подключено к %1s</string>
+</resources>

@@ -1,48 +1,64 @@
 package pw.vintr.vintrless.domain.v2ray.model
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import pw.vintr.vintrless.domain.v2ray.Constants
+import pw.vintr.vintrless.domain.v2ray.V2RayConfigDefaults
 import pw.vintr.vintrless.tools.extensions.Empty
 import pw.vintr.vintrless.tools.network.IPTools
+import pw.vintr.vintrless.tools.serialization.AnySerializer
 
+@Serializable
 data class V2rayConfig(
     var remarks: String? = null,
+    @Serializable(with = AnySerializer::class)
     var stats: Any? = null,
     val log: LogBean? = null,
     var policy: PolicyBean? = null,
-    val inbounds: ArrayList<InboundBean> = ArrayList(),
+    var inbounds: ArrayList<InboundBean> = ArrayList(),
     var outbounds: ArrayList<OutboundBean> = ArrayList(),
     var dns: DnsBean? = null,
     val routing: RoutingBean? = null,
+    @Serializable(with = AnySerializer::class)
     val api: Any? = null,
+    @Serializable(with = AnySerializer::class)
     val transport: Any? = null,
+    @Serializable(with = AnySerializer::class)
     val reverse: Any? = null,
+    @Serializable(with = AnySerializer::class)
     var fakedns: Any? = null,
+    @Serializable(with = AnySerializer::class)
     val browserForwarder: Any? = null,
+    @Serializable(with = AnySerializer::class)
     var observatory: Any? = null,
+    @Serializable(with = AnySerializer::class)
     var burstObservatory: Any? = null
 ) {
 
+    @Serializable
     data class LogBean(
-        val access: String,
-        val error: String,
+        val access: String? = null,
+        val error: String? = null,
         var loglevel: String?,
         val dnsLog: Boolean? = null
     )
 
+    @Serializable
     data class InboundBean(
         var tag: String,
         var port: Int,
         var protocol: String,
         var listen: String? = null,
-        val settings: Any? = null,
+        val settings: InSettingsBean? = null,
         val sniffing: SniffingBean?,
+        @Serializable(with = AnySerializer::class)
         val streamSettings: Any? = null,
+        @Serializable(with = AnySerializer::class)
         val allocate: Any? = null
     ) {
 
+        @Serializable
         data class InSettingsBean(
             val auth: String? = null,
             val udp: Boolean? = null,
@@ -52,6 +68,7 @@ data class V2rayConfig(
             val network: String? = null
         )
 
+        @Serializable
         data class SniffingBean(
             var enabled: Boolean,
             val destOverride: ArrayList<String>,
@@ -60,23 +77,25 @@ data class V2rayConfig(
         )
     }
 
+    @Serializable
     data class OutboundBean(
         var tag: String = "proxy",
         var protocol: String,
         var settings: OutSettingsBean? = null,
         var streamSettings: StreamSettingsBean? = null,
+        @Serializable(with = AnySerializer::class)
         val proxySettings: Any? = null,
         val sendThrough: String? = null,
         var mux: MuxBean? = MuxBean(false)
     ) {
         companion object {
 
-            fun create(configType: ProtocolType): OutboundBean? {
+            fun create(configType: ProtocolType): OutboundBean {
                 return when (configType) {
                     ProtocolType.VMESS,
                     ProtocolType.VLESS ->
                         OutboundBean(
-                            protocol = configType.name.lowercase(),
+                            protocol = configType.protocolName.lowercase(),
                             settings = OutSettingsBean(
                                 vnext = listOf(
                                     OutSettingsBean.VnextBean(
@@ -93,7 +112,7 @@ data class V2rayConfig(
                     ProtocolType.TROJAN,
                     ProtocolType.HYSTERIA2 ->
                         OutboundBean(
-                            protocol = configType.name.lowercase(),
+                            protocol = configType.protocolName.lowercase(),
                             settings = OutSettingsBean(
                                 servers = listOf(OutSettingsBean.ServersBean())
                             ),
@@ -102,7 +121,7 @@ data class V2rayConfig(
 
                     ProtocolType.WIREGUARD ->
                         OutboundBean(
-                            protocol = configType.name.lowercase(),
+                            protocol = configType.protocolName.lowercase(),
                             settings = OutSettingsBean(
                                 secretKey = "",
                                 peers = listOf(OutSettingsBean.WireGuardBean())
@@ -112,7 +131,9 @@ data class V2rayConfig(
             }
         }
 
+        @Serializable
         data class OutSettingsBean(
+            @SerialName("vnext")
             var vnext: List<VnextBean>? = null,
             var fragment: FragmentBean? = null,
             var noises: List<NoiseBean>? = null,
@@ -121,6 +142,7 @@ data class V2rayConfig(
             var response: Response? = null,
             /*DNS*/
             val network: String? = null,
+            @Serializable(with = AnySerializer::class)
             var address: Any? = null,
             val port: Int? = null,
             /*Freedom*/
@@ -137,55 +159,64 @@ data class V2rayConfig(
             var obfsPassword: String? = null,
         ) {
 
+            @Serializable
             data class VnextBean(
                 var address: String = "",
-                var port: Int = Constants.DEFAULT_PORT,
+                @SerialName("port")
+                var port: Int = V2RayConfigDefaults.DEFAULT_PORT,
                 var users: List<UsersBean>
             ) {
 
+                @Serializable
                 data class UsersBean(
                     var id: String = "",
                     var alterId: Int? = null,
                     var security: String? = null,
-                    var level: Int = Constants.DEFAULT_LEVEL,
+                    var level: Int = V2RayConfigDefaults.DEFAULT_LEVEL,
                     var encryption: String? = null,
                     var flow: String? = null
                 )
             }
 
+            @Serializable
             data class FragmentBean(
                 var packets: String? = null,
                 var length: String? = null,
                 var interval: String? = null
             )
 
+            @Serializable
             data class NoiseBean(
                 var type: String? = null,
                 var packet: String? = null,
                 var delay: String? = null
             )
 
+            @Serializable
             data class ServersBean(
                 var address: String = "",
                 var method: String? = null,
                 var ota: Boolean = false,
                 var password: String? = null,
-                var port: Int = Constants.DEFAULT_PORT,
-                var level: Int = Constants.DEFAULT_LEVEL,
+                var port: Int = V2RayConfigDefaults.DEFAULT_PORT,
+                var level: Int = V2RayConfigDefaults.DEFAULT_LEVEL,
                 val email: String? = null,
                 var flow: String? = null,
                 val ivCheck: Boolean? = null,
                 var users: List<SocksUsersBean>? = null
             ) {
+                @Serializable
                 data class SocksUsersBean(
                     var user: String = "",
                     var pass: String = "",
-                    var level: Int = Constants.DEFAULT_LEVEL
+                    var level: Int = V2RayConfigDefaults.DEFAULT_LEVEL
                 )
             }
 
+            @Serializable
             data class Response(var type: String)
 
+            @Serializable
             data class WireGuardBean(
                 var publicKey: String = "",
                 var preSharedKey: String = "",
@@ -193,8 +224,9 @@ data class V2rayConfig(
             )
         }
 
+        @Serializable
         data class StreamSettingsBean(
-            var network: String = Constants.DEFAULT_NETWORK,
+            var network: String = V2RayConfigDefaults.DEFAULT_NETWORK,
             var security: String? = null,
             var tcpSettings: TcpSettingsBean? = null,
             var kcpSettings: KcpSettingsBean? = null,
@@ -207,25 +239,36 @@ data class V2rayConfig(
             var realitySettings: TlsSettingsBean? = null,
             var grpcSettings: GrpcSettingsBean? = null,
             var hy2steriaSettings: Hysteria2SettingsBean? = null,
+            @Serializable(with = AnySerializer::class)
             val dsSettings: Any? = null,
             var sockopt: SockoptBean? = null
         ) {
 
+            @Serializable
             data class TcpSettingsBean(
+                @SerialName("header")
                 var header: HeaderBean = HeaderBean(),
+                @SerialName("acceptProxyProtocol")
                 val acceptProxyProtocol: Boolean? = null
             ) {
+                @Serializable
                 data class HeaderBean(
+                    @SerialName("type")
                     var type: String = "none",
+                    @SerialName("request")
                     var request: RequestBean? = null,
+                    @SerialName("response")
+                    @Serializable(with = AnySerializer::class)
                     var response: Any? = null
                 ) {
+                    @Serializable
                     data class RequestBean(
                         var path: List<String> = ArrayList(),
                         var headers: HeadersBean = HeadersBean(),
                         val version: String? = null,
                         val method: String? = null
                     ) {
+                        @Serializable
                         data class HeadersBean(
                             @SerialName("Host")
                             var host: List<String>? = ArrayList(),
@@ -242,6 +285,7 @@ data class V2rayConfig(
                 }
             }
 
+            @Serializable
             data class KcpSettingsBean(
                 var mtu: Int = 1350,
                 var tti: Int = 50,
@@ -253,9 +297,11 @@ data class V2rayConfig(
                 var header: HeaderBean = HeaderBean(),
                 var seed: String? = null
             ) {
+                @Serializable
                 data class HeaderBean(var type: String = "none")
             }
 
+            @Serializable
             data class WsSettingsBean(
                 var path: String? = null,
                 var headers: HeadersBean = HeadersBean(),
@@ -263,30 +309,36 @@ data class V2rayConfig(
                 val useBrowserForwarding: Boolean? = null,
                 val acceptProxyProtocol: Boolean? = null
             ) {
+                @Serializable
                 data class HeadersBean(
                     @SerialName("Host")
                     var host: String = String.Empty
                 )
             }
 
+            @Serializable
             data class HttpupgradeSettingsBean(
                 var path: String? = null,
                 var host: String? = null,
                 val acceptProxyProtocol: Boolean? = null
             )
 
+            @Serializable
             data class XhttpSettingsBean(
                 var path: String? = null,
                 var host: String? = null,
                 var mode: String? = null,
+                @Serializable(with = AnySerializer::class)
                 var extra: Any? = null,
             )
 
+            @Serializable
             data class HttpSettingsBean(
                 var host: List<String> = ArrayList(),
                 var path: String? = null
             )
 
+            @Serializable
             data class SockoptBean(
                 @SerialName("TcpNoDelay")
                 var tcpNoDelay: Boolean? = null,
@@ -297,6 +349,7 @@ data class V2rayConfig(
                 var dialerProxy: String? = null
             )
 
+            @Serializable
             data class TlsSettingsBean(
                 var allowInsecure: Boolean = false,
                 var serverName: String? = null,
@@ -306,7 +359,7 @@ data class V2rayConfig(
                 val preferServerCipherSuites: Boolean? = null,
                 val cipherSuites: String? = null,
                 val fingerprint: String? = null,
-                val certificates: List<Any>? = null,
+                val certificates: List<@Serializable(with = AnySerializer::class) Any?>? = null,
                 val disableSystemRoot: Boolean? = null,
                 val enableSessionResumption: Boolean? = null,
                 // REALITY settings
@@ -316,14 +369,17 @@ data class V2rayConfig(
                 var spiderX: String? = null
             )
 
+            @Serializable
             data class QuicSettingBean(
                 var security: String = "none",
                 var key: String = "",
                 var header: HeaderBean = HeaderBean()
             ) {
+                @Serializable
                 data class HeaderBean(var type: String = "none")
             }
 
+            @Serializable
             data class GrpcSettingsBean(
                 var serviceName: String = "",
                 var authority: String? = null,
@@ -334,6 +390,7 @@ data class V2rayConfig(
                 var healthCheckTimeout: Int? = null
             )
 
+            @Serializable
             data class Hysteria2SettingsBean(
                 @SerialName("password")
                 var password: String? = null,
@@ -342,6 +399,7 @@ data class V2rayConfig(
                 @SerialName("congestion")
                 var congestion: Hy2CongestionBean? = null
             ) {
+                @Serializable
                 data class Hy2CongestionBean(
                     var type: String? = "bbr",
                     @SerialName("up_mbps")
@@ -368,8 +426,8 @@ data class V2rayConfig(
                 when (network) {
                     NetworkType.TCP.type -> {
                         val tcpSetting = TcpSettingsBean()
-                        if (headerType == Constants.HEADER_TYPE_HTTP) {
-                            tcpSetting.header.type = Constants.HEADER_TYPE_HTTP
+                        if (headerType == V2RayConfigDefaults.HEADER_TYPE_HTTP) {
+                            tcpSetting.header.type = V2RayConfigDefaults.HEADER_TYPE_HTTP
 
                             if (!host.isNullOrEmpty() || !path.isNullOrEmpty()) {
                                 val requestObj = TcpSettingsBean.HeaderBean.RequestBean()
@@ -479,21 +537,24 @@ data class V2rayConfig(
                     shortId = if (shortId.isNullOrEmpty()) null else shortId,
                     spiderX = if (spiderX.isNullOrEmpty()) null else spiderX,
                 )
-                if (security == Constants.TLS) {
+                if (security == V2RayConfigDefaults.TLS) {
                     tlsSettings = tlsSetting
                     realitySettings = null
-                } else if (security == Constants.REALITY) {
+                } else if (security == V2RayConfigDefaults.REALITY) {
                     tlsSettings = null
                     realitySettings = tlsSetting
                 }
             }
         }
 
+        @Serializable
         data class MuxBean(
             var enabled: Boolean,
             var concurrency: Int = 8,
-            var xudpConcurrency: Int = 8,
-            var xudpProxyUDP443: String = "",
+            @SerialName("xudpConcurrency")
+            var xudpConcurrency: Int? = null,
+            @SerialName("xudpProxyUDP443")
+            var xudpProxyUDP443: String? = null,
         )
 
         fun getServerAddress(): String? {
@@ -659,14 +720,16 @@ data class V2rayConfig(
         }
     }
 
+    @Serializable
     data class DnsBean(
-        var servers: ArrayList<Any>? = null,
-        var hosts: Map<String, Any>? = null,
+        var servers: ArrayList<@Serializable(with = AnySerializer::class) Any?>? = null,
+        var hosts: Map<String, @Serializable(with = AnySerializer::class) Any?>? = null,
         val clientIp: String? = null,
         val disableCache: Boolean? = null,
         val queryStrategy: String? = null,
         val tag: String? = null
     ) {
+        @Serializable
         data class ServersBean(
             var address: String = "",
             var port: Int? = null,
@@ -677,15 +740,18 @@ data class V2rayConfig(
         )
     }
 
+    @Serializable
     data class RoutingBean(
         var domainStrategy: String,
         var domainMatcher: String? = null,
         var rules: ArrayList<RulesBean>,
-        val balancers: List<Any>? = null
+        val balancers: List<@Serializable(with = AnySerializer::class) Any?>? = null
     ) {
 
+        @Serializable
         data class RulesBean(
-            var type: String = "field",
+            @SerialName("type")
+            var type: String?,
             var ip: ArrayList<String>? = null,
             var domain: ArrayList<String>? = null,
             var outboundTag: String = "",
@@ -702,10 +768,13 @@ data class V2rayConfig(
         )
     }
 
+    @Serializable
     data class PolicyBean(
         var levels: Map<String, LevelBean>,
+        @Serializable(with = AnySerializer::class)
         var system: Any? = null
     ) {
+        @Serializable
         data class LevelBean(
             var handshake: Int? = null,
             var connIdle: Int? = null,
@@ -734,6 +803,10 @@ data class V2rayConfig(
     }
 
     fun toJson(): String {
-        return Json.encodeToString(value = this)
+        val json = Json {
+            encodeDefaults = true
+            explicitNulls = false
+        }
+        return json.encodeToString(value = this)
     }
 }

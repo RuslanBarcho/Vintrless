@@ -30,14 +30,8 @@ class V2RayVpnService : VpnService(), V2RayServiceDialog {
         private const val TUN2SOCKS = "libtun2socks.so"
         private const val TAG = "V2rayVPNService"
 
-        private const val ARG_CONTENT = "arg_content"
-        private const val ARG_DOMAIN = "arg_domain"
-
-        fun newInstance(context: Context, domain: String, content: String): Intent {
-            return Intent(context, V2RayVpnService::class.java).apply {
-                putExtra(ARG_DOMAIN, domain)
-                putExtra(ARG_CONTENT, content)
-            }
+        fun newInstance(context: Context): Intent {
+            return Intent(context, V2RayVpnService::class.java)
         }
     }
 
@@ -98,8 +92,6 @@ class V2RayVpnService : VpnService(), V2RayServiceDialog {
     }
 
     private fun setup() {
-        logging.error { "SETUP CALL" }
-
         val prepare = prepare(this)
         if (prepare != null) {
             return

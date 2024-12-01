@@ -1,9 +1,8 @@
 package pw.vintr.vintrless.domain.v2ray
 
-object Constants {
+object V2RayConfigDefaults {
     // Protocols Scheme
     const val VMESS = "vmess://"
-    const val CUSTOM = ""
     const val SHADOWSOCKS = "ss://"
     const val SOCKS = "socks://"
     const val HTTP = "http://"
@@ -11,7 +10,10 @@ object Constants {
     const val TROJAN = "trojan://"
     const val WIREGUARD = "wireguard://"
     const val HYSTERIA2 = "hysteria2://"
-    const val HY2 = "hy2://"
+
+    // Google API rule constants
+    const val GOOGLEAPIS_CN_DOMAIN = "domain:googleapis.cn"
+    const val GOOGLEAPIS_COM_DOMAIN = "googleapis.com"
 
     // Android Private DNS constants
     const val DNS_DNSPOD_DOMAIN = "dot.pub"
@@ -29,8 +31,8 @@ object Constants {
     val DNS_YANDEX_ADDRESSES = arrayListOf("77.88.8.8", "77.88.8.1", "2a02:6b8::feed:0ff", "2a02:6b8:0:1::feed:0ff")
 
     // Other
+    const val DEFAULT_LOOPBACK = "127.0.0.1"
     const val DEFAULT_PORT = 443
-    const val DEFAULT_SECURITY = "auto"
     const val DEFAULT_LEVEL = 8
     const val DEFAULT_NETWORK = "tcp"
     const val TLS = "tls"

@@ -33,5 +33,5 @@ object AppColor {
     val ChargedBlue = Color(0xFF0CACD8)
 
     val Red3 = Color(0xFFAA213D)
-    val Green0 = Color(0xFF1ABE49)
+    val Green0 = Color(0xFF147830)
 }

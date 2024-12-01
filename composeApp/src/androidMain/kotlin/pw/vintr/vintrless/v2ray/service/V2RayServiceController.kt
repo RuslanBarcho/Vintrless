@@ -26,10 +26,10 @@ import org.lighthousegames.logging.logging
 import pw.vintr.vintrless.MainActivity
 import pw.vintr.vintrless.R
 import pw.vintr.vintrless.broadcast.BroadcastController
-import pw.vintr.vintrless.domain.v2ray.model.V2rayConfig
+import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.tools.AppContext
 import pw.vintr.vintrless.tools.extensions.Empty
-import pw.vintr.vintrless.v2ray.SampleConnection
+import pw.vintr.vintrless.v2ray.storage.V2RayConfigStorage
 import java.lang.ref.SoftReference
 
 object V2RayServiceController {
@@ -75,8 +75,6 @@ object V2RayServiceController {
 
             Libv2ray.initV2Env(assetsPath, deviceIdForXUDPBaseKey)
         }
-
-    private var currentConfig: V2rayConfig? = null
 
     private class V2RayCallback : V2RayVPNServiceSupportsSet {
         override fun shutdown(): Long {
@@ -158,11 +156,7 @@ object V2RayServiceController {
     fun startV2rayService(context: Context) {
         BroadcastController.sendUIBroadcast(AppContext.get(), BroadcastController.MSG_STATE_CONNECTING)
 
-        val intent = V2RayVpnService.newInstance(
-            context = context,
-            domain = SampleConnection.DOMAIN,
-            content = SampleConnection.CONFIG,
-        )
+        val intent = V2RayVpnService.newInstance(context)
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
             context.startForegroundService(intent)
         } else {
@@ -172,7 +166,9 @@ object V2RayServiceController {
 
     fun startV2rayPoint() {
         val service = serviceDialog?.get()?.getService() ?: return
-        // val config = currentConfig ?: return
+        val config = V2RayConfigStorage.getConfig(service) ?: return
+
+        logging.debug { "Starting v2ray with config:\n${config.configJson}" }
 
         if (v2rayPoint.isRunning) {
             return
@@ -197,9 +193,8 @@ object V2RayServiceController {
             logging.error { e.toString() }
         }
 
-        // TODO: replace with current config
-        v2rayPoint.configureFileContent = SampleConnection.CONFIG
-        v2rayPoint.domainName = SampleConnection.DOMAIN
+        v2rayPoint.configureFileContent = config.configJson
+        v2rayPoint.domainName = config.domainName
 
         try {
             v2rayPoint.runLoop(false)
@@ -209,7 +204,7 @@ object V2RayServiceController {
 
         if (v2rayPoint.isRunning) {
             BroadcastController.sendUIBroadcast(service, BroadcastController.MSG_STATE_START_SUCCESS)
-            showNotification()
+            showNotification(config)
         } else {
             BroadcastController.sendUIBroadcast(service, BroadcastController.MSG_STATE_START_FAILURE)
         }
@@ -237,7 +232,7 @@ object V2RayServiceController {
         }
     }
 
-    private fun showNotification() {
+    private fun showNotification(config: V2RayEncodedConfig) {
         val service = serviceDialog?.get()?.getService() ?: return
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -282,18 +277,18 @@ object V2RayServiceController {
         }
 
         val mBuilder = NotificationCompat.Builder(service, channelId)
-            .setSmallIcon(R.drawable.ic_launcher_monochrome)
-            .setContentTitle(currentConfig?.remarks)
+            .setSmallIcon(R.drawable.ic_service_notification)
+            .setContentTitle(service.getString(R.string.service_connected_to, config.name))
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setOngoing(true)
             .setShowWhen(false)
             .setOnlyAlertOnce(true)
             .setContentIntent(contentPendingIntent)
-            .addAction(
-                R.drawable.ic_launcher_monochrome,
-                "STOP",
+            .addAction(NotificationCompat.Action(
+                null,
+                service.getString(R.string.service_stop_action),
                 stopV2RayPendingIntent
-            )
+            ))
 
         service.startForeground(NOTIFICATION_ID, mBuilder.build())
     }
