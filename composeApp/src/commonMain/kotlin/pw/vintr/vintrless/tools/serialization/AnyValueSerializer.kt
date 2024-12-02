@@ -4,7 +4,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
-import pw.vintr.vintrless.domain.v2ray.model.V2rayConfig
+import pw.vintr.vintrless.domain.v2ray.model.V2RayConfig
 
 /**
  * Convert Any? to JsonPrimitive
@@ -79,7 +79,7 @@ private fun Any?.toJsonElement(): JsonElement {
         is Iterable<*> -> JsonArray(this.map { it.toJsonElement() })
         // !!! key simply converted to string
         is Map<*, *> -> JsonObject(this.map { it.key.toString() to it.value.toJsonElement() }.toMap())
-        is V2rayConfig.DnsBean.ServersBean -> Json.encodeToJsonElement(this)
+        is V2RayConfig.DnsBean.ServersBean -> Json.encodeToJsonElement(this)
         else -> throw Exception("Bad value: ${this::class}=${this}}")
     }
 }

@@ -35,10 +35,32 @@
     <string name="profile_field_user_id">ID</string>
     <string name="profile_field_flow">Поток</string>
     <string name="profile_field_encryption">Шифрование</string>
+
     <string name="profile_field_transport_protocol">Транспортный протокол</string>
     <string name="profile_field_header_type">Тип заголовка</string>
-    <string name="profile_field_http_node">Узел HTTP</string>
+    <string name="profile_field_http_host">Узел HTTP</string>
     <string name="profile_field_path">Путь</string>
+    <string name="profile_field_host">Узел</string>
+    <string name="profile_field_kcp_seed">KCP Seed</string>
+
+    <string name="profile_field_ws_host">Узел WS</string>
+    <string name="profile_field_ws_path">Путь WS</string>
+
+    <string name="profile_field_httpupgrade_host">Узел HTTPUpgrade</string>
+    <string name="profile_field_httpupgrade_path">Путь HTTPUpgrade</string>
+
+    <string name="profile_field_xhttp_mode">Режим XHTTP</string>
+    <string name="profile_field_xhttp_host">Узел XHTTP</string>
+    <string name="profile_field_xhttp_path">Путь XHTTP</string>
+    <string name="profile_field_xhttp_json_extra">XHTTP Extra JSON</string>
+
+    <string name="profile_field_h2_host">Узел H2</string>
+    <string name="profile_field_h2_path">Путь H2</string>
+
+    <string name="profile_field_grpc_mode">gRPC mode</string>
+    <string name="profile_field_grpc_authority">Авторизация gRPC</string>
+    <string name="profile_field_grpc_service">Имя службы gRPC</string>
+
     <string name="profile_field_tls">TLS</string>
     <string name="profile_field_sni">SNI (Server Name Indication)</string>
     <string name="profile_field_fingerprint">Отпечаток</string>

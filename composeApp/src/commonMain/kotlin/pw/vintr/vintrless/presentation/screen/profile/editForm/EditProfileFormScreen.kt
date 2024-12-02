@@ -46,19 +46,26 @@ fun EditProfileFormScreen(
     ) {
         fields.forEachIndexed { index, profileField ->
             val fieldValue = data.getField(profileField)
+            val subfieldsByValue = profileField.subfieldsByValue[fieldValue]
 
             Field(
                 profileField = profileField,
                 value = data.getField(profileField)
             ) { viewModel.setValue(profileField, it) }
 
-            if (index != fields.lastIndex) {
+            // Spacer if it has subfields
+            if (!subfieldsByValue.isNullOrEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            profileField.subfieldsByValue[fieldValue]?.let { subfields ->
-                Spacer(modifier = Modifier.height(16.dp))
+            // Subfields
+            subfieldsByValue?.let { subfields ->
                 RenderFields(subfields, data)
+            }
+
+            // Spacer if it is not last
+            if (index != fields.lastIndex) {
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
@@ -161,6 +168,7 @@ private fun Field(
             label = stringResource(profileField.titleRes),
             value = value.orEmpty(),
             hint = stringResource(Res.string.field_not_specified),
+            singleLine = !profileField.multiline,
             onValueChange = { onSetValue(it) }
         )
     }

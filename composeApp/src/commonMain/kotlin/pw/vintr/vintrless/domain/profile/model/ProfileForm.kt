@@ -54,7 +54,7 @@ sealed class ProfileForm {
         return data
     }
 
-    private fun List<ProfileField>.unpackDefault(): List<ProfileField> {
+    fun List<ProfileField>.unpackDefault(): List<ProfileField> {
         return flatMap {
             val subfields = it.subfieldsByValue[it.initialValue].orEmpty()
 
@@ -94,9 +94,6 @@ sealed class ProfileForm {
                 titleRes = Res.string.profile_group_network,
                 fields = listOf(
                     ProfileField.TransportProtocol,
-                    ProfileField.HeaderType,
-                    ProfileField.HttpNode,
-                    ProfileField.Path
                 )
             ),
             ProfileFieldGroup(

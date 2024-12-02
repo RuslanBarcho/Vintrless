@@ -10,7 +10,7 @@ import pw.vintr.vintrless.tools.network.IPTools
 import pw.vintr.vintrless.tools.serialization.AnySerializer
 
 @Serializable
-data class V2rayConfig(
+data class V2RayConfig(
     var remarks: String? = null,
     @Serializable(with = AnySerializer::class)
     var stats: Any? = null,
@@ -415,8 +415,6 @@ data class V2rayConfig(
                 host: String?,
                 path: String?,
                 seed: String?,
-                quicSecurity: String?,
-                key: String?,
                 mode: String?,
                 serviceName: String?,
                 authority: String?

@@ -9,7 +9,6 @@ import pw.vintr.vintrless.domain.base.InteractorEvent
 import pw.vintr.vintrless.domain.v2ray.interactor.V2rayPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
-import pw.vintr.vintrless.domain.v2ray.model.V2rayConfig
 
 object AndroidV2rayInteractor : BaseInteractor(), V2rayPlatformInteractor {
 

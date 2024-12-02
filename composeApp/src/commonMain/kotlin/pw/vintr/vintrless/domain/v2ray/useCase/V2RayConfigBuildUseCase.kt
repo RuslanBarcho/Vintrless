@@ -5,7 +5,8 @@ import pw.vintr.vintrless.domain.profile.model.ProfileField
 import pw.vintr.vintrless.domain.v2ray.V2RayConfigDefaults
 import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
-import pw.vintr.vintrless.domain.v2ray.model.V2rayConfig
+import pw.vintr.vintrless.domain.v2ray.model.V2RayConfig
+import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.VlessOutboundBuildUseCase
 
 object V2RayConfigBuildUseCase {
 
@@ -13,10 +14,10 @@ object V2RayConfigBuildUseCase {
         val address = profile.getField(ProfileField.IP)
         val port = profile.getField(ProfileField.Port)
 
-        val config = V2rayConfig(
+        val config = V2RayConfig(
             remarks = profile.name,
             inbounds = getInbounds(),
-            log = V2rayConfig.LogBean(
+            log = V2RayConfig.LogBean(
                 loglevel = "warning"
             ),
             outbounds = getOutbounds(profile),
@@ -32,20 +33,20 @@ object V2RayConfigBuildUseCase {
         )
     }
 
-    private fun getInbounds(): ArrayList<V2rayConfig.InboundBean> {
+    private fun getInbounds(): ArrayList<V2RayConfig.InboundBean> {
         val socksPort = 10808
         val httpPort = 10809
 
-        val socketInbounds = V2rayConfig.InboundBean(
+        val socketInbounds = V2RayConfig.InboundBean(
             listen = V2RayConfigDefaults.DEFAULT_LOOPBACK,
             port = socksPort,
             protocol = "socks",
-            settings = V2rayConfig.InboundBean.InSettingsBean(
+            settings = V2RayConfig.InboundBean.InSettingsBean(
                 auth = "noauth",
                 udp = true,
                 userLevel = 8,
             ),
-            sniffing = V2rayConfig.InboundBean.SniffingBean(
+            sniffing = V2RayConfig.InboundBean.SniffingBean(
                 destOverride = arrayListOf(
                     "http",
                     "tls"
@@ -55,11 +56,11 @@ object V2RayConfigBuildUseCase {
             ),
             tag = "socks",
         )
-        val httpInbounds = V2rayConfig.InboundBean(
+        val httpInbounds = V2RayConfig.InboundBean(
             listen = V2RayConfigDefaults.DEFAULT_LOOPBACK,
             port = httpPort,
             protocol = "http",
-            settings = V2rayConfig.InboundBean.InSettingsBean(
+            settings = V2RayConfig.InboundBean.InSettingsBean(
                 userLevel = 8
             ),
             sniffing = null,
@@ -69,89 +70,29 @@ object V2RayConfigBuildUseCase {
         return arrayListOf(socketInbounds, httpInbounds)
     }
 
-    private fun getOutbounds(profile: ProfileData): ArrayList<V2rayConfig.OutboundBean> {
-        return when (profile.type) {
-            ProtocolType.VLESS -> getVlessOutbounds(profile)
+    private fun getOutbounds(profile: ProfileData): ArrayList<V2RayConfig.OutboundBean> {
+        val proxy = when (profile.type) {
+            ProtocolType.VLESS -> VlessOutboundBuildUseCase(profile)
             ProtocolType.VMESS,
             ProtocolType.SHADOWSOCKS,
             ProtocolType.SOCKS,
             ProtocolType.TROJAN,
             ProtocolType.WIREGUARD,
             ProtocolType.HYSTERIA2,
-            ProtocolType.HTTP -> getStubOutbounds()
+            ProtocolType.HTTP -> V2RayConfig.OutboundBean(protocol = "stub")
         }
-    }
 
-    private fun getVlessOutbounds(profile: ProfileData): ArrayList<V2rayConfig.OutboundBean> {
-        val proxy = V2rayConfig.OutboundBean(
-            mux = V2rayConfig.OutboundBean.MuxBean(
-                concurrency = -1,
-                enabled = false,
-                xudpConcurrency = 8,
-                xudpProxyUDP443 = ""
-            ),
-            protocol = profile.type.code,
-            settings = V2rayConfig.OutboundBean.OutSettingsBean(
-                vnext = listOf(
-                    V2rayConfig.OutboundBean.OutSettingsBean.VnextBean(
-                        address = profile.getField(ProfileField.IP).orEmpty(),
-                        port = profile.getField(ProfileField.Port)?.toIntOrNull() ?: 443,
-                        users = listOf(V2rayConfig.OutboundBean.OutSettingsBean.VnextBean.UsersBean(
-                            encryption = profile.getField(ProfileField.Encryption)
-                                ?: ProfileField.Encryption.initialValue,
-                            flow = profile.getField(ProfileField.Flow),
-                            id = profile.getField(ProfileField.UserId).orEmpty(),
-                            level = 8,
-                        )),
-                    )
-                )
-            ),
-            streamSettings = V2rayConfig.OutboundBean.StreamSettingsBean(
-                network = profile.getField(ProfileField.TransportProtocol)
-                    ?: ProfileField.TransportProtocol.initialValue,
-                realitySettings = if (profile.getField(ProfileField.TLS) == "reality") {
-                    V2rayConfig.OutboundBean.StreamSettingsBean.TlsSettingsBean(
-                        allowInsecure = false,
-                        serverName = profile.getField(ProfileField.SNI),
-                        fingerprint = profile.getField(ProfileField.Fingerprint),
-                        publicKey = profile.getField(ProfileField.PublicKey),
-                        shortId = profile.getField(ProfileField.ShortID),
-                        spiderX = profile.getField(ProfileField.SpiderX),
-                    )
-                } else {
-                    null
-                },
-                tlsSettings = if (profile.getField(ProfileField.TLS) == "tls") {
-                    V2rayConfig.OutboundBean.StreamSettingsBean.TlsSettingsBean(
-                        allowInsecure = profile.getField(ProfileField.AllowInsecure).toBoolean(),
-                        serverName = profile.getField(ProfileField.SNI),
-                        fingerprint = profile.getField(ProfileField.Fingerprint),
-                        alpn = profile.getField(ProfileField.ALPN)?.split(",")
-                    )
-                } else {
-                    null
-                },
-                security = profile.getField(ProfileField.TLS),
-                tcpSettings = V2rayConfig.OutboundBean.StreamSettingsBean.TcpSettingsBean(
-                    header = V2rayConfig.OutboundBean.StreamSettingsBean.TcpSettingsBean.HeaderBean(
-                        type = profile.getField(ProfileField.HeaderType) ?: "none"
-                    )
-                ),
-                // TODO: http and other protocols settings
-            ),
-            tag = "proxy"
-        )
-        val direct = V2rayConfig.OutboundBean(
+        val direct = V2RayConfig.OutboundBean(
             protocol = "freedom",
-            settings = V2rayConfig.OutboundBean.OutSettingsBean(
+            settings = V2RayConfig.OutboundBean.OutSettingsBean(
                 domainStrategy = "UseIP"
             ),
             tag = "direct"
         )
-        val block = V2rayConfig.OutboundBean(
+        val block = V2RayConfig.OutboundBean(
             protocol = "blackhole",
-            settings = V2rayConfig.OutboundBean.OutSettingsBean(
-                response = V2rayConfig.OutboundBean.OutSettingsBean.Response(
+            settings = V2RayConfig.OutboundBean.OutSettingsBean(
+                response = V2RayConfig.OutboundBean.OutSettingsBean.Response(
                     type = "http"
                 )
             ),
@@ -161,9 +102,7 @@ object V2RayConfigBuildUseCase {
         return arrayListOf(proxy, direct, block)
     }
 
-    private fun getStubOutbounds(): ArrayList<V2rayConfig.OutboundBean> = arrayListOf()
-
-    private fun getDns(): V2rayConfig.DnsBean {
+    private fun getDns(): V2RayConfig.DnsBean {
         val hosts = mutableMapOf<String, Any>()
 
         // hardcode googleapi rule to fix play store problems
@@ -183,7 +122,7 @@ object V2RayConfigBuildUseCase {
 
         servers.add("1.1.1.1")
         servers.add(
-            V2rayConfig.DnsBean.ServersBean(
+            V2RayConfig.DnsBean.ServersBean(
                 address = "1.1.1.1",
                 domains = listOf(
                     "domain:googleapis.cn",
@@ -192,7 +131,7 @@ object V2RayConfigBuildUseCase {
             )
         )
         servers.add(
-            V2rayConfig.DnsBean.ServersBean(
+            V2RayConfig.DnsBean.ServersBean(
                 address = "223.5.5.5",
                 domains = listOf(
                     "domain:dns.alidns.com",
@@ -210,29 +149,29 @@ object V2RayConfigBuildUseCase {
             )
         )
 
-        return V2rayConfig.DnsBean(
+        return V2RayConfig.DnsBean(
             hosts = hosts,
             servers = servers,
         )
     }
 
-    private fun getRouting(): V2rayConfig.RoutingBean {
-        return V2rayConfig.RoutingBean(
+    private fun getRouting(): V2RayConfig.RoutingBean {
+        return V2RayConfig.RoutingBean(
             domainStrategy = "AsIs",
             rules = arrayListOf(
-                V2rayConfig.RoutingBean.RulesBean(
+                V2RayConfig.RoutingBean.RulesBean(
                     ip = arrayListOf("1.1.1.1"),
                     outboundTag = "proxy",
                     port = "53",
                     type = "field"
                 ),
-                V2rayConfig.RoutingBean.RulesBean(
+                V2RayConfig.RoutingBean.RulesBean(
                     ip = arrayListOf("223.5.5.5"),
                     outboundTag = "direct",
                     port = "53",
                     type = "field"
                 ),
-                V2rayConfig.RoutingBean.RulesBean(
+                V2RayConfig.RoutingBean.RulesBean(
                     domain = arrayListOf(
                         "domain:googleapis.cn",
                         "domain:gstatic.com"
@@ -240,30 +179,30 @@ object V2RayConfigBuildUseCase {
                     outboundTag = "proxy",
                     type = "field"
                 ),
-                V2rayConfig.RoutingBean.RulesBean(
+                V2RayConfig.RoutingBean.RulesBean(
                     network = "udp",
                     outboundTag = "block",
                     port = "443",
                     type = "field"
                 ),
-                V2rayConfig.RoutingBean.RulesBean(
+                V2RayConfig.RoutingBean.RulesBean(
                     domain = arrayListOf(
                         "geosite:category-ads-all"
                     ),
                     outboundTag = "block",
                     type = "field"
                 ),
-                V2rayConfig.RoutingBean.RulesBean(
+                V2RayConfig.RoutingBean.RulesBean(
                     ip = arrayListOf("geoip:private"),
                     outboundTag = "direct",
                     type = "field"
                 ),
-                V2rayConfig.RoutingBean.RulesBean(
+                V2RayConfig.RoutingBean.RulesBean(
                     domain = arrayListOf("geosite:private"),
                     outboundTag = "direct",
                     type = "field"
                 ),
-                V2rayConfig.RoutingBean.RulesBean(
+                V2RayConfig.RoutingBean.RulesBean(
                     domain = arrayListOf(
                         "domain:dns.alidns.com",
                         "domain:doh.pub",
@@ -276,7 +215,7 @@ object V2RayConfigBuildUseCase {
                     outboundTag = "direct",
                     type = "field"
                 ),
-                V2rayConfig.RoutingBean.RulesBean(
+                V2RayConfig.RoutingBean.RulesBean(
                     domain = arrayListOf(
                         "223.5.5.5/32",
                         "223.6.6.6/32",
@@ -302,7 +241,7 @@ object V2RayConfigBuildUseCase {
                     outboundTag = "direct",
                     type = "field"
                 ),
-                V2rayConfig.RoutingBean.RulesBean(
+                V2RayConfig.RoutingBean.RulesBean(
                     outboundTag = "proxy",
                     port = "0-65535",
                     type = "field"
