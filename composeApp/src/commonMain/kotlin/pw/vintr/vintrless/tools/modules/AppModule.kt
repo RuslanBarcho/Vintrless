@@ -12,6 +12,7 @@ import pw.vintr.vintrless.data.storage.preference.PreferenceStorage
 import pw.vintr.vintrless.data.storage.preference.PreferenceStorageImpl
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
+import pw.vintr.vintrless.domain.profile.interactor.ProfileUrlInteractor
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmViewModel
 import pw.vintr.vintrless.presentation.screen.home.HomeViewModel
@@ -36,13 +37,14 @@ val appModule = module {
     // Domain
     interactor { AlertInteractor() }
     interactor { ProfileInteractor(get()) }
+    interactor { ProfileUrlInteractor() }
 
     // Presentation
     viewModel { MainViewModel(get()) }
     viewModel { ConfirmViewModel(get()) }
     viewModel { HomeViewModel(get(), get()) }
     viewModel { SettingsViewModel(get()) }
-    viewModel { CreateNewProfileViewModel(get()) }
+    viewModel { CreateNewProfileViewModel(get(), get(), get(), get()) }
     viewModel { params ->
         EditProfileFormViewModel(
             navigator = get(),

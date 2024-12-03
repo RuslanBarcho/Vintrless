@@ -76,5 +76,5 @@
     <string name="profile_save_success_title">Profile saved!</string>
     <string name="profile_save_success_message">It can now be used to connect :)</string>
     <string name="error_alert_title">An error has occurred :(</string>
-    <string name="error_alert_server_message">This is a server error - please try again later</string>
+    <string name="error_alert_default_message">Something goes wrong - please try again</string>
 </resources>

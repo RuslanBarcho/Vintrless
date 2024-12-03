@@ -2,11 +2,45 @@ package pw.vintr.vintrless.domain.v2ray.useCase.outbounds
 
 import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.domain.profile.model.ProfileField
+import pw.vintr.vintrless.domain.v2ray.V2RayConfigDefaults
 import pw.vintr.vintrless.domain.v2ray.model.V2RayConfig
+import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.transport.KCPBuildUseCase
+import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.transport.TCPBuildUseCase
 
 object VlessOutboundBuildUseCase {
 
     operator fun invoke(profile: ProfileData): V2RayConfig.OutboundBean {
+        val network = profile.getField(ProfileField.TransportProtocol)
+            ?: ProfileField.TransportProtocol.initialValue
+
+        // Build tls or reality settings
+        val realitySettings = if (profile.getField(ProfileField.TLS) == V2RayConfigDefaults.REALITY) {
+            V2RayConfig.OutboundBean.StreamSettingsBean.TlsSettingsBean(
+                allowInsecure = false,
+                serverName = profile.getField(ProfileField.SNI),
+                fingerprint = profile.getField(ProfileField.Fingerprint),
+                publicKey = profile.getField(ProfileField.PublicKey),
+                shortId = profile.getField(ProfileField.ShortID),
+                spiderX = profile.getField(ProfileField.SpiderX),
+            )
+        } else {
+            null
+        }
+        val tlsSettings = if (profile.getField(ProfileField.TLS) == V2RayConfigDefaults.TLS) {
+            V2RayConfig.OutboundBean.StreamSettingsBean.TlsSettingsBean(
+                allowInsecure = profile.getField(ProfileField.AllowInsecure).toBoolean(),
+                serverName = profile.getField(ProfileField.SNI),
+                fingerprint = profile.getField(ProfileField.Fingerprint),
+                alpn = profile.getField(ProfileField.ALPN)
+                    ?.split(",")
+                    ?.map { it.trim() }
+                    ?.filter { it.isNotEmpty() }
+            )
+        } else {
+            null
+        }
+
+        // Build outbounds
         return V2RayConfig.OutboundBean(
             mux = V2RayConfig.OutboundBean.MuxBean(
                 concurrency = -1,
@@ -31,39 +65,12 @@ object VlessOutboundBuildUseCase {
                 )
             ),
             streamSettings = V2RayConfig.OutboundBean.StreamSettingsBean(
-                network = profile.getField(ProfileField.TransportProtocol)
-                    ?: ProfileField.TransportProtocol.initialValue,
-                realitySettings = if (profile.getField(ProfileField.TLS) == "reality") {
-                    V2RayConfig.OutboundBean.StreamSettingsBean.TlsSettingsBean(
-                        allowInsecure = false,
-                        serverName = profile.getField(ProfileField.SNI),
-                        fingerprint = profile.getField(ProfileField.Fingerprint),
-                        publicKey = profile.getField(ProfileField.PublicKey),
-                        shortId = profile.getField(ProfileField.ShortID),
-                        spiderX = profile.getField(ProfileField.SpiderX),
-                    )
-                } else {
-                    null
-                },
-                tlsSettings = if (profile.getField(ProfileField.TLS) == "tls") {
-                    V2RayConfig.OutboundBean.StreamSettingsBean.TlsSettingsBean(
-                        allowInsecure = profile.getField(ProfileField.AllowInsecure).toBoolean(),
-                        serverName = profile.getField(ProfileField.SNI),
-                        fingerprint = profile.getField(ProfileField.Fingerprint),
-                        alpn = profile.getField(ProfileField.ALPN)
-                            ?.split(",")
-                            ?.map { it.trim() }
-                            ?.filter { it.isNotEmpty() }
-                    )
-                } else {
-                    null
-                },
+                network = network,
+                realitySettings = realitySettings,
+                tlsSettings = tlsSettings,
                 security = profile.getField(ProfileField.TLS),
-                tcpSettings = V2RayConfig.OutboundBean.StreamSettingsBean.TcpSettingsBean(
-                    header = V2RayConfig.OutboundBean.StreamSettingsBean.TcpSettingsBean.HeaderBean(
-                        type = profile.getField(ProfileField.TcpHeaderType) ?: "none"
-                    )
-                ),
+                tcpSettings = TCPBuildUseCase(profile),
+                kcpSettings = KCPBuildUseCase(profile),
                 // TODO: http and other protocols settings
             ),
             tag = "proxy"

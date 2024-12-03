@@ -76,5 +76,5 @@
     <string name="profile_save_success_title">Профиль сохранен!</string>
     <string name="profile_save_success_message">Теперь его можно использовать для подключения :)</string>
     <string name="error_alert_title">Произошла ошибка :(</string>
-    <string name="error_alert_server_message">Это ошибка сервера - попробуйте, пожалуйста, позже</string>
+    <string name="error_alert_default_message">Что-то пошло не так - попробуйте, пожалуйста, еще раз</string>
 </resources>

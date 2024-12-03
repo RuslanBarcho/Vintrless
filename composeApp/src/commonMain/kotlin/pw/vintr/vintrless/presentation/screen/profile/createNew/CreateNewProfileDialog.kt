@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -36,6 +37,7 @@ fun CreateNewProfileDialog(
     viewModel: CreateNewProfileViewModel = koinViewModel()
 ) {
     val screenState = viewModel.screenState.collectAsState()
+    val clipboardManager = LocalClipboardManager.current
 
     Column(
         modifier = Modifier
@@ -84,7 +86,9 @@ fun CreateNewProfileDialog(
                 iconRes = Res.drawable.ic_clipboard,
                 title = stringResource(Res.string.paste_from_clipboard)
             ) {
-                viewModel.pasteFromClipboard()
+                viewModel.pasteFromClipboard(
+                    pasteText = clipboardManager.getText()?.text.orEmpty()
+                )
             }
             Spacer(modifier = Modifier.height(20.dp))
 
