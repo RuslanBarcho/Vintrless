@@ -26,6 +26,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
+import pw.vintr.vintrless.domain.alert.model.AlertModel.Type.*
 import pw.vintr.vintrless.domain.alert.model.AlertState
 import pw.vintr.vintrless.presentation.navigation.*
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmDialog
@@ -34,6 +35,7 @@ import pw.vintr.vintrless.presentation.screen.main.MainScreen
 import pw.vintr.vintrless.presentation.screen.profile.createNew.CreateNewProfileDialog
 import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormScreen
 import pw.vintr.vintrless.presentation.screen.profile.list.ProfileListScreen
+import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
 import pw.vintr.vintrless.presentation.theme.VintrlessTheme
 import pw.vintr.vintrless.presentation.uikit.alert.Alert
 import pw.vintr.vintrless.tools.extensions.extendedDialog
@@ -109,6 +111,11 @@ private fun AlertHolder(
                 message = alertState.value.alert?.messageRes
                     ?.let { stringResource(it) }
                     .orEmpty(),
+                backgroundColor = when (alertState.value.alert?.type) {
+                    POSITIVE -> VintrlessExtendedTheme.colors.positive
+                    NEGATIVE -> VintrlessExtendedTheme.colors.negative
+                    null -> VintrlessExtendedTheme.colors.cardBackgroundColor
+                },
                 onCloseAction = { alertInteractor.hideAlert() }
             )
         }

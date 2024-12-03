@@ -37,6 +37,17 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
+            // ZXing
+            implementation(libs.core)
+
+            // Camera
+            implementation(libs.androidx.camera.core)
+            implementation(libs.androidx.camera.camera2)
+            implementation(libs.androidx.camera.view)
+            implementation(libs.androidx.camera.lifecycle)
+
+            // V2Ray
             implementation(files("libs/libv2ray.aar"))
         }
         commonMain.dependencies {

@@ -19,3 +19,5 @@ expect fun NativePaint.setMaskFilter(blurRadius: Float)
 expect fun FlowSettings(): FlowSettings
 
 expect fun V2rayPlatformInteractor(): V2rayPlatformInteractor
+
+expect fun cameraAvailable(): Boolean

@@ -29,3 +29,5 @@ actual fun NativePaint.setMaskFilter(blurRadius: Float) {
 actual fun FlowSettings() = NSUserDefaultsSettings.Factory().create().toFlowSettings()
 
 actual fun V2rayPlatformInteractor(): V2rayPlatformInteractor = CupertinoV2rayInteractor
+
+actual fun cameraAvailable() = false

@@ -30,7 +30,7 @@ inline fun <reified T : Any> NavGraphBuilder.extendedDialog(
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidthRestricted(maxWidth = 400.dp, decreaseSize = 56.dp)
+                        .fillMaxWidthRestricted(maxWidth = 600.dp, decreaseSize = 56.dp)
                 ) {
                     content(it)
                 }

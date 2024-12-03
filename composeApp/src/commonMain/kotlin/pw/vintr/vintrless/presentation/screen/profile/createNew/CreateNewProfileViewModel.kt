@@ -3,6 +3,7 @@ package pw.vintr.vintrless.presentation.screen.profile.createNew
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import pw.vintr.vintrless.cameraAvailable
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.alert.model.AlertModel
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
@@ -19,7 +20,9 @@ class CreateNewProfileViewModel(
     private val profileInteractor: ProfileInteractor,
 ) : BaseViewModel(navigator) {
 
-    private val _screenState = MutableStateFlow(CreateNewProfileState())
+    private val _screenState = MutableStateFlow(CreateNewProfileState(
+        qrScanAvailable = cameraAvailable()
+    ))
     val screenState = _screenState.asStateFlow()
 
     fun openQRScan() {
@@ -29,6 +32,7 @@ class CreateNewProfileViewModel(
     fun pasteFromClipboard(pasteText: String) {
         launch(createExceptionHandler {
             alertInteractor.showAlert(AlertModel.CommonError())
+            navigateBack()
         }) {
             val profile = profileUrlInteractor.decodeProfileUrl(pasteText)
 

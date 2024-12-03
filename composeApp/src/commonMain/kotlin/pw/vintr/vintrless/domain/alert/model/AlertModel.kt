@@ -9,17 +9,30 @@ import vintrless.composeapp.generated.resources.profile_save_success_message
 
 sealed class AlertModel {
 
+    enum class Type {
+        POSITIVE,
+        NEGATIVE;
+    }
+
     abstract val titleRes: StringResource
 
     abstract val messageRes: StringResource
 
+    open val type: Type = Type.POSITIVE
+
     data class CommonError(
         override val titleRes: StringResource = Res.string.error_alert_title,
-        override val messageRes: StringResource = Res.string.error_alert_default_message
-    ) : AlertModel()
+        override val messageRes: StringResource = Res.string.error_alert_default_message,
+    ) : AlertModel() {
+
+        override val type = Type.NEGATIVE
+    }
 
     data class ProfileSaveSucceed(
         override val titleRes: StringResource = Res.string.profile_save_success_title,
         override val messageRes: StringResource = Res.string.profile_save_success_message
-    ) : AlertModel()
+    ) : AlertModel() {
+
+        override val type = Type.POSITIVE
+    }
 }

@@ -29,3 +29,5 @@ actual fun NativePaint.setMaskFilter(blurRadius: Float) {
 actual fun FlowSettings() = PreferencesSettings.Factory().create().toFlowSettings()
 
 actual fun V2rayPlatformInteractor(): V2rayPlatformInteractor = JvmV2rayInteractor
+
+actual fun cameraAvailable() = false
