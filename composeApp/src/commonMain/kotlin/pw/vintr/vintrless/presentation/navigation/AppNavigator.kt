@@ -85,6 +85,23 @@ class AppNavigator {
         return resultWire.setResultListener(resultKey) { resultCallback(it as T) }
     }
 
+    fun replace(
+        screen: Screen,
+        type: NavigatorType? = null,
+        applyNavigatorType: Boolean = false
+    ) {
+        _actionFlow.tryEmit(
+            NavigatorAction.Replace(
+                screen = screen,
+                navigatorType = type ?: currentNavigatorType,
+            )
+        )
+
+        if (applyNavigatorType && type != null) {
+            currentNavigatorType = type
+        }
+    }
+
     fun replaceAll(
         screen: Screen,
         type: NavigatorType? = null,
@@ -120,6 +137,11 @@ sealed class NavigatorAction {
         override val navigatorType: NavigatorType,
     ) : NavigatorAction()
 
+    data class Replace(
+        val screen: Screen,
+        override val navigatorType: NavigatorType,
+    ) : NavigatorAction()
+
     data class ReplaceAll(
         val screen: Screen,
         override val navigatorType: NavigatorType,
@@ -151,6 +173,13 @@ fun NavigatorEffect(
                     }
                     is NavigatorAction.Forward -> {
                         controller.navigate(action.screen)
+                    }
+                    is NavigatorAction.Replace -> {
+                        controller.navigate(action.screen) {
+                            popUpTo(controller.currentBackStack.value.last().id) {
+                                inclusive = true
+                            }
+                        }
                     }
                     is NavigatorAction.ReplaceAll -> {
                         controller.navigate(action.screen) { popUpToTop(controller) }

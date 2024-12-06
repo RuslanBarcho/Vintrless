@@ -21,6 +21,9 @@ sealed class AppScreen : Screen {
     data object CreateNewProfile : AppScreen()
 
     @Serializable
+    data object ScanProfileQR : AppScreen()
+
+    @Serializable
     data class EditProfileForm(
         val profileTypeOrdinal: Int,
         val dataId: String? = null,

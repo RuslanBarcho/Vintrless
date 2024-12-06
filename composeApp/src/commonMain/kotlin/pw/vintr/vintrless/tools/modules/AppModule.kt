@@ -20,6 +20,7 @@ import pw.vintr.vintrless.presentation.screen.main.MainViewModel
 import pw.vintr.vintrless.presentation.screen.profile.createNew.CreateNewProfileViewModel
 import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormViewModel
 import pw.vintr.vintrless.presentation.screen.profile.list.ProfileListViewModel
+import pw.vintr.vintrless.presentation.screen.profile.scanQr.ScanProfileQRViewModel
 import pw.vintr.vintrless.presentation.screen.profile.share.ShareProfileViewModel
 import pw.vintr.vintrless.presentation.screen.settings.SettingsViewModel
 import pw.vintr.vintrless.tools.extensions.interactor
@@ -46,6 +47,7 @@ val appModule = module {
     viewModel { HomeViewModel(get(), get()) }
     viewModel { SettingsViewModel(get()) }
     viewModel { CreateNewProfileViewModel(get(), get(), get(), get()) }
+    viewModel { ScanProfileQRViewModel(get(), get(), get()) }
     viewModel { params ->
         EditProfileFormViewModel(
             navigator = get(),

@@ -35,6 +35,7 @@ import pw.vintr.vintrless.presentation.screen.main.MainScreen
 import pw.vintr.vintrless.presentation.screen.profile.createNew.CreateNewProfileDialog
 import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormScreen
 import pw.vintr.vintrless.presentation.screen.profile.list.ProfileListScreen
+import pw.vintr.vintrless.presentation.screen.profile.scanQr.ScanProfileQrScreen
 import pw.vintr.vintrless.presentation.screen.profile.share.ShareProfileDialog
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
 import pw.vintr.vintrless.presentation.theme.VintrlessTheme
@@ -150,6 +151,10 @@ fun Navigation(
                 usePlatformDefaultWidth = false,
             )
         ) { CreateNewProfileDialog() }
+
+        composable<AppScreen.ScanProfileQR> {
+            ScanProfileQrScreen()
+        }
 
         composable<AppScreen.EditProfileForm> {
             val route: AppScreen.EditProfileForm = it.toRoute()

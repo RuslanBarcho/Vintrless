@@ -26,7 +26,7 @@ class CreateNewProfileViewModel(
     val screenState = _screenState.asStateFlow()
 
     fun openQRScan() {
-        // TODO: navigate to QR scan
+        navigator.replace(AppScreen.ScanProfileQR)
     }
 
     fun pasteFromClipboard(pasteText: String) {
