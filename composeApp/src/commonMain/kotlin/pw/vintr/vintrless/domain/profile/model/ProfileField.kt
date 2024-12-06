@@ -1,6 +1,7 @@
 package pw.vintr.vintrless.domain.profile.model
 
 import org.jetbrains.compose.resources.StringResource
+import pw.vintr.vintrless.tools.extensions.Empty
 import vintrless.composeapp.generated.resources.*
 
 sealed class ProfileField {
@@ -16,6 +17,8 @@ sealed class ProfileField {
     abstract val titleRes: StringResource
 
     abstract val key: String
+
+    open val queryKey: String = String.Empty
 
     data object Name : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_name
@@ -48,12 +51,14 @@ sealed class ProfileField {
         )
 
         override val key: String = "flow"
+        override val queryKey: String = "flow"
     }
 
     data object Encryption : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_encryption
         override val initialValue = "none"
         override val key: String = "encryption"
+        override val queryKey: String = "encryption"
     }
 
     /**
@@ -77,6 +82,7 @@ sealed class ProfileField {
         override val initialValue = availableValues.first()
 
         override val key: String = "transport-protocol"
+        override val queryKey: String = "type"
 
         override val subfieldsByValue: Map<String?, List<ProfileField>> = mapOf(
             "tcp" to listOf(TcpHeaderType, TcpHost, TcpPath),
@@ -99,16 +105,19 @@ sealed class ProfileField {
         )
         override val initialValue = availableValues.first()
         override val key: String = "tcp-header-type"
+        override val queryKey: String = "headerType"
     }
 
     data object TcpHost : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_http_host
         override val key: String = "http-host"
+        override val queryKey: String = "host"
     }
 
     data object TcpPath : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_path
         override val key: String = "http-path"
+        override val queryKey: String = "path"
     }
 
     /** KCP */
@@ -124,38 +133,45 @@ sealed class ProfileField {
         )
         override val initialValue = availableValues.first()
         override val key: String = "kcp-header-type"
+        override val queryKey: String = "headerType"
     }
 
     data object KcpHost : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_host
         override val key: String = "kcp-host"
+        override val queryKey: String = "host"
     }
 
     data object KcpSeed : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_kcp_seed
         override val key: String = "kcp-seed"
+        override val queryKey: String = "seed"
     }
 
     /** WS */
     data object WSHost : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_ws_host
         override val key: String = "ws-host"
+        override val queryKey: String = "host"
     }
 
     data object WSPath : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_ws_path
         override val key: String = "ws-path"
+        override val queryKey: String = "path"
     }
 
     /** httpupgrade */
     data object HTTPUpgradeHost : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_httpupgrade_host
         override val key: String = "httpupgrade-host"
+        override val queryKey: String = "host"
     }
 
     data object HTTPUpgradePath : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_httpupgrade_path
         override val key: String = "httpupgrade-path"
+        override val queryKey: String = "path"
     }
 
     /** xhttp */
@@ -168,21 +184,25 @@ sealed class ProfileField {
         )
         override val initialValue = availableValues.first()
         override val key: String = "xhttp-mode"
+        override val queryKey: String = "mode"
     }
 
     data object XHTTPHost : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_xhttp_host
         override val key: String = "xhttp-host"
+        override val queryKey: String = "host"
     }
 
     data object XHTTPPath : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_xhttp_path
         override val key: String = "xhttp-path"
+        override val queryKey: String = "path"
     }
 
     data object XHTTPJsonExtra : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_xhttp_json_extra
         override val key: String = "xhttp-json-extra"
+        override val queryKey: String = "extra"
         override val multiline: Boolean = true
     }
 
@@ -190,11 +210,13 @@ sealed class ProfileField {
     data object H2Host : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_h2_host
         override val key: String = "h2-host"
+        override val queryKey: String = "host"
     }
 
     data object H2Path : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_h2_path
         override val key: String = "h2-path"
+        override val queryKey: String = "path"
     }
 
     /** gRPC */
@@ -206,16 +228,19 @@ sealed class ProfileField {
         )
         override val initialValue = availableValues.first()
         override val key: String = "gRPC-mode"
+        override val queryKey: String = "mode"
     }
 
     data object GRPCAuthority : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_grpc_authority
         override val key: String = "gRPC-authority"
+        override val queryKey: String = "authority"
     }
 
     data object GRPCService : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_grpc_service
         override val key: String = "gRPC-service"
+        override val queryKey: String = "serviceName"
     }
 
     /**
@@ -239,11 +264,13 @@ sealed class ProfileField {
         )
 
         override val key: String = "tls"
+        override val queryKey: String = "security"
     }
 
     data object SNI : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_sni
         override val key: String = "sni"
+        override val queryKey: String = "sni"
     }
 
     data object Fingerprint : ProfileField() {
@@ -264,21 +291,25 @@ sealed class ProfileField {
         )
 
         override val key: String = "fingerprint"
+        override val queryKey: String = "fp"
     }
 
     data object PublicKey : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_public_key
         override val key: String = "public-key"
+        override val queryKey: String = "pbk"
     }
 
     data object ShortID : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_short_id
         override val key: String = "short-id"
+        override val queryKey: String = "sid"
     }
 
     data object SpiderX : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_spider_x
         override val key: String = "spider-x"
+        override val queryKey: String = "spx"
     }
 
     data object ALPN : ProfileField() {
@@ -298,6 +329,7 @@ sealed class ProfileField {
         override val initialValue = availableValues.first()
 
         override val key: String = "alpn"
+        override val queryKey: String = "alpn"
     }
 
     data object AllowInsecure : ProfileField() {

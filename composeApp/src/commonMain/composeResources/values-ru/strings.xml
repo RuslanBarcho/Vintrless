@@ -77,4 +77,11 @@
     <string name="profile_save_success_message">Теперь его можно использовать для подключения :)</string>
     <string name="error_alert_title">Произошла ошибка :(</string>
     <string name="error_alert_default_message">Что-то пошло не так - попробуйте, пожалуйста, еще раз</string>
+
+    <string name="other_ways">Другие способы</string>
+    <string name="share_url">Поделиться URL</string>
+    <string name="share_json">Поделиться JSON</string>
+
+    <string name="copied_to_clipboard">Скопировано в буфер обмена</string>
+    <string name="now_you_can_share_data">Теперь вы можете поделиться данными для подключения</string>
 </resources>

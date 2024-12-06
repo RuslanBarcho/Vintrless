@@ -46,7 +46,9 @@ class ProfileListViewModel(
     }
 
     fun onShareClick(profile: ProfileData) {
-        // TODO: share logic
+        navigator.forward(
+            AppScreen.ShareProfile(dataId = profile.id)
+        )
     }
 
     fun onDeleteClick(profile: ProfileData) {

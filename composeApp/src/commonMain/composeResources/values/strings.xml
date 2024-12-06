@@ -77,4 +77,11 @@
     <string name="profile_save_success_message">It can now be used to connect :)</string>
     <string name="error_alert_title">An error has occurred :(</string>
     <string name="error_alert_default_message">Something goes wrong - please try again</string>
+
+    <string name="other_ways">Other ways</string>
+    <string name="share_url">Share URL</string>
+    <string name="share_json">Share JSON</string>
+
+    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="now_you_can_share_data">Now you can share connection data</string>
 </resources>

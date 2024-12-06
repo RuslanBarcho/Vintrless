@@ -18,11 +18,16 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import pw.vintr.vintrless.broadcast.BroadcastController
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
+import pw.vintr.vintrless.tools.AppActivity
 import pw.vintr.vintrless.v2ray.interactor.AndroidV2rayInteractor
 import pw.vintr.vintrless.v2ray.service.V2RayServiceController
 import pw.vintr.vintrless.v2ray.storage.V2RayConfigStorage
 
 class MainActivity : ComponentActivity() {
+
+    init {
+        AppActivity.setUp { this }
+    }
 
     private val requestVpnPermission = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()

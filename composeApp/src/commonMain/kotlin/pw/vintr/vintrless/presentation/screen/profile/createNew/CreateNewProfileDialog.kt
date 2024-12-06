@@ -1,6 +1,5 @@
 package pw.vintr.vintrless.presentation.screen.profile.createNew
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -13,17 +12,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.vintr.vintrless.presentation.navigation.NavigatorType
 import pw.vintr.vintrless.presentation.theme.Gilroy12
-import pw.vintr.vintrless.presentation.theme.RubikMedium16
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
+import pw.vintr.vintrless.presentation.uikit.menu.MenuAction
+import pw.vintr.vintrless.presentation.uikit.menu.MenuActionWithIcon
 import pw.vintr.vintrless.presentation.uikit.separator.LineSeparator
 import pw.vintr.vintrless.tools.extensions.cardBackground
 import vintrless.composeapp.generated.resources.*
@@ -71,7 +69,7 @@ fun CreateNewProfileDialog(
             )
             Spacer(modifier = Modifier.height(10.dp))
             if (screenState.value.qrScanAvailable) {
-                ActionWithIcon(
+                MenuActionWithIcon(
                     iconRes = Res.drawable.ic_qr_scan,
                     title = stringResource(Res.string.scan_qr)
                 ) {
@@ -82,7 +80,7 @@ fun CreateNewProfileDialog(
                         .padding(horizontal = 32.dp)
                 )
             }
-            ActionWithIcon(
+            MenuActionWithIcon(
                 iconRes = Res.drawable.ic_clipboard,
                 title = stringResource(Res.string.paste_from_clipboard)
             ) {
@@ -103,7 +101,7 @@ fun CreateNewProfileDialog(
             )
             Spacer(modifier = Modifier.height(10.dp))
             screenState.value.availableForms.mapIndexed { index, form ->
-                Action(
+                MenuAction(
                     title = form.type.protocolName,
                 ) {
                     viewModel.openFillProfileForm(form)
@@ -116,63 +114,5 @@ fun CreateNewProfileDialog(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun ActionWithIcon(
-    modifier: Modifier = Modifier,
-    iconRes: DrawableResource,
-    title: String,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 12.dp, horizontal = 32.dp)
-    ) {
-        Image(
-            modifier = Modifier
-                .size(20.dp),
-            painter = painterResource(iconRes),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(VintrlessExtendedTheme.colors.textRegular)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            modifier = Modifier.weight(1f),
-            text = title,
-            style = RubikMedium16(),
-            color = VintrlessExtendedTheme.colors.textRegular,
-        )
-    }
-}
-
-@Composable
-private fun Action(
-    modifier: Modifier = Modifier,
-    title: String,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 12.dp, horizontal = 32.dp)
-    ) {
-        Text(
-            modifier = Modifier.weight(1f),
-            text = title,
-            style = RubikMedium16(),
-            color = VintrlessExtendedTheme.colors.textRegular,
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Image(
-            modifier = Modifier
-                .size(20.dp),
-            painter = painterResource(Res.drawable.ic_arrow_right),
-            contentDescription = null,
-        )
     }
 }

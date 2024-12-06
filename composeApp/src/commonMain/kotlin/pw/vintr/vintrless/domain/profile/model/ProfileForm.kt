@@ -38,6 +38,24 @@ sealed class ProfileForm {
      */
     abstract val fieldGroups: List<ProfileFieldGroup>
 
+    fun getAllFields() = fieldGroups.flatMap { group ->
+        group.fields.unpackAll()
+    }
+
+    private fun List<ProfileField>.unpackAll(): List<ProfileField> {
+        return flatMap {
+            val subfields = it.subfieldsByValue.values.flatten().distinct()
+
+            if (subfields.isNotEmpty()) {
+                val unpackedInternal = subfields.unpackAll()
+
+                listOf(it, *unpackedInternal.toTypedArray())
+            } else {
+                listOf(it)
+            }
+        }
+    }
+
     fun getDefaultData(): Map<String, String> {
         val data = mutableMapOf<String, String>()
 

@@ -34,5 +34,8 @@ sealed class AppScreen : Screen {
     data object ProfileList : AppScreen()
 
     @Serializable
+    data class ShareProfile(val dataId: String) : AppScreen()
+
+    @Serializable
     data object ConfirmDeleteProfile : AppScreen()
 }

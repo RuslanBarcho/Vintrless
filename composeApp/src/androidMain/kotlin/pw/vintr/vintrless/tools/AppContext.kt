@@ -11,7 +11,9 @@ internal object AppContext {
     }
 
     fun get(): Context {
-        if(::application.isInitialized.not()) throw Exception("Application context isn't initialized")
+        if (::application.isInitialized.not()) {
+            throw Exception("Application context isn't initialized")
+        }
         return application.applicationContext
     }
 }

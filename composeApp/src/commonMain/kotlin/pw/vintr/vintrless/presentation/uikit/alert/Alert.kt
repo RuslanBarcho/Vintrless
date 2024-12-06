@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import pw.vintr.vintrless.presentation.theme.AppColor
 import pw.vintr.vintrless.presentation.theme.Gilroy16
 import pw.vintr.vintrless.presentation.theme.RubikMedium14
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
@@ -49,11 +50,12 @@ fun Alert(
                     .weight(1f),
                 text = title,
                 style = Gilroy16(),
-                color = VintrlessExtendedTheme.colors.textRegular,
+                color = AppColor.White,
             )
             ButtonSimpleIcon(
                 iconRes = Res.drawable.ic_close,
                 onClick = onCloseAction,
+                tint = AppColor.White,
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -62,7 +64,7 @@ fun Alert(
                 .fillMaxWidth(),
             text = message,
             style = RubikMedium14(),
-            color = VintrlessExtendedTheme.colors.textRegular,
+            color = AppColor.White,
         )
         Spacer(modifier = Modifier.height(4.dp))
     }

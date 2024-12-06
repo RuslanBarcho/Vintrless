@@ -35,6 +35,7 @@ import pw.vintr.vintrless.presentation.screen.main.MainScreen
 import pw.vintr.vintrless.presentation.screen.profile.createNew.CreateNewProfileDialog
 import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormScreen
 import pw.vintr.vintrless.presentation.screen.profile.list.ProfileListScreen
+import pw.vintr.vintrless.presentation.screen.profile.share.ShareProfileDialog
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
 import pw.vintr.vintrless.presentation.theme.VintrlessTheme
 import pw.vintr.vintrless.presentation.uikit.alert.Alert
@@ -160,6 +161,16 @@ fun Navigation(
         }
 
         composable<AppScreen.ProfileList> { ProfileListScreen() }
+
+        extendedDialog<AppScreen.ShareProfile>(
+            dialogProperties = DialogProperties(
+                usePlatformDefaultWidth = false,
+            )
+        ) {
+            val route: AppScreen.ShareProfile = it.toRoute()
+
+            ShareProfileDialog(dataId = route.dataId)
+        }
 
         extendedDialog<AppScreen.ConfirmDeleteProfile>(
             dialogProperties = DialogProperties(

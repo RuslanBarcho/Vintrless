@@ -86,6 +86,9 @@ kotlin {
 
             // Uri for multiplatform
             implementation(libs.uri.kmp)
+
+            // QR for multiplatform
+            implementation(libs.qr.kit)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -96,6 +99,13 @@ kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
         freeCompilerArgs = listOf("-Xcontext-receivers")
+    }
+    targets.configureEach {
+        compilations.configureEach {
+            compileTaskProvider.get().compilerOptions {
+                freeCompilerArgs.add("-Xexpect-actual-classes")
+            }
+        }
     }
 }
 
@@ -146,11 +156,11 @@ android {
     applicationVariants.all {
         val variant = this
         val versionCodes = mapOf(
-            "armeabi-v7a" to 4,
-            "arm64-v8a" to 4,
-            "x86" to 4,
-            "x86_64" to 4,
-            "universal" to 4
+            "armeabi-v7a" to 1,
+            "arm64-v8a" to 1,
+            "x86" to 1,
+            "x86_64" to 1,
+            "universal" to 1
         )
 
         variant.outputs

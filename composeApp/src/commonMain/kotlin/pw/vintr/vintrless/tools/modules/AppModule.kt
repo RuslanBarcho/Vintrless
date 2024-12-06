@@ -20,6 +20,7 @@ import pw.vintr.vintrless.presentation.screen.main.MainViewModel
 import pw.vintr.vintrless.presentation.screen.profile.createNew.CreateNewProfileViewModel
 import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormViewModel
 import pw.vintr.vintrless.presentation.screen.profile.list.ProfileListViewModel
+import pw.vintr.vintrless.presentation.screen.profile.share.ShareProfileViewModel
 import pw.vintr.vintrless.presentation.screen.settings.SettingsViewModel
 import pw.vintr.vintrless.tools.extensions.interactor
 
@@ -51,8 +52,16 @@ val appModule = module {
             protocolType = params.get(),
             dataId = params.getOrNull(),
             profileInteractor = get(),
-            alertInteractor = get()
+            alertInteractor = get(),
         )
     }
     viewModel { ProfileListViewModel(get(), get()) }
+    viewModel { params ->
+        ShareProfileViewModel(
+            navigator = get(),
+            dataId = params.get(),
+            profileInteractor = get(),
+            alertInteractor = get(),
+        )
+    }
 }
