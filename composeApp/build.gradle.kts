@@ -201,9 +201,16 @@ compose.desktop {
             packageName = "pw.vintr.vintrless"
             packageVersion = "1.0.0"
 
+            appResourcesRootDir = rootDir.resolve("desktopLibs")
+
             jvmArgs(
                 "-Dapple.awt.application.appearance=system"
             )
+        }
+
+        buildTypes.release.proguard {
+            version.set("7.4.0")
+            configurationFiles.from("proguard.pro")
         }
     }
 }

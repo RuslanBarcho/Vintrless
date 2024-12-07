@@ -84,9 +84,8 @@ fun App() {
 }
 
 @Composable
-private fun AlertHolder(
-    alertInteractor: AlertInteractor = koinInject()
-) {
+private fun AlertHolder() {
+    val alertInteractor: AlertInteractor = koinInject()
     val alertState = alertInteractor.alertState.collectAsState(initial = AlertState())
 
     LaunchedEffect(key1 = alertState.value) {
