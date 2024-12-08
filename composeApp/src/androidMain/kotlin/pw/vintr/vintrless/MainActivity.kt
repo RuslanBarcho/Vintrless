@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import pw.vintr.vintrless.broadcast.BroadcastController
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.tools.AppActivity
-import pw.vintr.vintrless.v2ray.interactor.AndroidV2rayInteractor
+import pw.vintr.vintrless.v2ray.interactor.AndroidV2RayInteractor
 import pw.vintr.vintrless.v2ray.service.V2RayServiceController
 import pw.vintr.vintrless.v2ray.storage.V2RayConfigStorage
 
@@ -42,17 +42,17 @@ class MainActivity : ComponentActivity() {
             when (intent?.getIntExtra(BroadcastController.BROADCAST_KEY, 0)) {
                 BroadcastController.MSG_STATE_START_SUCCESS,
                 BroadcastController.MSG_STATE_RUNNING -> {
-                    AndroidV2rayInteractor.postConnected()
+                    AndroidV2RayInteractor.postConnected()
                 }
 
                 BroadcastController.MSG_STATE_CONNECTING -> {
-                    AndroidV2rayInteractor.postConnecting()
+                    AndroidV2RayInteractor.postConnecting()
                 }
 
                 BroadcastController.MSG_STATE_NOT_RUNNING,
                 BroadcastController.MSG_STATE_START_FAILURE,
                 BroadcastController.MSG_STATE_STOP_SUCCESS -> {
-                    AndroidV2rayInteractor.postDisconnected()
+                    AndroidV2RayInteractor.postDisconnected()
                 }
             }
         }
@@ -87,12 +87,12 @@ class MainActivity : ComponentActivity() {
 
     private fun startListenInteractorEvents() {
         lifecycleScope.launch {
-            AndroidV2rayInteractor.event.collect { event ->
+            AndroidV2RayInteractor.event.collect { event ->
                 when (event) {
-                    is AndroidV2rayInteractor.Event.StartV2RayViaActivity -> {
+                    is AndroidV2RayInteractor.Event.StartV2RayViaActivity -> {
                         startV2ray(event.config)
                     }
-                    is AndroidV2rayInteractor.Event.StopV2RayViaActivity -> {
+                    is AndroidV2RayInteractor.Event.StopV2RayViaActivity -> {
                         stopV2Ray()
                     }
                 }

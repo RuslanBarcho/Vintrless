@@ -6,7 +6,7 @@ import pw.vintr.vintrless.V2rayPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.model.ProfileData
-import pw.vintr.vintrless.domain.v2ray.interactor.V2rayPlatformInteractor
+import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.useCase.V2RayConfigBuildUseCase
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
@@ -17,7 +17,7 @@ import pw.vintr.vintrless.presentation.navigation.NavigatorType
 class HomeViewModel(
     navigator: AppNavigator,
     private val profileInteractor: ProfileInteractor,
-    private val v2rayInteractor: V2rayPlatformInteractor = V2rayPlatformInteractor()
+    private val v2rayInteractor: V2RayPlatformInteractor = V2rayPlatformInteractor()
 ) : BaseViewModel(navigator) {
 
     private val connectionState = v2rayInteractor.connectionState

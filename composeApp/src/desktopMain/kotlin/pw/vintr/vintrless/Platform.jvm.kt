@@ -8,9 +8,9 @@ import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import org.jetbrains.skia.FilterBlurMode
 import org.jetbrains.skia.MaskFilter
-import pw.vintr.vintrless.domain.v2ray.interactor.V2rayPlatformInteractor
+import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
-import pw.vintr.vintrless.v2ray.JvmV2rayInteractor
+import pw.vintr.vintrless.v2ray.interactor.JvmV2RayInteractor
 
 class DesktopBottomSheetNavigator(sheetState: ModalBottomSheetState) : BottomSheetNavigator(sheetState)
 
@@ -28,6 +28,6 @@ actual fun NativePaint.setMaskFilter(blurRadius: Float) {
 @OptIn(ExperimentalSettingsApi::class)
 actual fun FlowSettings() = PreferencesSettings.Factory().create().toFlowSettings()
 
-actual fun V2rayPlatformInteractor(): V2rayPlatformInteractor = JvmV2rayInteractor
+actual fun V2rayPlatformInteractor(): V2RayPlatformInteractor = JvmV2RayInteractor
 
 actual fun cameraAvailable() = false

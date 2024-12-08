@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
 import pw.vintr.vintrless.domain.base.BaseInteractor
-import pw.vintr.vintrless.domain.v2ray.interactor.V2rayPlatformInteractor
+import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 
-object CupertinoV2rayInteractor : BaseInteractor(), V2rayPlatformInteractor {
+object CupertinoV2rayInteractor : BaseInteractor(), V2RayPlatformInteractor {
 
     private val _connectionState = MutableStateFlow(ConnectionState.Disconnected)
 

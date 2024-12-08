@@ -1,3 +1,4 @@
+import ir.mahozad.manifest.ManifestMode
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -8,6 +9,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    id("ir.mahozad.compose-exe-manifest") version "1.0.0"
 }
 
 kotlin {
@@ -193,6 +195,12 @@ dependencies {
 }
 
 compose.desktop {
+    composeExeManifest {
+        enabled = true
+        manifestMode = ManifestMode.EMBED
+        manifestFile = file("app.manifest")
+    }
+
     application {
         mainClass = "pw.vintr.vintrless.MainKt"
 
