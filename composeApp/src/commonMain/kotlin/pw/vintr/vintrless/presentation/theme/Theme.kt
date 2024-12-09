@@ -62,6 +62,9 @@ data class VintrlessColors(
     val segmentStroke: Color = Color.Unspecified,
     val segmentIndicatorStroke: Color = Color.Unspecified,
     val segmentIndicatorBackground: Color = Color.Unspecified,
+    // Scrollbar
+    val scrollbarUnhover: Color = Color.Unspecified,
+    val scrollbarHover: Color = Color.Unspecified,
 )
 
 val LocalVintrColors = staticCompositionLocalOf { VintrlessColors() }
@@ -118,6 +121,9 @@ val darkVintrColors = VintrlessColors(
     segmentStroke = AppColor.MineShaft,
     segmentIndicatorStroke = AppColor.BrightTurquoise,
     segmentIndicatorBackground = AppColor.DeepCerulean,
+    // Scrollbar
+    scrollbarUnhover = AppColor.Jumbo,
+    scrollbarHover = AppColor.FrenchGray,
 )
 
 val lightVintrColors = VintrlessColors(
@@ -172,6 +178,9 @@ val lightVintrColors = VintrlessColors(
     segmentStroke = AppColor.GraySuit,
     segmentIndicatorStroke = AppColor.ShojinBlue,
     segmentIndicatorBackground = AppColor.FrenchPass,
+    // Scrollbar
+    scrollbarUnhover = AppColor.Jumbo,
+    scrollbarHover = AppColor.FrenchGray,
 )
 
 private val darkColorScheme = darkColorScheme(

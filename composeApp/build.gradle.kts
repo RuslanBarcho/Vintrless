@@ -100,6 +100,9 @@ kotlin {
 
             // Realm
             implementation(libs.library.base)
+
+            // File picker
+            implementation(libs.filekit.core)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -197,10 +200,6 @@ android {
             useLegacyPackaging = true
         }
     }
-}
-
-dependencies {
-    debugImplementation(compose.uiTooling)
 }
 
 compose.desktop {

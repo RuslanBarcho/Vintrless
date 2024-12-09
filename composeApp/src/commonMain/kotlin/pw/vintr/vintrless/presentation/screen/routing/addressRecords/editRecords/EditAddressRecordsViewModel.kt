@@ -1,4 +1,4 @@
-package pw.vintr.vintrless.presentation.screen.routing.editAddressRecords
+package pw.vintr.vintrless.presentation.screen.routing.addressRecords.editRecords
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -8,7 +8,11 @@ import pw.vintr.vintrless.domain.routing.model.Ruleset
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
+import pw.vintr.vintrless.presentation.navigation.AppScreen
+import pw.vintr.vintrless.presentation.navigation.NavigatorType
+import pw.vintr.vintrless.presentation.screen.routing.addressRecords.addRecords.AddAddressRecordsResult
 import pw.vintr.vintrless.tools.extensions.updateLoaded
+import pw.vintr.vintrless.tools.extensions.withLoaded
 
 class EditAddressRecordsViewModel(
     navigator: AppNavigator,
@@ -43,6 +47,41 @@ class EditAddressRecordsViewModel(
                 domains = ruleset.domains,
                 selectedAddressRecordType = RuleAddressRecordType.IP
             )
+        }
+    }
+
+    fun openAddAddressRecords() {
+        _screenState.withLoaded { loadedState ->
+            handleResult(AddAddressRecordsResult.KEY) {
+                navigator.forwardWithResult<AddAddressRecordsResult>(
+                    AppScreen.AddAddressRecords,
+                    NavigatorType.Root,
+                    AddAddressRecordsResult.KEY
+                ) {
+                    handleAddAddressRecordsResult(
+                        records = it.records,
+                        replaceCurrent = it.replaceCurrent,
+                        type = loadedState.selectedAddressRecordType,
+                    )
+                }
+            }
+        }
+    }
+
+    private fun handleAddAddressRecordsResult(
+        records: List<String>,
+        replaceCurrent: Boolean,
+        type: RuleAddressRecordType,
+    ) {
+        _screenState.updateLoaded { state ->
+            when (type) {
+                RuleAddressRecordType.IP -> {
+                    state.copy(ips = if (replaceCurrent) records else state.ips + records)
+                }
+                RuleAddressRecordType.DOMAIN -> {
+                    state.copy(domains = if (replaceCurrent) records else state.domains + records)
+                }
+            }
         }
     }
 

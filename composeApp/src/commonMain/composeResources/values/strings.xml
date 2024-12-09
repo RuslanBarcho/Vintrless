@@ -94,4 +94,8 @@
     <string name="address_record_type_ip">IP</string>
     <string name="address_record_type_domain">Domains</string>
     <string name="address_records_empty">Add address records to filter traffic</string>
+
+    <string name="load_from_file">Load from file</string>
+    <string name="enter_manually">Enter manually</string>
+    <string name="replace_current">Replace current</string>
 </resources>

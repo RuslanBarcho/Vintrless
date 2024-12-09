@@ -179,3 +179,7 @@
     *;
 }
 -keep class pw.vintr.vintrless.data.routing.model.ExcludeRulesetCacheObject
+
+# KileKit
+-keep class com.sun.jna.** { *; }
+-keep class * implements com.sun.jna.** { *; }

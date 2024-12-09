@@ -49,4 +49,7 @@ sealed class AppScreen : Screen {
     data class EditAddressRecords(
         val rulesetId: String,
     ) : AppScreen()
+
+    @Serializable
+    data object AddAddressRecords : AppScreen()
 }

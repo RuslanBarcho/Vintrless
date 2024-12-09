@@ -1,9 +1,12 @@
-package pw.vintr.vintrless.presentation.screen.routing.editAddressRecords
+package pw.vintr.vintrless.presentation.screen.routing.addressRecords.editRecords
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -11,16 +14,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import pw.vintr.vintrless.LazyColumnScrollbar
 import pw.vintr.vintrless.domain.routing.model.RuleAddressRecordType
 import pw.vintr.vintrless.domain.routing.model.Ruleset
 import pw.vintr.vintrless.domain.routing.model.Ruleset.Exclude.Type.BLACKLIST
 import pw.vintr.vintrless.domain.routing.model.Ruleset.Exclude.Type.WHITELIST
+import pw.vintr.vintrless.platform.PlatformType
+import pw.vintr.vintrless.platformType
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.theme.Gilroy18
 import pw.vintr.vintrless.presentation.theme.RubikMedium16
@@ -66,6 +73,23 @@ fun EditAddressRecordsScreen(
                     else -> String.Empty
                 },
                 onBackPressed = { viewModel.navigateBack() },
+                trailing = {
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(CircleShape)
+                            .clickable { viewModel.openAddAddressRecords() },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp),
+                            painter = painterResource(Res.drawable.ic_add),
+                            contentDescription = "Add new profile button icon",
+                            tint = VintrlessExtendedTheme.colors.textRegular
+                        )
+                    }
+                }
             )
         },
     ) { scaffoldPadding ->
@@ -129,51 +153,68 @@ private fun AddressRecordList(
     records: List<String>,
     onDeleteClick: (Int) -> Unit,
 ) {
-    if (records.isNotEmpty()) {
-        // Ruleset address items
-        LazyColumn(
-            modifier = modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(
-                vertical = 20.dp,
-                horizontal = 28.dp,
-            ),
-        ) {
-            itemsIndexed(records) { index, item ->
-                AddressRecordItem(
-                    value = item,
-                    onDeleteClick = {
-                        onDeleteClick(index)
+    Box(
+        modifier = modifier
+            .fillMaxSize(),
+    ) {
+        if (records.isNotEmpty()) {
+            // Ruleset address items
+            val listState = rememberLazyListState()
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(
+                    vertical = 20.dp,
+                    horizontal = 28.dp,
+                ),
+                state = listState,
+            ) {
+                itemsIndexed(records) { index, item ->
+                    AddressRecordItem(
+                        value = item,
+                        onDeleteClick = {
+                            onDeleteClick(index)
+                        }
+                    )
+                    if (index != records.lastIndex) {
+                        LineSeparator(modifier = Modifier.fillMaxWidth())
                     }
-                )
-                if (index != records.lastIndex) {
-                    LineSeparator(modifier = Modifier.fillMaxWidth())
                 }
             }
-        }
-    } else {
-        // Empty state
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = 28.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Image(
-                painter = painterResource(Res.drawable.illustration_no_addresses),
-                contentDescription = null,
-            )
-            Spacer(modifier = Modifier.height(28.dp))
-            Text(
+
+            // Scrollbar for desktop
+            if (platformType() == PlatformType.JVM) {
+                LazyColumnScrollbar(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .fillMaxHeight(),
+                    listState = listState
+                )
+            }
+        } else {
+            // Empty state
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                text = stringResource(Res.string.address_records_empty),
-                color = VintrlessExtendedTheme.colors.textRegular,
-                style = RubikMedium16(),
-                textAlign = TextAlign.Center,
-            )
+                    .fillMaxSize()
+                    .padding(horizontal = 28.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Image(
+                    painter = painterResource(Res.drawable.illustration_no_addresses),
+                    contentDescription = null,
+                )
+                Spacer(modifier = Modifier.height(28.dp))
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = stringResource(Res.string.address_records_empty),
+                    color = VintrlessExtendedTheme.colors.textRegular,
+                    style = RubikMedium16(),
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }
@@ -187,7 +228,8 @@ private fun AddressRecordItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp)
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             modifier = Modifier
@@ -195,7 +237,6 @@ private fun AddressRecordItem(
             text = value,
             color = VintrlessExtendedTheme.colors.textRegular,
             style = Gilroy18(),
-            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.width(10.dp))
         ButtonSecondary(

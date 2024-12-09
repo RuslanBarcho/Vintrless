@@ -39,7 +39,8 @@ import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormSc
 import pw.vintr.vintrless.presentation.screen.profile.list.ProfileListScreen
 import pw.vintr.vintrless.presentation.screen.profile.scanQr.ScanProfileQrScreen
 import pw.vintr.vintrless.presentation.screen.profile.share.ShareProfileDialog
-import pw.vintr.vintrless.presentation.screen.routing.editAddressRecords.EditAddressRecordsScreen
+import pw.vintr.vintrless.presentation.screen.routing.addressRecords.addRecords.AddAddressRecordsDialog
+import pw.vintr.vintrless.presentation.screen.routing.addressRecords.editRecords.EditAddressRecordsScreen
 import pw.vintr.vintrless.presentation.screen.routing.rulesetList.RulesetListScreen
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
 import pw.vintr.vintrless.presentation.theme.VintrlessTheme
@@ -157,11 +158,7 @@ fun Navigation(
             }
         }
 
-        extendedDialog<AppScreen.CreateNewProfile>(
-            dialogProperties = DialogProperties(
-                usePlatformDefaultWidth = false,
-            )
-        ) { CreateNewProfileDialog() }
+        extendedDialog<AppScreen.CreateNewProfile> { CreateNewProfileDialog() }
 
         composable<AppScreen.ScanProfileQR> {
             ScanProfileQrScreen()
@@ -178,21 +175,13 @@ fun Navigation(
 
         composable<AppScreen.ProfileList> { ProfileListScreen() }
 
-        extendedDialog<AppScreen.ShareProfile>(
-            dialogProperties = DialogProperties(
-                usePlatformDefaultWidth = false,
-            )
-        ) {
+        extendedDialog<AppScreen.ShareProfile> {
             val route: AppScreen.ShareProfile = it.toRoute()
 
             ShareProfileDialog(dataId = route.dataId)
         }
 
-        extendedDialog<AppScreen.ConfirmDeleteProfile>(
-            dialogProperties = DialogProperties(
-                usePlatformDefaultWidth = false,
-            )
-        ) {
+        extendedDialog<AppScreen.ConfirmDeleteProfile> {
             ConfirmDialog(
                 data = ConfirmDialogData.Resource(
                     titleRes = Res.string.profile_delete_title,
@@ -210,6 +199,10 @@ fun Navigation(
             EditAddressRecordsScreen(
                 rulesetId = route.rulesetId,
             )
+        }
+
+        extendedDialog<AppScreen.AddAddressRecords> {
+            AddAddressRecordsDialog()
         }
     }
 }

@@ -1,7 +1,9 @@
 package pw.vintr.vintrless
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.NativePaint
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
@@ -13,6 +15,9 @@ expect fun getBottomSheetNavigator(sheetState: ModalBottomSheetState): BottomShe
 
 @Composable
 expect fun applyThemeOnView(darkTheme: Boolean)
+
+@Composable
+expect fun LazyColumnScrollbar(modifier: Modifier = Modifier, listState: LazyListState)
 
 expect fun NativePaint.setMaskFilter(blurRadius: Float)
 

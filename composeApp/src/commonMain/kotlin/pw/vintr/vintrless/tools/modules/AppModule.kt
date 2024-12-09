@@ -29,7 +29,8 @@ import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormVi
 import pw.vintr.vintrless.presentation.screen.profile.list.ProfileListViewModel
 import pw.vintr.vintrless.presentation.screen.profile.scanQr.ScanProfileQRViewModel
 import pw.vintr.vintrless.presentation.screen.profile.share.ShareProfileViewModel
-import pw.vintr.vintrless.presentation.screen.routing.editAddressRecords.EditAddressRecordsViewModel
+import pw.vintr.vintrless.presentation.screen.routing.addressRecords.addRecords.AddAddressRecordsViewModel
+import pw.vintr.vintrless.presentation.screen.routing.addressRecords.editRecords.EditAddressRecordsViewModel
 import pw.vintr.vintrless.presentation.screen.routing.rulesetList.RulesetListViewModel
 import pw.vintr.vintrless.presentation.screen.settings.SettingsViewModel
 import pw.vintr.vintrless.tools.extensions.interactor
@@ -106,4 +107,5 @@ val appModule = module {
             routingInteractor = get(),
         )
     }
+    viewModel { AddAddressRecordsViewModel(get()) }
 }

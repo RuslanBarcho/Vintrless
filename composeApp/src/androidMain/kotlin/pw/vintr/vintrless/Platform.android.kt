@@ -2,9 +2,11 @@ package pw.vintr.vintrless
 
 import android.app.Activity
 import android.graphics.BlurMaskFilter
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.NativePaint
 import androidx.compose.ui.graphics.toArgb
@@ -44,6 +46,12 @@ actual fun applyThemeOnView(darkTheme: Boolean) {
         }
     }
 }
+
+@Composable
+actual fun LazyColumnScrollbar(
+    modifier: Modifier,
+    listState: LazyListState
+) {}
 
 actual fun NativePaint.setMaskFilter(blurRadius: Float) {
     maskFilter = BlurMaskFilter(blurRadius, BlurMaskFilter.Blur.NORMAL)

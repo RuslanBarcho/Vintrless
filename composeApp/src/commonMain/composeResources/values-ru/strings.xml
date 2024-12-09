@@ -94,4 +94,8 @@
     <string name="address_record_type_ip">IP</string>
     <string name="address_record_type_domain">Домены</string>
     <string name="address_records_empty">Добавьте адресные записи, чтобы фильтровать трафик</string>
+
+    <string name="load_from_file">Загрузить из файла</string>
+    <string name="enter_manually">Ввести вручную</string>
+    <string name="replace_current">Заменить текущие</string>
 </resources>

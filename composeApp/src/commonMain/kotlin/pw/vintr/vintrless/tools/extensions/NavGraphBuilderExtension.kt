@@ -15,7 +15,9 @@ import kotlin.reflect.KType
 inline fun <reified T : Any> NavGraphBuilder.extendedDialog(
     typeMap: Map<KType, NavType<*>> = emptyMap(),
     deepLinks: List<NavDeepLink> = emptyList(),
-    dialogProperties: DialogProperties = DialogProperties(),
+    dialogProperties: DialogProperties = DialogProperties(
+        usePlatformDefaultWidth = false,
+    ),
     noinline content: @Composable (NavBackStackEntry) -> Unit
 ) {
     destination(
