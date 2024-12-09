@@ -14,8 +14,6 @@
     <string name="settings_app_description">Интерфейс и автоподключение</string>
     <string name="settings_vpn_title">Настройки VPN</string>
     <string name="settings_vpn_description">Подключение и анализ пакетов</string>
-    <string name="settings_proxy_title">Режим проксирования</string>
-    <string name="settings_proxy_description">Глобально или выборочно</string>
     <string name="settings_routing_title">Роутинг</string>
     <string name="settings_routing_description">Правила маршрутизации</string>
     <string name="settings_about_title">О приложении</string>
@@ -84,4 +82,12 @@
 
     <string name="copied_to_clipboard">Скопировано в буфер обмена</string>
     <string name="now_you_can_share_data">Теперь вы можете поделиться данными для подключения</string>
+
+    <string name="rulesets">Наборы правил</string>
+    <string name="ruleset_global">Глобально</string>
+    <string name="ruleset_global_description">Любой запрос проксируются через заданный в профиле сервер</string>
+    <string name="ruleset_blacklist">Черный список</string>
+    <string name="ruleset_blacklist_description">Через сервер проксируются только те запросы, которые совпали с указанными ip или доменами</string>
+    <string name="ruleset_whitelist">Белый список</string>
+    <string name="ruleset_whitelist_description">Через сервер проксируются все запросы, которые не совпали с указанными ip или доменами</string>
 </resources>

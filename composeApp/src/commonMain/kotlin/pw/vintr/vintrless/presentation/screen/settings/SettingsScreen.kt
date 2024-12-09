@@ -59,7 +59,7 @@ fun SettingsScreen(
                 SettingsItemView(
                     item = settingsItem,
                 ) {
-                    // TODO: click
+                    viewModel.onSettingItemClick(settingsItem)
                 }
                 if (index != screenState.value.items.lastIndex) {
                     LineSeparator(

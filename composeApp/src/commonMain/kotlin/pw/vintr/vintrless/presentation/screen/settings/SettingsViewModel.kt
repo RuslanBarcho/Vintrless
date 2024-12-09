@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.jetbrains.compose.resources.StringResource
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
+import pw.vintr.vintrless.presentation.navigation.AppScreen
+import pw.vintr.vintrless.presentation.navigation.NavigatorType
 import vintrless.composeapp.generated.resources.*
 
 class SettingsViewModel(
@@ -15,7 +17,6 @@ class SettingsViewModel(
         items = listOf(
             SettingsItem.App(),
             SettingsItem.Vpn(),
-            SettingsItem.Proxy(),
             SettingsItem.Routing(),
             SettingsItem.About(
                 appVersion = "1.0",
@@ -24,6 +25,16 @@ class SettingsViewModel(
         ),
     ))
     val screenState = _screenState.asStateFlow()
+
+    fun onSettingItemClick(item: SettingsItem) {
+        when (item) {
+            is SettingsItem.Routing -> {
+                navigator.switchNavigatorType(NavigatorType.Root)
+                navigator.forward(AppScreen.RulesetList)
+            }
+            else -> Unit
+        }
+    }
 }
 
 data class SettingsState(
@@ -46,11 +57,6 @@ sealed class SettingsItem {
     data class Vpn(
         override val titleRes: StringResource = Res.string.settings_vpn_title,
         override val descriptionRes: StringResource = Res.string.settings_vpn_description
-    ) : SettingsItem()
-
-    data class Proxy(
-        override val titleRes: StringResource = Res.string.settings_proxy_title,
-        override val descriptionRes: StringResource = Res.string.settings_proxy_description
     ) : SettingsItem()
 
     data class Routing(

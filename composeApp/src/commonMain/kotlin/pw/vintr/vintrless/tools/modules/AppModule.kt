@@ -1,11 +1,17 @@
 package pw.vintr.vintrless.tools.modules
 
 import com.russhwolf.settings.ExperimentalSettingsApi
+import io.realm.kotlin.Realm
+import io.realm.kotlin.RealmConfiguration
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import org.koin.dsl.onClose
 import pw.vintr.vintrless.FlowSettings
 import pw.vintr.vintrless.data.profile.model.ProfileDataStorageObject
 import pw.vintr.vintrless.data.profile.repository.ProfileRepository
+import pw.vintr.vintrless.data.routing.model.ExcludeRulesetCacheObject
+import pw.vintr.vintrless.data.routing.repository.RoutingRepository
+import pw.vintr.vintrless.data.routing.source.ExcludeRulesetCacheDataSource
 import pw.vintr.vintrless.data.storage.collection.CollectionStorage
 import pw.vintr.vintrless.data.storage.collection.ProfileDataStorage
 import pw.vintr.vintrless.data.storage.preference.PreferenceStorage
@@ -13,6 +19,7 @@ import pw.vintr.vintrless.data.storage.preference.PreferenceStorageImpl
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileUrlInteractor
+import pw.vintr.vintrless.domain.routing.interactor.RoutingInteractor
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmViewModel
 import pw.vintr.vintrless.presentation.screen.home.HomeViewModel
@@ -22,24 +29,48 @@ import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormVi
 import pw.vintr.vintrless.presentation.screen.profile.list.ProfileListViewModel
 import pw.vintr.vintrless.presentation.screen.profile.scanQr.ScanProfileQRViewModel
 import pw.vintr.vintrless.presentation.screen.profile.share.ShareProfileViewModel
+import pw.vintr.vintrless.presentation.screen.routing.rulesetList.RulesetListViewModel
 import pw.vintr.vintrless.presentation.screen.settings.SettingsViewModel
 import pw.vintr.vintrless.tools.extensions.interactor
+
+private const val REALM_SCHEMA_VERSION = 1L
 
 @OptIn(ExperimentalSettingsApi::class)
 val appModule = module {
     single { AppNavigator() }
 
+    // Realm
+    single {
+        val config = RealmConfiguration.Builder(
+            schema = setOf(
+                ExcludeRulesetCacheObject::class,
+            )
+        )
+            .schemaVersion(REALM_SCHEMA_VERSION)
+            .deleteRealmIfMigrationNeeded()
+            .build()
+
+        Realm.open(config)
+    } onClose { realm ->
+        realm?.close()
+    }
+
     // Data
     val flowSettings = FlowSettings()
 
     single<PreferenceStorage> { PreferenceStorageImpl(flowSettings) }
+
     single<CollectionStorage<ProfileDataStorageObject>> { ProfileDataStorage(flowSettings) }
     single { ProfileRepository(get(), get()) }
+
+    single { ExcludeRulesetCacheDataSource(get()) }
+    single { RoutingRepository(get(), get()) }
 
     // Domain
     interactor { AlertInteractor() }
     interactor { ProfileInteractor(get()) }
     interactor { ProfileUrlInteractor() }
+    interactor { RoutingInteractor(get()) }
 
     // Presentation
     viewModel { MainViewModel(get()) }
@@ -66,4 +97,5 @@ val appModule = module {
             alertInteractor = get(),
         )
     }
+    viewModel { RulesetListViewModel(get(), get()) }
 }

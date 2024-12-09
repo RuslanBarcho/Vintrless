@@ -14,8 +14,6 @@
     <string name="settings_app_description">UI and connect on boot</string>
     <string name="settings_vpn_title">VPN settings</string>
     <string name="settings_vpn_description">Connection and package analysis</string>
-    <string name="settings_proxy_title">Proxy mode</string>
-    <string name="settings_proxy_description">Globally or selectively</string>
     <string name="settings_routing_title">Routing</string>
     <string name="settings_routing_description">Routing rules</string>
     <string name="settings_about_title">About app</string>
@@ -84,4 +82,12 @@
 
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="now_you_can_share_data">Now you can share connection data</string>
+
+    <string name="rulesets">Rulesets</string>
+    <string name="ruleset_global">Global</string>
+    <string name="ruleset_global_description">Any request is proxied through the server specified in the profile</string>
+    <string name="ruleset_blacklist">Blacklist</string>
+    <string name="ruleset_blacklist_description">Only those requests that match the specified ip or domains are proxied through the server</string>
+    <string name="ruleset_whitelist">Whitelist</string>
+    <string name="ruleset_whitelist_description">All requests that do not match the specified ip or domains are proxied through the server</string>
 </resources>

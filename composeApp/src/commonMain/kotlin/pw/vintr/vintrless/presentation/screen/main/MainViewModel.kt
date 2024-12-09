@@ -30,7 +30,7 @@ sealed class Tab(
         rootScreen = AppScreen.Home
     )
     data object Settings : Tab(
-        route = "setting",
+        route = "settings",
         iconRes = Res.drawable.ic_settings,
         navigatorType = TabNavigator.Settings,
         rootScreen = AppScreen.Settings
@@ -64,5 +64,17 @@ class MainViewModel(
         tabs
             .find { it.route == route }
             ?.let { setNavigatorType(it.navigatorType) }
+    }
+
+    /**
+     * Simplified navigation section, waiting for fix:
+     * https://youtrack.jetbrains.com/issue/CMP-6691/Compose-navigation-restore-state-not-working
+     * https://youtrack.jetbrains.com/issue/CMP-6689/iOS-Navigation-Crash-Nested-Graphs-popBackStack
+     */
+    private val _selectedTab = MutableStateFlow<Tab>(Tab.Home)
+    val selectedTab = _selectedTab.asStateFlow()
+
+    fun setSelectedTab(tab: Tab) {
+        _selectedTab.value = tab
     }
 }

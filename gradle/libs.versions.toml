@@ -20,6 +20,7 @@ kotlin = "2.0.21"
 kotlinSerialization = "2.0.20"
 kotlinx-coroutines = "1.9.0"
 kotlinxSerializationJson = "1.7.3"
+libraryBase = "2.3.0"
 lifecycleViewmodelCompose = "2.8.2"
 logging = "1.5.0"
 multiplatformSettings = "1.2.0"
@@ -50,6 +51,7 @@ androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", nam
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+library-base = { module = "io.realm.kotlin:library-base", version.ref = "libraryBase" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 logging = { module = "org.lighthousegames:logging", version.ref = "logging" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }

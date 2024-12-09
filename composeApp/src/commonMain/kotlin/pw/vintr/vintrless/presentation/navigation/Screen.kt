@@ -41,4 +41,7 @@ sealed class AppScreen : Screen {
 
     @Serializable
     data object ConfirmDeleteProfile : AppScreen()
+
+    @Serializable
+    data object RulesetList : AppScreen()
 }

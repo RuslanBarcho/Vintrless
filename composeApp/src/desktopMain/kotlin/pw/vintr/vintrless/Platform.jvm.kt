@@ -8,7 +8,9 @@ import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import org.jetbrains.skia.FilterBlurMode
 import org.jetbrains.skia.MaskFilter
+import org.lighthousegames.logging.logging
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
+import pw.vintr.vintrless.platform.PlatformType
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
 import pw.vintr.vintrless.v2ray.interactor.JvmV2RayInteractor
 
@@ -28,6 +30,8 @@ actual fun NativePaint.setMaskFilter(blurRadius: Float) {
 @OptIn(ExperimentalSettingsApi::class)
 actual fun FlowSettings() = PreferencesSettings.Factory().create().toFlowSettings()
 
-actual fun V2rayPlatformInteractor(): V2RayPlatformInteractor = JvmV2RayInteractor
+actual fun V2RayPlatformInteractor(): V2RayPlatformInteractor = JvmV2RayInteractor
 
 actual fun cameraAvailable() = false
+
+actual fun platformType() = PlatformType.JVM

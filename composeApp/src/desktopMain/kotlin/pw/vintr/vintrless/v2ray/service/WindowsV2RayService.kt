@@ -33,6 +33,7 @@ object WindowsV2RayService {
 
             inheritIO(tunProc.inputStream, System.out)
             inheritIO(tunProc.errorStream, System.err)
+            tunProc.addShutdownHook()
 
             runningProcMap[ProcType.TUN] = tunProc
 
@@ -42,6 +43,7 @@ object WindowsV2RayService {
 
             inheritIO(xrayProc.inputStream, System.out)
             inheritIO(xrayProc.errorStream, System.err)
+            xrayProc.addShutdownHook()
 
             runningProcMap[ProcType.XRAY] = xrayProc
 
@@ -93,5 +95,10 @@ object WindowsV2RayService {
         destroy()
         inputStream?.close()
         outputStream?.close()
+    }
+
+    private fun Process.addShutdownHook() {
+        val shutdownRunnable = Runnable { close() }
+        Runtime.getRuntime().addShutdownHook(Thread(shutdownRunnable))
     }
 }

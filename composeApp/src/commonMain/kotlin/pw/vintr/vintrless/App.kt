@@ -28,15 +28,18 @@ import org.koin.compose.koinInject
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.alert.model.AlertModel.Type.*
 import pw.vintr.vintrless.domain.alert.model.AlertState
+import pw.vintr.vintrless.platform.PlatformType
 import pw.vintr.vintrless.presentation.navigation.*
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmDialog
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmDialogData
+import pw.vintr.vintrless.presentation.screen.main.SimplifiedNavigationMainScreen
 import pw.vintr.vintrless.presentation.screen.main.MainScreen
 import pw.vintr.vintrless.presentation.screen.profile.createNew.CreateNewProfileDialog
 import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormScreen
 import pw.vintr.vintrless.presentation.screen.profile.list.ProfileListScreen
 import pw.vintr.vintrless.presentation.screen.profile.scanQr.ScanProfileQrScreen
 import pw.vintr.vintrless.presentation.screen.profile.share.ShareProfileDialog
+import pw.vintr.vintrless.presentation.screen.routing.rulesetList.RulesetListScreen
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
 import pw.vintr.vintrless.presentation.theme.VintrlessTheme
 import pw.vintr.vintrless.presentation.uikit.alert.Alert
@@ -142,7 +145,15 @@ fun Navigation(
         exitTransition = { fadeOut(animationSpec = tween(TRANSITION_DURATION)) },
     ) {
         composable<AppScreen.Main> {
-            MainScreen()
+            when (platformType()) {
+                PlatformType.ANDROID -> {
+                    MainScreen()
+                }
+                PlatformType.JVM,
+                PlatformType.IOS -> {
+                    SimplifiedNavigationMainScreen()
+                }
+            }
         }
 
         extendedDialog<AppScreen.CreateNewProfile>(
@@ -189,6 +200,8 @@ fun Navigation(
                 )
             )
         }
+
+        composable<AppScreen.RulesetList> { RulesetListScreen() }
     }
 }
 

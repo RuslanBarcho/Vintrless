@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+
+    id("io.realm.kotlin") version "2.3.0"
     id("ir.mahozad.compose-exe-manifest") version "1.0.0"
 }
 
@@ -91,6 +93,9 @@ kotlin {
 
             // QR for multiplatform
             implementation(libs.qr.kit)
+
+            // Realm
+            implementation(libs.library.base)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
