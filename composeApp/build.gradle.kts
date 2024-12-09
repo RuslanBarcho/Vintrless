@@ -84,6 +84,10 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.no.arg)
             implementation(libs.multiplatform.settings.coroutines)
+            implementation(libs.multiplatform.settings.datastore)
+
+            implementation(libs.androidx.datastore)
+            implementation(libs.androidx.datastore.preferences.core)
 
             // Logging
             api(libs.logging)
@@ -213,6 +217,7 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "pw.vintr.vintrless"
             packageVersion = "1.0.0"
+            modules("jdk.unsupported")
 
             appResourcesRootDir = rootDir.resolve("desktopLibs")
 
