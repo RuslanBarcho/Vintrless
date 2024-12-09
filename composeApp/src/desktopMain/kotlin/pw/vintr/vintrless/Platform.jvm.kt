@@ -14,6 +14,7 @@ import org.jetbrains.skia.MaskFilter
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
 import pw.vintr.vintrless.platform.PlatformType
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
+import pw.vintr.vintrless.tools.PathProvider
 import pw.vintr.vintrless.v2ray.interactor.JvmV2RayInteractor
 
 class DesktopBottomSheetNavigator(sheetState: ModalBottomSheetState) : BottomSheetNavigator(sheetState)
@@ -29,12 +30,10 @@ actual fun NativePaint.setMaskFilter(blurRadius: Float) {
     this.maskFilter = MaskFilter.makeBlur(FilterBlurMode.NORMAL, blurRadius / 2, true)
 }
 
-internal const val dataStoreFileName = "vintrless.preferences_pb"
-
 @OptIn(ExperimentalSettingsApi::class, ExperimentalSettingsImplementation::class)
 actual fun FlowSettings(): FlowSettings {
     val dataStore = PreferenceDataStoreFactory.createWithPath(
-        produceFile = { "${System.getProperty("user.dir")}/$dataStoreFileName".toPath() }
+        produceFile = { PathProvider.dataStoreFilePath.toPath() }
     )
     return DataStoreSettings(dataStore)
 }

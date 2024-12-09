@@ -13,27 +13,25 @@ class RoutingInteractor(
         val global = Ruleset.Global
 
         // Default blacklist
-        val savedBlacklistRuleset = routingRepository
-            .getExcludeRuleset(Ruleset.Exclude.Type.BLACKLIST.id)
-        val blacklistRuleset = Ruleset.Exclude(
-            type = Ruleset.Exclude.Type.BLACKLIST,
-            ips = savedBlacklistRuleset?.ips?.toList().orEmpty(),
-            domains = savedBlacklistRuleset?.domains?.toList().orEmpty()
-        )
+        val blacklistRuleset = getExcludeRuleset(Ruleset.Exclude.Type.BLACKLIST)
 
         // Default whitelist
-        val savedWhitelistRuleset = routingRepository
-            .getExcludeRuleset(Ruleset.Exclude.Type.WHITELIST.id)
-        val whitelistRuleset = Ruleset.Exclude(
-            type = Ruleset.Exclude.Type.WHITELIST,
-            ips = savedWhitelistRuleset?.ips?.toList().orEmpty(),
-            domains = savedWhitelistRuleset?.domains?.toList().orEmpty()
-        )
+        val whitelistRuleset = getExcludeRuleset(Ruleset.Exclude.Type.WHITELIST)
 
         return listOf(
             global,
             blacklistRuleset,
             whitelistRuleset
+        )
+    }
+
+    suspend fun getExcludeRuleset(type: Ruleset.Exclude.Type): Ruleset.Exclude {
+        val savedWhitelistRuleset = routingRepository
+            .getExcludeRuleset(type.id)
+        return Ruleset.Exclude(
+            type = type,
+            ips = savedWhitelistRuleset?.ips?.toList().orEmpty(),
+            domains = savedWhitelistRuleset?.domains?.toList().orEmpty()
         )
     }
 
@@ -44,6 +42,7 @@ class RoutingInteractor(
     suspend fun getSelectedRulesetId(): String {
         return routingRepository.getSelectedRulesetId() ?: Ruleset.Global.id
     }
+
 
     suspend fun saveExcludeRuleset(ruleset: Ruleset.Exclude) {
         routingRepository.saveExcludeRuleset(ruleset.toCacheObject())

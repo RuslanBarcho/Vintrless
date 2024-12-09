@@ -8,6 +8,7 @@ import pw.vintr.vintrless.domain.routing.model.Ruleset
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
+import pw.vintr.vintrless.presentation.navigation.AppScreen
 import pw.vintr.vintrless.tools.extensions.updateLoaded
 
 class RulesetListViewModel(
@@ -42,7 +43,12 @@ class RulesetListViewModel(
     }
 
     fun openEditRuleset(ruleset: Ruleset) {
-        // TODO: open
+        when (ruleset) {
+            is Ruleset.Exclude -> {
+                navigator.forward(AppScreen.EditAddressRecords(ruleset.id))
+            }
+            else -> Unit
+        }
     }
 
     fun onDeleteClick(ruleset: Ruleset) {

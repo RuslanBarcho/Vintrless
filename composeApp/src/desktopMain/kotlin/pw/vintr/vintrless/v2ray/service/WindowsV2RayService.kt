@@ -1,6 +1,7 @@
 package pw.vintr.vintrless.v2ray.service
 
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
+import pw.vintr.vintrless.tools.PathProvider
 import pw.vintr.vintrless.v2ray.interactor.JvmV2RayInteractor
 import java.io.BufferedWriter
 import java.io.File
@@ -19,7 +20,7 @@ object WindowsV2RayService {
 
     private val runningProcMap: MutableMap<ProcType, Process> = mutableMapOf()
 
-    private val resourcesDir = File(System.getProperty("compose.application.resources.dir"))
+    private val resourcesDir = File(PathProvider.resourcesPath)
 
     fun startService(config: V2RayEncodedConfig) {
         JvmV2RayInteractor.postConnecting()
@@ -57,7 +58,7 @@ object WindowsV2RayService {
     }
 
     private fun saveXrayConfig(config: V2RayEncodedConfig) {
-        val xrayConfigFile = File("${resourcesDir.absolutePath}\\config_xray.json")
+        val xrayConfigFile = File("${PathProvider.resourcesPath}\\config_xray.json")
 
         // Remove current config if exist
         if (xrayConfigFile.exists()) {

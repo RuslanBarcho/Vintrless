@@ -90,4 +90,8 @@
     <string name="ruleset_blacklist_description">Через сервер проксируются только те запросы, которые совпали с указанными ip или доменами</string>
     <string name="ruleset_whitelist">Белый список</string>
     <string name="ruleset_whitelist_description">Через сервер проксируются все запросы, которые не совпали с указанными ip или доменами</string>
+
+    <string name="address_record_type_ip">IP</string>
+    <string name="address_record_type_domain">Домены</string>
+    <string name="address_records_empty">Добавьте адресные записи, чтобы фильтровать трафик</string>
 </resources>

@@ -39,6 +39,7 @@ import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormSc
 import pw.vintr.vintrless.presentation.screen.profile.list.ProfileListScreen
 import pw.vintr.vintrless.presentation.screen.profile.scanQr.ScanProfileQrScreen
 import pw.vintr.vintrless.presentation.screen.profile.share.ShareProfileDialog
+import pw.vintr.vintrless.presentation.screen.routing.editAddressRecords.EditAddressRecordsScreen
 import pw.vintr.vintrless.presentation.screen.routing.rulesetList.RulesetListScreen
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
 import pw.vintr.vintrless.presentation.theme.VintrlessTheme
@@ -202,6 +203,14 @@ fun Navigation(
         }
 
         composable<AppScreen.RulesetList> { RulesetListScreen() }
+
+        composable<AppScreen.EditAddressRecords> {
+            val route: AppScreen.EditAddressRecords = it.toRoute()
+
+            EditAddressRecordsScreen(
+                rulesetId = route.rulesetId,
+            )
+        }
     }
 }
 

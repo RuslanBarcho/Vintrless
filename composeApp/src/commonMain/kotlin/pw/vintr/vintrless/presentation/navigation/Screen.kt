@@ -44,4 +44,9 @@ sealed class AppScreen : Screen {
 
     @Serializable
     data object RulesetList : AppScreen()
+
+    @Serializable
+    data class EditAddressRecords(
+        val rulesetId: String,
+    ) : AppScreen()
 }

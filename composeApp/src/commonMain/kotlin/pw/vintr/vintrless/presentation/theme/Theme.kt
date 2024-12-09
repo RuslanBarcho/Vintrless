@@ -57,6 +57,11 @@ data class VintrlessColors(
     // Alert
     val negative: Color = Color.Unspecified,
     val positive: Color = Color.Unspecified,
+    // Segment Control
+    val segmentBackground: Color = Color.Unspecified,
+    val segmentStroke: Color = Color.Unspecified,
+    val segmentIndicatorStroke: Color = Color.Unspecified,
+    val segmentIndicatorBackground: Color = Color.Unspecified,
 )
 
 val LocalVintrColors = staticCompositionLocalOf { VintrlessColors() }
@@ -107,7 +112,12 @@ val darkVintrColors = VintrlessColors(
     radioSelected = AppColor.White,
     // Alert
     negative = AppColor.Red3,
-    positive = AppColor.Green0
+    positive = AppColor.Green0,
+    // Segment Control
+    segmentBackground = AppColor.ChineseBlack,
+    segmentStroke = AppColor.MineShaft,
+    segmentIndicatorStroke = AppColor.BrightTurquoise,
+    segmentIndicatorBackground = AppColor.DeepCerulean,
 )
 
 val lightVintrColors = VintrlessColors(
@@ -156,7 +166,12 @@ val lightVintrColors = VintrlessColors(
     radioSelected = AppColor.ShojinBlue,
     // Alert
     negative = AppColor.Red3,
-    positive = AppColor.Green0
+    positive = AppColor.Green0,
+    // Segment Control
+    segmentBackground = AppColor.AthensGray,
+    segmentStroke = AppColor.GraySuit,
+    segmentIndicatorStroke = AppColor.ShojinBlue,
+    segmentIndicatorBackground = AppColor.FrenchPass,
 )
 
 private val darkColorScheme = darkColorScheme(

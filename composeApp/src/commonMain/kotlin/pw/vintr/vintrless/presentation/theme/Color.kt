@@ -31,6 +31,8 @@ object AppColor {
     val ShojinBlue = Color(0xFF0CB1DF)
     val Spray = Color(0xFF80D5ED)
     val ChargedBlue = Color(0xFF0CACD8)
+    val DeepCerulean = Color(0xFF0088AD)
+    val FrenchPass = Color(0xFFBCF0FF)
 
     val Red3 = Color(0xFFAA213D)
     val Green0 = Color(0xFF147830)

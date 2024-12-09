@@ -90,4 +90,8 @@
     <string name="ruleset_blacklist_description">Only those requests that match the specified ip or domains are proxied through the server</string>
     <string name="ruleset_whitelist">Whitelist</string>
     <string name="ruleset_whitelist_description">All requests that do not match the specified ip or domains are proxied through the server</string>
+
+    <string name="address_record_type_ip">IP</string>
+    <string name="address_record_type_domain">Domains</string>
+    <string name="address_records_empty">Add address records to filter traffic</string>
 </resources>

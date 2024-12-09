@@ -29,6 +29,7 @@ import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormVi
 import pw.vintr.vintrless.presentation.screen.profile.list.ProfileListViewModel
 import pw.vintr.vintrless.presentation.screen.profile.scanQr.ScanProfileQRViewModel
 import pw.vintr.vintrless.presentation.screen.profile.share.ShareProfileViewModel
+import pw.vintr.vintrless.presentation.screen.routing.editAddressRecords.EditAddressRecordsViewModel
 import pw.vintr.vintrless.presentation.screen.routing.rulesetList.RulesetListViewModel
 import pw.vintr.vintrless.presentation.screen.settings.SettingsViewModel
 import pw.vintr.vintrless.tools.extensions.interactor
@@ -98,4 +99,11 @@ val appModule = module {
         )
     }
     viewModel { RulesetListViewModel(get(), get()) }
+    viewModel { params ->
+        EditAddressRecordsViewModel(
+            navigator = get(),
+            rulesetId = params.get(),
+            routingInteractor = get(),
+        )
+    }
 }
