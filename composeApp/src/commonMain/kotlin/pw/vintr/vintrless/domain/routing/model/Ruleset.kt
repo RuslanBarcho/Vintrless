@@ -7,11 +7,15 @@ sealed class Ruleset {
 
     abstract val id: String
 
+    abstract val isEmpty: Boolean
+
     /**
      * Default ruleset type. Means "All requests go to proxy"
      */
     data object Global : Ruleset() {
         override val id: String = "default_global"
+
+        override val isEmpty: Boolean = false
     }
 
     /**
@@ -35,6 +39,8 @@ sealed class Ruleset {
 
         override val id: String = type.id
 
+        override val isEmpty: Boolean = ips.isEmpty() && domains.isEmpty()
+
         fun toCacheObject() = ExcludeRulesetCacheObject(
             id = id,
             ips = ips.toRealmList(),
@@ -49,5 +55,8 @@ sealed class Ruleset {
         override val id: String,
         val name: String,
         val description: String,
-    ) : Ruleset()
+    ) : Ruleset() {
+
+        override val isEmpty: Boolean = false
+    }
 }

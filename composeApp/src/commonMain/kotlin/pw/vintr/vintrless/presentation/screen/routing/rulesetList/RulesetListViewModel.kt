@@ -9,6 +9,8 @@ import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
 import pw.vintr.vintrless.presentation.navigation.AppScreen
+import pw.vintr.vintrless.presentation.navigation.NavigatorType
+import pw.vintr.vintrless.presentation.screen.routing.addressRecords.editRecords.EditAddressRecordsResult
 import pw.vintr.vintrless.tools.extensions.updateLoaded
 
 class RulesetListViewModel(
@@ -16,7 +18,7 @@ class RulesetListViewModel(
     private val routingInteractor: RoutingInteractor,
 ) : BaseViewModel(navigator) {
 
-    private val _screenState = MutableStateFlow<BaseScreenState<ProfileListState>>(BaseScreenState.Loading())
+    private val _screenState = MutableStateFlow<BaseScreenState<RulesetListState>>(BaseScreenState.Loading())
     val screenState = _screenState.asStateFlow()
 
     init {
@@ -24,30 +26,61 @@ class RulesetListViewModel(
     }
 
     private fun loadData() {
-        _screenState.loadWithStateHandling {
-            val rulesets = routingInteractor.getRulesets()
-            val selectedRulesetId = routingInteractor.getSelectedRulesetId()
+        _screenState.loadWithStateHandling { loadRulesetState() }
+    }
 
-            ProfileListState(
-                rulesets = rulesets,
-                selectedRulesetId = selectedRulesetId,
-            )
-        }
+    private suspend fun loadRulesetState(): RulesetListState {
+        val rulesets = routingInteractor.getRulesets()
+        val selectedRulesetId = routingInteractor.getSelectedRulesetId()
+
+        return RulesetListState(
+            rulesets = rulesets,
+            selectedRulesetId = selectedRulesetId,
+        )
     }
 
     fun selectRuleset(ruleset: Ruleset) {
-        launch {
-            routingInteractor.setSelectedRulesetId(ruleset.id)
-            _screenState.updateLoaded { it.copy(selectedRulesetId = ruleset.id) }
+        if (ruleset.isEmpty) {
+            openEditRuleset(ruleset)
+        } else {
+            launch {
+                routingInteractor.setSelectedRulesetId(ruleset.id)
+                _screenState.updateLoaded { it.copy(selectedRulesetId = ruleset.id) }
+            }
         }
     }
 
     fun openEditRuleset(ruleset: Ruleset) {
         when (ruleset) {
             is Ruleset.Exclude -> {
-                navigator.forward(AppScreen.EditAddressRecords(ruleset.id))
+                openEditExcludeRuleset(ruleset)
             }
             else -> Unit
+        }
+    }
+
+    private fun openEditExcludeRuleset(ruleset: Ruleset.Exclude) {
+        handleResult(EditAddressRecordsResult.KEY) {
+            navigator.forwardWithResult<EditAddressRecordsResult>(
+                AppScreen.EditAddressRecords(ruleset.id),
+                NavigatorType.Root,
+                EditAddressRecordsResult.KEY
+            ) { result ->
+                handleEditExcludeRulesetResult(
+                    ruleset = ruleset.copy(
+                        ips = result.ips,
+                        domains = result.domains,
+                    )
+                )
+            }
+        }
+    }
+
+    private fun handleEditExcludeRulesetResult(ruleset: Ruleset.Exclude) {
+        // Save and refresh screen data
+        launch {
+            routingInteractor.saveExcludeRuleset(ruleset)
+            _screenState.value = BaseScreenState.Loaded(loadRulesetState())
         }
     }
 
@@ -56,7 +89,7 @@ class RulesetListViewModel(
     }
 }
 
-data class ProfileListState(
+data class RulesetListState(
     val rulesets: List<Ruleset>,
     val selectedRulesetId: String,
 )

@@ -32,6 +32,7 @@ import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.theme.Gilroy18
 import pw.vintr.vintrless.presentation.theme.RubikMedium16
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
+import pw.vintr.vintrless.presentation.uikit.button.ButtonRegular
 import pw.vintr.vintrless.presentation.uikit.button.ButtonSecondary
 import pw.vintr.vintrless.presentation.uikit.button.ButtonSecondarySize
 import pw.vintr.vintrless.presentation.uikit.container.RestrictedWidthLayout
@@ -141,6 +142,16 @@ fun EditAddressRecordsScreen(
                             )
                         }
                     )
+
+                    // Save button
+                    ButtonRegular(
+                        modifier = Modifier
+                            .padding(start = 28.dp, end = 28.dp, top = 12.dp, bottom = 20.dp),
+                        text = stringResource(Res.string.common_save),
+                        enabled = state.payload.hasChanges,
+                    ) {
+                        viewModel.sendEditResult()
+                    }
                 }
             }
         }

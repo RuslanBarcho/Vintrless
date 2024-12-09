@@ -6,6 +6,6 @@ data class AddAddressRecordsResult(
 ) {
 
     companion object {
-        const val KEY = "album-action-result"
+        const val KEY = "add-address-records-result"
     }
 }

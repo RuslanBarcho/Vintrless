@@ -23,9 +23,7 @@ class AddAddressRecordsViewModel(
     val screenState = _screenState.asStateFlow()
 
     fun pickFile() {
-        launch(createExceptionHandler {
-
-        }) {
+        launch(createExceptionHandler()) {
             val file = FileKit.pickFile(
                 type = PickerType.File(extensions = listOf(TXT_EXTENSION)),
                 mode = PickerMode.Single,
@@ -34,18 +32,32 @@ class AddAddressRecordsViewModel(
             val items = bytes.decodeToString()
                 .split(String.Comma)
 
-            navigator.back(
-                resultKey = AddAddressRecordsResult.KEY,
-                result = AddAddressRecordsResult(
-                    records = items,
-                    replaceCurrent = _screenState.value.replaceCurrent
-                )
-            )
+            closeAndSendResult(items)
         }
+    }
+
+    fun parseFromClipboard(clipboardContent: String) {
+        if (clipboardContent.isEmpty()) { return }
+        val items = clipboardContent
+            .split(String.Comma)
+
+        closeAndSendResult(items)
     }
 
     fun setReplaceCurrent(value: Boolean) {
         _screenState.update { it.copy(replaceCurrent = value) }
+    }
+
+    private fun closeAndSendResult(items: List<String>) {
+        if (items.isEmpty()) { return }
+
+        navigator.back(
+            resultKey = AddAddressRecordsResult.KEY,
+            result = AddAddressRecordsResult(
+                records = items,
+                replaceCurrent = _screenState.value.replaceCurrent
+            )
+        )
     }
 }
 

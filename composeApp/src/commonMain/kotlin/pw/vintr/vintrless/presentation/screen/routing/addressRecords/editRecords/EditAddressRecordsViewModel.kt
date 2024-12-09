@@ -13,6 +13,7 @@ import pw.vintr.vintrless.presentation.navigation.NavigatorType
 import pw.vintr.vintrless.presentation.screen.routing.addressRecords.addRecords.AddAddressRecordsResult
 import pw.vintr.vintrless.tools.extensions.updateLoaded
 import pw.vintr.vintrless.tools.extensions.withLoaded
+import pw.vintr.vintrless.tools.network.IPTools
 
 class EditAddressRecordsViewModel(
     navigator: AppNavigator,
@@ -76,10 +77,17 @@ class EditAddressRecordsViewModel(
         _screenState.updateLoaded { state ->
             when (type) {
                 RuleAddressRecordType.IP -> {
-                    state.copy(ips = if (replaceCurrent) records else state.ips + records)
+                    val filteredIps = records.filter { IPTools.isIpAddress(it) }
+                    state.copy(
+                        ips = if (replaceCurrent) filteredIps else state.ips + filteredIps,
+                        hasChanges = true,
+                    )
                 }
                 RuleAddressRecordType.DOMAIN -> {
-                    state.copy(domains = if (replaceCurrent) records else state.domains + records)
+                    state.copy(
+                        domains = if (replaceCurrent) records else state.domains + records,
+                        hasChanges = true,
+                    )
                 }
             }
         }
@@ -93,12 +101,30 @@ class EditAddressRecordsViewModel(
         _screenState.updateLoaded {
             when (itemType) {
                 RuleAddressRecordType.IP -> {
-                    it.copy(ips = it.ips.toMutableList().apply { removeAt(itemIndex) })
+                    it.copy(
+                        ips = it.ips.toMutableList().apply { removeAt(itemIndex) },
+                        hasChanges = true,
+                    )
                 }
                 RuleAddressRecordType.DOMAIN -> {
-                    it.copy(domains = it.domains.toMutableList().apply { removeAt(itemIndex) })
+                    it.copy(
+                        domains = it.domains.toMutableList().apply { removeAt(itemIndex) },
+                        hasChanges = true,
+                    )
                 }
             }
+        }
+    }
+
+    fun sendEditResult() {
+        _screenState.withLoaded {
+            navigator.back(
+                resultKey = EditAddressRecordsResult.KEY,
+                result = EditAddressRecordsResult(
+                    ips = it.ips,
+                    domains = it.domains
+                )
+            )
         }
     }
 }
@@ -108,4 +134,5 @@ data class EditAddressRecordsState(
     val ips: List<String>,
     val domains: List<String>,
     val selectedAddressRecordType: RuleAddressRecordType,
+    val hasChanges: Boolean = false,
 )

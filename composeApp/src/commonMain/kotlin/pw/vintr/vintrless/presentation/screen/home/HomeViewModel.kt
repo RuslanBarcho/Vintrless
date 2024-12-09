@@ -51,6 +51,8 @@ class HomeViewModel(
                 v2rayInteractor.startV2ray(
                     config = V2RayConfigBuildUseCase(selectedProfile)
                 )
+            } ?: run {
+                openCreateNewProfile()
             }
         }
     }
