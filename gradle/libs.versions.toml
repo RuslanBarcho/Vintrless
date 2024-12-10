@@ -21,6 +21,7 @@ koinCompose = "4.0.0"
 kotlin = "2.0.21"
 kotlinSerialization = "2.0.20"
 kotlinx-coroutines = "1.9.0"
+kotlinxDatetime = "0.6.1"
 kotlinxSerializationJson = "1.7.3"
 libraryBase = "2.3.0"
 lifecycleViewmodelCompose = "2.8.2"
@@ -56,6 +57,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 library-base = { module = "io.realm.kotlin:library-base", version.ref = "libraryBase" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }

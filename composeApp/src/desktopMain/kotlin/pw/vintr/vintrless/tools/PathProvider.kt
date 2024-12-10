@@ -8,5 +8,5 @@ internal object PathProvider {
 
     val dataStoreFilePath = "$applicationPath/preferences/vintrless.preferences_pb"
 
-    val databaseFilePath = "$applicationPath/db/vintrless.preferences_pb"
+    val databaseDirectoryPath = "$applicationPath/db"
 }

@@ -95,6 +95,9 @@ class MainActivity : ComponentActivity() {
                     is AndroidV2RayInteractor.Event.StartV2RayViaActivity -> {
                         startV2ray(event.config)
                     }
+                    is AndroidV2RayInteractor.Event.RestartV2RayViaActivity -> {
+                        restartV2Ray(event.config)
+                    }
                     is AndroidV2RayInteractor.Event.StopV2RayViaActivity -> {
                         stopV2Ray()
                     }
@@ -115,6 +118,14 @@ class MainActivity : ComponentActivity() {
         } else {
             V2RayServiceController.startV2rayService(context = applicationContext)
         }
+    }
+
+    private fun restartV2Ray(config: V2RayEncodedConfig) {
+        // Save config
+        V2RayConfigStorage.saveConfig(applicationContext, config)
+
+        // Restart service
+        BroadcastController.sendServiceBroadcast(this, BroadcastController.MSG_STATE_RESTART)
     }
 
     private fun stopV2Ray() {

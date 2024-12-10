@@ -8,7 +8,11 @@ interface V2RayPlatformInteractor {
 
     val connectionState: Flow<ConnectionState>
 
+    val currentState: ConnectionState
+
     fun startV2ray(config: V2RayEncodedConfig)
+
+    fun restartV2Ray(config: V2RayEncodedConfig)
 
     fun stopV2ray()
 }

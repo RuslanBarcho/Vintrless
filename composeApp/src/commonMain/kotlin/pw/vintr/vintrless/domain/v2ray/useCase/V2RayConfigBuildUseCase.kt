@@ -2,15 +2,17 @@ package pw.vintr.vintrless.domain.v2ray.useCase
 
 import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.domain.profile.model.ProfileField
+import pw.vintr.vintrless.domain.routing.model.Ruleset
 import pw.vintr.vintrless.domain.v2ray.V2RayConfigDefaults
 import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.domain.v2ray.model.V2RayConfig
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.VlessOutboundBuildUseCase
+import pw.vintr.vintrless.domain.v2ray.useCase.routing.V2RayRoutingBuildUseCase
 
 object V2RayConfigBuildUseCase {
 
-    operator fun invoke(profile: ProfileData): V2RayEncodedConfig {
+    operator fun invoke(profile: ProfileData, ruleset: Ruleset = Ruleset.Global): V2RayEncodedConfig {
         val address = profile.getField(ProfileField.IP)
         val port = profile.getField(ProfileField.Port)
 
@@ -22,7 +24,7 @@ object V2RayConfigBuildUseCase {
             ),
             outbounds = getOutbounds(profile),
             dns = getDns(),
-            routing = getRouting(),
+            routing = V2RayRoutingBuildUseCase(ruleset),
         )
 
         return V2RayEncodedConfig(
@@ -152,101 +154,6 @@ object V2RayConfigBuildUseCase {
         return V2RayConfig.DnsBean(
             hosts = hosts,
             servers = servers,
-        )
-    }
-
-    private fun getRouting(): V2RayConfig.RoutingBean {
-        return V2RayConfig.RoutingBean(
-            domainStrategy = "AsIs",
-            rules = arrayListOf(
-                V2RayConfig.RoutingBean.RulesBean(
-                    ip = arrayListOf("1.1.1.1"),
-                    outboundTag = "proxy",
-                    port = "53",
-                    type = "field"
-                ),
-                V2RayConfig.RoutingBean.RulesBean(
-                    ip = arrayListOf("223.5.5.5"),
-                    outboundTag = "direct",
-                    port = "53",
-                    type = "field"
-                ),
-                V2RayConfig.RoutingBean.RulesBean(
-                    domain = arrayListOf(
-                        "domain:googleapis.cn",
-                        "domain:gstatic.com"
-                    ),
-                    outboundTag = "proxy",
-                    type = "field"
-                ),
-                V2RayConfig.RoutingBean.RulesBean(
-                    network = "udp",
-                    outboundTag = "block",
-                    port = "443",
-                    type = "field"
-                ),
-                V2RayConfig.RoutingBean.RulesBean(
-                    domain = arrayListOf(
-                        "geosite:category-ads-all"
-                    ),
-                    outboundTag = "block",
-                    type = "field"
-                ),
-                V2RayConfig.RoutingBean.RulesBean(
-                    ip = arrayListOf("geoip:private"),
-                    outboundTag = "direct",
-                    type = "field"
-                ),
-                V2RayConfig.RoutingBean.RulesBean(
-                    domain = arrayListOf("geosite:private"),
-                    outboundTag = "direct",
-                    type = "field"
-                ),
-                V2RayConfig.RoutingBean.RulesBean(
-                    domain = arrayListOf(
-                        "domain:dns.alidns.com",
-                        "domain:doh.pub",
-                        "domain:dot.pub",
-                        "domain:doh.360.cn",
-                        "domain:dot.360.cn",
-                        "geosite:cn",
-                        "geosite:geolocation-cn"
-                    ),
-                    outboundTag = "direct",
-                    type = "field"
-                ),
-                V2RayConfig.RoutingBean.RulesBean(
-                    domain = arrayListOf(
-                        "223.5.5.5/32",
-                        "223.6.6.6/32",
-                        "2400:3200::1/128",
-                        "2400:3200:baba::1/128",
-                        "119.29.29.29/32",
-                        "1.12.12.12/32",
-                        "120.53.53.53/32",
-                        "2402:4e00::/128",
-                        "2402:4e00:1::/128",
-                        "180.76.76.76/32",
-                        "2400:da00::6666/128",
-                        "114.114.114.114/32",
-                        "114.114.115.115/32",
-                        "180.184.1.1/32",
-                        "180.184.2.2/32",
-                        "101.226.4.6/32",
-                        "218.30.118.6/32",
-                        "123.125.81.6/32",
-                        "140.207.198.6/32",
-                        "geoip:cn"
-                    ),
-                    outboundTag = "direct",
-                    type = "field"
-                ),
-                V2RayConfig.RoutingBean.RulesBean(
-                    outboundTag = "proxy",
-                    port = "0-65535",
-                    type = "field"
-                ),
-            )
         )
     }
 }

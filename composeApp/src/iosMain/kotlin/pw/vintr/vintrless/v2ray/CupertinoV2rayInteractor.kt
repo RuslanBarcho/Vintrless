@@ -16,9 +16,13 @@ object CupertinoV2rayInteractor : BaseInteractor(), V2RayPlatformInteractor {
     override val connectionState: Flow<ConnectionState> = _connectionState
         .shareIn(this, started = SharingStarted.Eagerly, replay = 1)
 
+    override val currentState: ConnectionState get() = _connectionState.value
+
     override fun startV2ray(config: V2RayEncodedConfig) {
         _connectionState.value = ConnectionState.Connecting
     }
+
+    override fun restartV2Ray(config: V2RayEncodedConfig) {}
 
     override fun stopV2ray() {
         _connectionState.value = ConnectionState.Disconnected

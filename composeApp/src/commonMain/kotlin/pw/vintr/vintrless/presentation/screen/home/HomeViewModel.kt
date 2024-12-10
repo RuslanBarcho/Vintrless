@@ -2,12 +2,10 @@ package pw.vintr.vintrless.presentation.screen.home
 
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import pw.vintr.vintrless.V2RayPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.model.ProfileData
-import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
-import pw.vintr.vintrless.domain.v2ray.useCase.V2RayConfigBuildUseCase
+import pw.vintr.vintrless.domain.v2ray.manager.V2RayConnectionManager
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
@@ -17,10 +15,10 @@ import pw.vintr.vintrless.presentation.navigation.NavigatorType
 class HomeViewModel(
     navigator: AppNavigator,
     private val profileInteractor: ProfileInteractor,
-    private val v2rayInteractor: V2RayPlatformInteractor = V2RayPlatformInteractor()
+    private val v2RayConnectionManager: V2RayConnectionManager
 ) : BaseViewModel(navigator) {
 
-    private val connectionState = v2rayInteractor.connectionState
+    private val connectionState = v2RayConnectionManager.connectionState
         .stateInThis(ConnectionState.Disconnected)
 
     val screenState = combine(
@@ -47,18 +45,16 @@ class HomeViewModel(
 
     private fun connect() {
         launch {
-            profileInteractor.getSelectedProfile()?.let { selectedProfile ->
-                v2rayInteractor.startV2ray(
-                    config = V2RayConfigBuildUseCase(selectedProfile)
-                )
-            } ?: run {
+            if (profileInteractor.getSelectedProfile() != null) {
+                v2RayConnectionManager.sendStartCommand()
+            } else {
                 openCreateNewProfile()
             }
         }
     }
 
     private fun disconnect() {
-        v2rayInteractor.stopV2ray()
+        v2RayConnectionManager.sendStopCommand()
     }
 
     fun openCreateNewProfile() {

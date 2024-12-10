@@ -20,6 +20,8 @@ import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileUrlInteractor
 import pw.vintr.vintrless.domain.routing.interactor.RoutingInteractor
+import pw.vintr.vintrless.domain.v2ray.manager.V2RayConnectionManager
+import pw.vintr.vintrless.platform.RealmConfigurationManager.applyPlatformConfiguration
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmViewModel
 import pw.vintr.vintrless.presentation.screen.home.HomeViewModel
@@ -50,6 +52,7 @@ val appModule = module {
         )
             .schemaVersion(REALM_SCHEMA_VERSION)
             .deleteRealmIfMigrationNeeded()
+            .applyPlatformConfiguration()
             .build()
 
         Realm.open(config)
@@ -73,11 +76,12 @@ val appModule = module {
     interactor { ProfileInteractor(get()) }
     interactor { ProfileUrlInteractor() }
     interactor { RoutingInteractor(get()) }
+    interactor { V2RayConnectionManager(profileInteractor = get(), routingInteractor = get()) }
 
     // Presentation
     viewModel { MainViewModel(get()) }
     viewModel { ConfirmViewModel(get()) }
-    viewModel { HomeViewModel(get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get()) }
     viewModel { SettingsViewModel(get()) }
     viewModel { CreateNewProfileViewModel(get(), get(), get(), get()) }
     viewModel { ScanProfileQRViewModel(get(), get(), get()) }
@@ -99,7 +103,7 @@ val appModule = module {
             alertInteractor = get(),
         )
     }
-    viewModel { RulesetListViewModel(get(), get()) }
+    viewModel { RulesetListViewModel(get(), get(), get()) }
     viewModel { params ->
         EditAddressRecordsViewModel(
             navigator = get(),

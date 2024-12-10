@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pw.vintr.vintrless.domain.routing.interactor.RoutingInteractor
 import pw.vintr.vintrless.domain.routing.model.Ruleset
+import pw.vintr.vintrless.domain.v2ray.manager.V2RayConnectionManager
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
@@ -16,6 +17,7 @@ import pw.vintr.vintrless.tools.extensions.updateLoaded
 class RulesetListViewModel(
     navigator: AppNavigator,
     private val routingInteractor: RoutingInteractor,
+    private val v2RayConnectionManager: V2RayConnectionManager,
 ) : BaseViewModel(navigator) {
 
     private val _screenState = MutableStateFlow<BaseScreenState<RulesetListState>>(BaseScreenState.Loading())
@@ -44,8 +46,12 @@ class RulesetListViewModel(
             openEditRuleset(ruleset)
         } else {
             launch {
+                // Save and send selection to UI
                 routingInteractor.setSelectedRulesetId(ruleset.id)
                 _screenState.updateLoaded { it.copy(selectedRulesetId = ruleset.id) }
+
+                // Restart service to apply changes
+                v2RayConnectionManager.sendRestartCommand()
             }
         }
     }
@@ -77,10 +83,17 @@ class RulesetListViewModel(
     }
 
     private fun handleEditExcludeRulesetResult(ruleset: Ruleset.Exclude) {
-        // Save and refresh screen data
         launch {
+            // Save and refresh screen data
             routingInteractor.saveExcludeRuleset(ruleset)
-            _screenState.value = BaseScreenState.Loaded(loadRulesetState())
+
+            val updatedState = loadRulesetState()
+            _screenState.value = BaseScreenState.Loaded(updatedState)
+
+            // Restart service if selection has changed its parameters
+            if (updatedState.selectedRulesetId == ruleset.id) {
+                v2RayConnectionManager.sendRestartCommand()
+            }
         }
     }
 

@@ -1,7 +1,7 @@
 package pw.vintr.vintrless.tools.extensions
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 
 inline fun <reified R> StateFlow<*>.withTyped(block: (R) -> Unit) {
@@ -38,3 +38,10 @@ inline fun <T> MutableStateFlow<BaseScreenState<T>>.updateLoaded(
         loaded.copy(payload = mutation(loaded.payload))
     }
 }
+
+fun <T> Flow<T>.throttleLatest(delayMillis: Long): Flow<T> = this
+    .conflate()
+    .transform {
+        emit(it)
+        delay(delayMillis)
+    }

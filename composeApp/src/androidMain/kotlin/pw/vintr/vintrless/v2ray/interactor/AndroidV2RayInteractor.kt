@@ -15,6 +15,8 @@ object AndroidV2RayInteractor : BaseInteractor(), V2RayPlatformInteractor {
     sealed class Event : InteractorEvent {
         data class StartV2RayViaActivity(val config: V2RayEncodedConfig) : Event()
 
+        data class RestartV2RayViaActivity(val config: V2RayEncodedConfig) : Event()
+
         data object StopV2RayViaActivity : Event()
     }
 
@@ -23,8 +25,16 @@ object AndroidV2RayInteractor : BaseInteractor(), V2RayPlatformInteractor {
     override val connectionState: Flow<ConnectionState> = _connectionState
         .shareIn(this, started = SharingStarted.Eagerly, replay = 1)
 
+    override val currentState: ConnectionState get() = _connectionState.value
+
     override fun startV2ray(config: V2RayEncodedConfig) {
         sendEventSync(Event.StartV2RayViaActivity(config))
+    }
+
+    override fun restartV2Ray(config: V2RayEncodedConfig) {
+        if (_connectionState.value == ConnectionState.Connected) {
+            sendEventSync(Event.RestartV2RayViaActivity(config))
+        }
     }
 
     override fun stopV2ray() {

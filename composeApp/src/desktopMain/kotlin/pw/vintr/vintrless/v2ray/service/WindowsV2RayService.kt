@@ -1,5 +1,9 @@
 package pw.vintr.vintrless.v2ray.service
 
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.tools.PathProvider
 import pw.vintr.vintrless.v2ray.interactor.JvmV2RayInteractor
@@ -18,42 +22,54 @@ object WindowsV2RayService {
         XRAY
     }
 
+    private const val PROCESS_START_DELAY_MILLIS = 300L
+
     private val runningProcMap: MutableMap<ProcType, Process> = mutableMapOf()
 
     private val resourcesDir = File(PathProvider.resourcesPath)
 
+    private var serviceStartJob: Job? = null
+
     fun startService(config: V2RayEncodedConfig) {
-        JvmV2RayInteractor.postConnecting()
+        serviceStartJob = MainScope().launch {
+            JvmV2RayInteractor.postConnecting()
 
-        try {
-            saveXrayConfig(config)
+            try {
+                // Save config to file
+                saveXrayConfig(config)
 
-            val tunProc = ProcessBuilder("cmd", "/c", "sing-box", "run", "-c", "config_singbox.json")
-                .directory(resourcesDir)
-                .start()
+                // Start xray listener
+                val xrayProc = ProcessBuilder("cmd", "/c", "xray", "run", "-c", "config_xray.json")
+                    .directory(resourcesDir)
+                    .start()
 
-            inheritIO(tunProc.inputStream, System.out)
-            inheritIO(tunProc.errorStream, System.err)
-            tunProc.addShutdownHook()
+                inheritIO(xrayProc.inputStream, System.out)
+                inheritIO(xrayProc.errorStream, System.err)
+                xrayProc.addShutdownHook()
 
-            runningProcMap[ProcType.TUN] = tunProc
+                runningProcMap[ProcType.XRAY] = xrayProc
 
-            val xrayProc = ProcessBuilder("cmd", "/c", "xray", "run", "-c", "config_xray.json")
-                .directory(resourcesDir)
-                .start()
+                delay(PROCESS_START_DELAY_MILLIS)
 
-            inheritIO(xrayProc.inputStream, System.out)
-            inheritIO(xrayProc.errorStream, System.err)
-            xrayProc.addShutdownHook()
+                // Start TUN
+                val tunProc = ProcessBuilder("cmd", "/c", "sing-box", "run", "-c", "config_singbox.json")
+                    .directory(resourcesDir)
+                    .start()
 
-            runningProcMap[ProcType.XRAY] = xrayProc
+                inheritIO(tunProc.inputStream, System.out)
+                inheritIO(tunProc.errorStream, System.err)
+                tunProc.addShutdownHook()
 
-            JvmV2RayInteractor.postConnected()
-        } catch (exception: Throwable) {
-            exception.printStackTrace()
+                runningProcMap[ProcType.TUN] = tunProc
 
-            stopService()
-            JvmV2RayInteractor.postDisconnected()
+                // Notify UI
+                JvmV2RayInteractor.postConnected()
+            } catch (exception: Throwable) {
+                exception.printStackTrace()
+
+                stopService()
+                JvmV2RayInteractor.postDisconnected()
+            }
         }
     }
 

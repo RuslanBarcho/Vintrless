@@ -103,6 +103,9 @@ kotlin {
 
             // File picker
             implementation(libs.filekit.core)
+
+            // Date time
+            implementation(libs.kotlinx.datetime)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
