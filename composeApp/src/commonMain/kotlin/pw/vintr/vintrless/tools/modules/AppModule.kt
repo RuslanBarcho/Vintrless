@@ -7,20 +7,19 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import org.koin.dsl.onClose
 import pw.vintr.vintrless.FlowSettings
-import pw.vintr.vintrless.data.profile.model.ProfileDataStorageObject
+import pw.vintr.vintrless.data.profile.model.ProfileDataCacheObject
 import pw.vintr.vintrless.data.profile.repository.ProfileRepository
+import pw.vintr.vintrless.data.profile.source.ProfileCacheDataSource
 import pw.vintr.vintrless.data.routing.model.ExcludeRulesetCacheObject
 import pw.vintr.vintrless.data.routing.repository.RoutingRepository
 import pw.vintr.vintrless.data.routing.source.ExcludeRulesetCacheDataSource
-import pw.vintr.vintrless.data.storage.collection.CollectionStorage
-import pw.vintr.vintrless.data.storage.collection.ProfileDataStorage
 import pw.vintr.vintrless.data.storage.preference.PreferenceStorage
 import pw.vintr.vintrless.data.storage.preference.PreferenceStorageImpl
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileUrlInteractor
 import pw.vintr.vintrless.domain.routing.interactor.RoutingInteractor
-import pw.vintr.vintrless.domain.v2ray.manager.V2RayConnectionManager
+import pw.vintr.vintrless.domain.v2ray.interactor.V2RayConnectionInteractor
 import pw.vintr.vintrless.platform.RealmConfigurationManager.applyPlatformConfiguration
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmViewModel
@@ -47,6 +46,7 @@ val appModule = module {
     single {
         val config = RealmConfiguration.Builder(
             schema = setOf(
+                ProfileDataCacheObject::class,
                 ExcludeRulesetCacheObject::class,
             )
         )
@@ -62,10 +62,9 @@ val appModule = module {
 
     // Data
     val flowSettings = FlowSettings()
-
     single<PreferenceStorage> { PreferenceStorageImpl(flowSettings) }
 
-    single<CollectionStorage<ProfileDataStorageObject>> { ProfileDataStorage(flowSettings) }
+    single { ProfileCacheDataSource(get()) }
     single { ProfileRepository(get(), get()) }
 
     single { ExcludeRulesetCacheDataSource(get()) }
@@ -76,7 +75,10 @@ val appModule = module {
     interactor { ProfileInteractor(get()) }
     interactor { ProfileUrlInteractor() }
     interactor { RoutingInteractor(get()) }
-    interactor { V2RayConnectionManager(profileInteractor = get(), routingInteractor = get()) }
+    interactor { V2RayConnectionInteractor(
+        profileInteractor = get(),
+        routingInteractor = get())
+    }
 
     // Presentation
     viewModel { MainViewModel(get()) }
@@ -94,7 +96,7 @@ val appModule = module {
             alertInteractor = get(),
         )
     }
-    viewModel { ProfileListViewModel(get(), get()) }
+    viewModel { ProfileListViewModel(get(), get(), get()) }
     viewModel { params ->
         ShareProfileViewModel(
             navigator = get(),

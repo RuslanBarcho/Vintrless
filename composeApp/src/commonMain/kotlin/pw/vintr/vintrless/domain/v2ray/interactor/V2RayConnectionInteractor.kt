@@ -1,4 +1,4 @@
-package pw.vintr.vintrless.domain.v2ray.manager
+package pw.vintr.vintrless.domain.v2ray.interactor
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -10,12 +10,11 @@ import pw.vintr.vintrless.V2RayPlatformInteractor
 import pw.vintr.vintrless.domain.base.BaseInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.routing.interactor.RoutingInteractor
-import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.v2ray.useCase.V2RayConfigBuildUseCase
 import pw.vintr.vintrless.tools.extensions.throttleLatest
 
-class V2RayConnectionManager(
+class V2RayConnectionInteractor(
     private val v2rayInteractor: V2RayPlatformInteractor = V2RayPlatformInteractor(),
     private val profileInteractor: ProfileInteractor,
     private val routingInteractor: RoutingInteractor,

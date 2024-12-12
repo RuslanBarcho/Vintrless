@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pw.vintr.vintrless.domain.routing.interactor.RoutingInteractor
 import pw.vintr.vintrless.domain.routing.model.Ruleset
-import pw.vintr.vintrless.domain.v2ray.manager.V2RayConnectionManager
+import pw.vintr.vintrless.domain.v2ray.interactor.V2RayConnectionInteractor
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
@@ -17,7 +17,7 @@ import pw.vintr.vintrless.tools.extensions.updateLoaded
 class RulesetListViewModel(
     navigator: AppNavigator,
     private val routingInteractor: RoutingInteractor,
-    private val v2RayConnectionManager: V2RayConnectionManager,
+    private val v2RayConnectionInteractor: V2RayConnectionInteractor,
 ) : BaseViewModel(navigator) {
 
     private val _screenState = MutableStateFlow<BaseScreenState<RulesetListState>>(BaseScreenState.Loading())
@@ -51,7 +51,7 @@ class RulesetListViewModel(
                 _screenState.updateLoaded { it.copy(selectedRulesetId = ruleset.id) }
 
                 // Restart service to apply changes
-                v2RayConnectionManager.sendRestartCommand()
+                v2RayConnectionInteractor.sendRestartCommand()
             }
         }
     }
@@ -92,7 +92,7 @@ class RulesetListViewModel(
 
             // Restart service if selection has changed its parameters
             if (updatedState.selectedRulesetId == ruleset.id) {
-                v2RayConnectionManager.sendRestartCommand()
+                v2RayConnectionInteractor.sendRestartCommand()
             }
         }
     }

@@ -1,7 +1,8 @@
 package pw.vintr.vintrless.domain.profile.model
 
+import io.realm.kotlin.ext.toRealmDictionary
 import kotlinx.serialization.Serializable
-import pw.vintr.vintrless.data.profile.model.ProfileDataStorageObject
+import pw.vintr.vintrless.data.profile.model.ProfileDataCacheObject
 import pw.vintr.vintrless.domain.profile.model.ProfileForm.Vless.unpackDefault
 import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import kotlin.uuid.ExperimentalUuidApi
@@ -15,10 +16,10 @@ data class ProfileData @OptIn(ExperimentalUuidApi::class) constructor(
 ) {
 
     companion object {
-        fun fromStorageObject(cacheObject: ProfileDataStorageObject) = ProfileData(
+        fun fromCacheObject(cacheObject: ProfileDataCacheObject) = ProfileData(
             id = cacheObject.id,
             type = ProtocolType.getByCode(cacheObject.typeCode),
-            data = cacheObject.data,
+            data = cacheObject.data.toMap(),
         )
     }
 
@@ -61,9 +62,9 @@ data class ProfileData @OptIn(ExperimentalUuidApi::class) constructor(
 
     fun getField(field: ProfileField): String? = data[field.key]
 
-    fun toStorageObject() = ProfileDataStorageObject(
+    fun toCacheObject() = ProfileDataCacheObject(
         id = id,
         typeCode = type.code,
-        data = data,
+        data = data.toRealmDictionary(),
     )
 }

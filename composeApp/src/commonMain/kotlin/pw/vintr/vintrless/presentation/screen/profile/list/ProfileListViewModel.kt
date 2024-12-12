@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.model.ProfileData
+import pw.vintr.vintrless.domain.v2ray.interactor.V2RayConnectionInteractor
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
@@ -14,6 +15,7 @@ import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmResult
 class ProfileListViewModel(
     navigator: AppNavigator,
     private val profileInteractor: ProfileInteractor,
+    private val v2RayConnectionInteractor: V2RayConnectionInteractor,
 ) : BaseViewModel(navigator) {
 
     val screenState = combine(
@@ -29,7 +31,10 @@ class ProfileListViewModel(
     }.stateInThis(BaseScreenState.Loading())
 
     fun selectProfile(profile: ProfileData) {
-        launch { profileInteractor.setSelectedProfile(profile.id) }
+        launch {
+            profileInteractor.setSelectedProfile(profile.id)
+            v2RayConnectionInteractor.sendRestartCommand()
+        }
     }
 
     fun openCreateNewProfile() {

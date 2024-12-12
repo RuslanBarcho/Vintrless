@@ -5,7 +5,7 @@ import kotlinx.coroutines.launch
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.model.ProfileData
-import pw.vintr.vintrless.domain.v2ray.manager.V2RayConnectionManager
+import pw.vintr.vintrless.domain.v2ray.interactor.V2RayConnectionInteractor
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
@@ -15,10 +15,10 @@ import pw.vintr.vintrless.presentation.navigation.NavigatorType
 class HomeViewModel(
     navigator: AppNavigator,
     private val profileInteractor: ProfileInteractor,
-    private val v2RayConnectionManager: V2RayConnectionManager
+    private val v2RayConnectionInteractor: V2RayConnectionInteractor
 ) : BaseViewModel(navigator) {
 
-    private val connectionState = v2RayConnectionManager.connectionState
+    private val connectionState = v2RayConnectionInteractor.connectionState
         .stateInThis(ConnectionState.Disconnected)
 
     val screenState = combine(
@@ -46,7 +46,7 @@ class HomeViewModel(
     private fun connect() {
         launch {
             if (profileInteractor.getSelectedProfile() != null) {
-                v2RayConnectionManager.sendStartCommand()
+                v2RayConnectionInteractor.sendStartCommand()
             } else {
                 openCreateNewProfile()
             }
@@ -54,7 +54,7 @@ class HomeViewModel(
     }
 
     private fun disconnect() {
-        v2RayConnectionManager.sendStopCommand()
+        v2RayConnectionInteractor.sendStopCommand()
     }
 
     fun openCreateNewProfile() {
