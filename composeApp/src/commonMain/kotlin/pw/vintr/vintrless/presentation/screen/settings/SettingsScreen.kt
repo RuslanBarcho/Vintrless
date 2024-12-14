@@ -99,10 +99,12 @@ private fun SettingsItemView(
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
-                text = stringResource(
-                    item.descriptionRes,
-                    *item.descriptionArgs.toTypedArray()
-                ),
+                text = item.descriptionRes?.let { resource ->
+                    stringResource(
+                        resource,
+                        *item.descriptionArgs.toTypedArray()
+                    )
+                } ?: item.descriptionText.orEmpty(),
                 style = Gilroy12(),
                 color = VintrlessExtendedTheme.colors.textSecondary,
             )

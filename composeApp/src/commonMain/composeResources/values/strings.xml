@@ -17,7 +17,6 @@
     <string name="settings_routing_title">Routing</string>
     <string name="settings_routing_description">Routing rules</string>
     <string name="settings_about_title">About app</string>
-    <string name="settings_about_description">Vintrless %1$s • Xray-core v%2$s</string>
     <string name="auto_detect">Detect automatically</string>
     <string name="manual_input">Enter manually</string>
     <string name="scan_qr">Scan QR</string>

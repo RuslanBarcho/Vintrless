@@ -18,7 +18,3 @@ val String.Companion.Dot: String
 fun String.isBoolean(): Boolean {
     return this == "true" || this == "false"
 }
-
-fun String?.toBoolean(): Boolean {
-    return this == "true"
-}

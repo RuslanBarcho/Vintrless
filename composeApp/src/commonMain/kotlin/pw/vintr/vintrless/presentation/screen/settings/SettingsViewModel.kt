@@ -3,10 +3,13 @@ package pw.vintr.vintrless.presentation.screen.settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.jetbrains.compose.resources.StringResource
+import pw.vintr.vintrless.platform.AppConfig
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
 import pw.vintr.vintrless.presentation.navigation.AppScreen
 import pw.vintr.vintrless.presentation.navigation.NavigatorType
+import pw.vintr.vintrless.tools.extensions.Dot
+import pw.vintr.vintrless.tools.extensions.Space
 import vintrless.composeapp.generated.resources.*
 
 class SettingsViewModel(
@@ -15,12 +18,10 @@ class SettingsViewModel(
 
     private val _screenState = MutableStateFlow(SettingsState(
         items = listOf(
-            SettingsItem.App(),
-            SettingsItem.Vpn(),
             SettingsItem.Routing(),
             SettingsItem.About(
-                appVersion = "1.0",
-                xrayCoreVersion = "24.10.16"
+                appVersionName = AppConfig.appVersionName,
+                v2RayCoreVersionName = AppConfig.v2RayCoreVersionName
             ),
         ),
     ))
@@ -45,7 +46,9 @@ sealed class SettingsItem {
 
     abstract val titleRes: StringResource
 
-    abstract val descriptionRes: StringResource
+    open val descriptionRes: StringResource? = null
+
+    open val descriptionText: String? = null
 
     open val descriptionArgs: List<Any> = listOf()
 
@@ -66,11 +69,16 @@ sealed class SettingsItem {
 
     data class About(
         override val titleRes: StringResource = Res.string.settings_about_title,
-        override val descriptionRes: StringResource = Res.string.settings_about_description,
-        val appVersion: String,
-        val xrayCoreVersion: String,
+        val appVersionName: String,
+        val v2RayCoreVersionName: String,
     ) : SettingsItem() {
 
-        override val descriptionArgs: List<Any> = listOf(appVersion, xrayCoreVersion)
+        override val descriptionText = buildString {
+            append(appVersionName)
+            append(String.Space)
+            append(String.Dot)
+            append(String.Space)
+            append(v2RayCoreVersionName)
+        }
     }
 }
