@@ -4,8 +4,7 @@ import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.domain.profile.model.ProfileField
 import pw.vintr.vintrless.domain.v2ray.V2RayConfigDefaults
 import pw.vintr.vintrless.domain.v2ray.model.V2RayConfig
-import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.transport.KCPBuildUseCase
-import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.transport.TCPBuildUseCase
+import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.transport.*
 
 object VlessOutboundBuildUseCase {
 
@@ -71,7 +70,11 @@ object VlessOutboundBuildUseCase {
                 security = profile.getField(ProfileField.TLS),
                 tcpSettings = TCPBuildUseCase(profile),
                 kcpSettings = KCPBuildUseCase(profile),
-                // TODO: http and other protocols settings
+                wsSettings = WSBuildUseCase(profile),
+                httpupgradeSettings = HttpUpgradeBuildUseCase(profile),
+                xhttpSettings = XHttpBuildUseCase(profile),
+                httpSettings = HttpBuildUseCase(profile),
+                grpcSettings = GrpcBuildUseCase(profile),
             ),
             tag = "proxy"
         )

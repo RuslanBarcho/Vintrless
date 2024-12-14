@@ -217,8 +217,9 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "pw.vintr.vintrless"
+            packageName = "Vintrless"
             packageVersion = "1.0.0"
+            vendor = "Vintrapps"
             modules("jdk.unsupported")
 
             appResourcesRootDir = rootDir.resolve("desktopLibs")
