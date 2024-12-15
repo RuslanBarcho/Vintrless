@@ -75,11 +75,6 @@ class EditProfileFormViewModel(
                         // Save to persistent storage
                         profileInteractor.saveProfile(profile)
 
-                        // Set as selected if none is selected now
-                        if (profileInteractor.getSelectedProfile() == null) {
-                            profileInteractor.setSelectedProfile(profile.id)
-                        }
-
                         // Show success message and exit
                         alertInteractor.showAlert(AlertModel.ProfileSaveSucceed())
                         navigateBack()

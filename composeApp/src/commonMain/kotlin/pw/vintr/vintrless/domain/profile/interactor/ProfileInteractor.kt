@@ -18,6 +18,11 @@ class ProfileInteractor(
 
     suspend fun saveProfile(profile: ProfileData) {
         repository.saveProfile(profile.toCacheObject())
+
+        // Set as selected if none is selected now
+        if (getSelectedProfile() == null) {
+            setSelectedProfile(profile.id)
+        }
     }
 
     suspend fun getProfile(id: String): ProfileData? {
