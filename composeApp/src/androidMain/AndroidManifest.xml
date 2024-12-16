@@ -52,6 +52,12 @@
                     android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                     android:value="vpn"/>
         </service>
+
+        <provider
+                android:name=".tools.MultiprocessPreferences"
+                android:authorities="pw.vintr.vintrless.PREFFERENCE_AUTHORITY"
+                android:exported="false"
+        />
     </application>
 
 </manifest>

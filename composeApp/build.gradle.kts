@@ -53,6 +53,9 @@ kotlin {
 
             // V2Ray
             implementation(files("libs/libv2ray.aar"))
+
+            // Preferences
+            implementation(libs.androidx.preference.ktx)
         }
         commonMain.dependencies {
             // Common

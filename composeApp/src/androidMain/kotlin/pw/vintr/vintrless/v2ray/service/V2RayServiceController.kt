@@ -166,7 +166,7 @@ object V2RayServiceController {
 
     fun startV2rayPoint() {
         val service = serviceDialog?.get()?.getService() ?: return
-        val config = V2RayConfigStorage.getConfig(service) ?: return
+        val config = V2RayConfigStorage.getConfig(service.applicationContext) ?: return
 
         logging.debug { "Starting v2ray with config:\n${config.configJson}" }
 

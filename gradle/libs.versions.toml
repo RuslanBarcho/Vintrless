@@ -28,6 +28,7 @@ lifecycleViewmodelCompose = "2.8.2"
 logging = "1.5.0"
 multiplatformSettings = "1.2.0"
 navigationCompose = "2.8.0-alpha10"
+preferenceKtx = "1.2.1"
 qrKit = "3.0.5"
 uriKmp = "0.0.18"
 foundationDesktop = "1.7.0"
@@ -39,6 +40,7 @@ androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", versi
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraCore" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
+androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 core = { module = "com.google.zxing:core", version.ref = "core" }
 filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekitCore" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koinCompose" }
