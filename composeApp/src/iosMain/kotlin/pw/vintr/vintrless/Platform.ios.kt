@@ -11,7 +11,7 @@ import com.russhwolf.settings.coroutines.toFlowSettings
 import org.jetbrains.skia.FilterBlurMode
 import org.jetbrains.skia.MaskFilter
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
-import pw.vintr.vintrless.platform.PlatformType
+import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
 import pw.vintr.vintrless.v2ray.CupertinoV2rayInteractor
 

@@ -17,7 +17,7 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.SharedPreferencesSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
-import pw.vintr.vintrless.platform.PlatformType
+import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
 import pw.vintr.vintrless.tools.AppContext
 import pw.vintr.vintrless.v2ray.interactor.AndroidV2RayInteractor

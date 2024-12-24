@@ -97,4 +97,6 @@
     <string name="load_from_file">Загрузить из файла</string>
     <string name="enter_manually">Ввести вручную</string>
     <string name="replace_current">Заменить текущие</string>
+
+    <string name="manual_input_label">Ручной ввод (через запятую)</string>
 </resources>

@@ -1,4 +1,4 @@
-package pw.vintr.vintrless.platform
+package pw.vintr.vintrless.platform.manager
 
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection

@@ -44,6 +44,15 @@ class AddAddressRecordsViewModel(
         closeAndSendResult(items)
     }
 
+    fun openManualInput() {
+        navigator.back(
+            resultKey = AddAddressRecordsResult.KEY,
+            result = AddAddressRecordsResult.OpenManualInput(
+                replaceCurrent = _screenState.value.replaceCurrent
+            )
+        )
+    }
+
     fun setReplaceCurrent(value: Boolean) {
         _screenState.update { it.copy(replaceCurrent = value) }
     }
@@ -53,7 +62,7 @@ class AddAddressRecordsViewModel(
 
         navigator.back(
             resultKey = AddAddressRecordsResult.KEY,
-            result = AddAddressRecordsResult(
+            result = AddAddressRecordsResult.RecordsSelected(
                 records = items,
                 replaceCurrent = _screenState.value.replaceCurrent
             )

@@ -11,6 +11,7 @@ import pw.vintr.vintrless.presentation.navigation.AppNavigator
 import pw.vintr.vintrless.presentation.navigation.AppScreen
 import pw.vintr.vintrless.presentation.navigation.NavigatorType
 import pw.vintr.vintrless.presentation.screen.routing.addressRecords.addRecords.AddAddressRecordsResult
+import pw.vintr.vintrless.presentation.screen.routing.addressRecords.manualInputRecords.ManualInputAddressRecordsResult
 import pw.vintr.vintrless.tools.extensions.updateLoaded
 import pw.vintr.vintrless.tools.extensions.withLoaded
 import pw.vintr.vintrless.tools.network.IPTools
@@ -58,10 +59,39 @@ class EditAddressRecordsViewModel(
                     AppScreen.AddAddressRecords,
                     NavigatorType.Root,
                     AddAddressRecordsResult.KEY
-                ) {
+                ) { result ->
+                    when (result) {
+                        is AddAddressRecordsResult.RecordsSelected -> {
+                            handleAddAddressRecordsResult(
+                                records = result.records,
+                                replaceCurrent = result.replaceCurrent,
+                                type = loadedState.selectedAddressRecordType,
+                            )
+                        }
+                        is AddAddressRecordsResult.OpenManualInput -> {
+                            openManualInputAddressRecords(
+                                replaceCurrent = result.replaceCurrent
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun openManualInputAddressRecords(replaceCurrent: Boolean) {
+        _screenState.withLoaded { loadedState ->
+            handleResult(ManualInputAddressRecordsResult.KEY) {
+                navigator.forwardWithResult<ManualInputAddressRecordsResult>(
+                    AppScreen.ManualInputAddressRecords(
+                        defaultReplaceCurrent = replaceCurrent,
+                    ),
+                    NavigatorType.Root,
+                    ManualInputAddressRecordsResult.KEY
+                ) { result ->
                     handleAddAddressRecordsResult(
-                        records = it.records,
-                        replaceCurrent = it.replaceCurrent,
+                        records = result.records,
+                        replaceCurrent = result.replaceCurrent,
                         type = loadedState.selectedAddressRecordType,
                     )
                 }

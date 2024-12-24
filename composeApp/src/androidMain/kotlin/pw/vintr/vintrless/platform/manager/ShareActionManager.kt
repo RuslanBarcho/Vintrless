@@ -1,8 +1,7 @@
-package pw.vintr.vintrless.platform
+package pw.vintr.vintrless.platform.manager
 
 import android.content.Intent
 import pw.vintr.vintrless.tools.AppActivity
-import pw.vintr.vintrless.tools.AppContext
 
 actual object ShareActionManager {
 

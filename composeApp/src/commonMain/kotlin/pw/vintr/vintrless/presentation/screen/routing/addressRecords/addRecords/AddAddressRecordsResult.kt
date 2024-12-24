@@ -1,11 +1,17 @@
 package pw.vintr.vintrless.presentation.screen.routing.addressRecords.addRecords
 
-data class AddAddressRecordsResult(
-    val records: List<String>,
-    val replaceCurrent: Boolean,
-) {
+sealed class AddAddressRecordsResult {
 
     companion object {
         const val KEY = "add-address-records-result"
     }
+
+    data class RecordsSelected(
+        val records: List<String>,
+        val replaceCurrent: Boolean,
+    ) : AddAddressRecordsResult()
+
+    data class OpenManualInput(
+        val replaceCurrent: Boolean,
+    ) : AddAddressRecordsResult()
 }

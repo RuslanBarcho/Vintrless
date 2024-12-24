@@ -1,4 +1,4 @@
-package pw.vintr.vintrless.platform
+package pw.vintr.vintrless.platform.model
 
 enum class PlatformType {
     ANDROID,

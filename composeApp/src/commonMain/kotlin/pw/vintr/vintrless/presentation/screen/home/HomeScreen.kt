@@ -16,12 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.profile.model.ProfileData
+import pw.vintr.vintrless.platform.manager.WindowManager
 import pw.vintr.vintrless.presentation.theme.*
 import pw.vintr.vintrless.presentation.uikit.button.SwitchButton
 import pw.vintr.vintrless.presentation.uikit.layout.ScreenStateLayout
@@ -233,10 +235,19 @@ fun ConfigCard(
     selectedProfile: ProfileData?,
     onClick: () -> Unit,
 ) {
+    val windowCorners = remember { WindowManager.getWindowCornerRadius() }
+
     Box(
         modifier = modifier
             .animateContentSize()
-            .cardBackground(RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp))
+            .cardBackground(
+                RoundedCornerShape(
+                    topStart = 50.dp,
+                    topEnd = 50.dp,
+                    bottomStart = with(LocalDensity.current) { windowCorners.bottomLeft.toDp() },
+                    bottomEnd = with(LocalDensity.current) { windowCorners.bottomRight.toDp() },
+                )
+            )
             .navigationBarsPadding()
             .padding(
                 bottom = NAV_BAR_HEIGHT_DP.dp + NAV_BAR_PADDING_DP.dp + 16.dp,

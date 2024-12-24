@@ -1,4 +1,4 @@
-package pw.vintr.vintrless.platform
+package pw.vintr.vintrless.platform.manager
 
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication

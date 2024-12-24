@@ -7,7 +7,7 @@ import pw.vintr.vintrless.domain.alert.model.AlertModel
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.useCase.encodeUrl.EncodeProfileUrlUseCase
 import pw.vintr.vintrless.domain.v2ray.useCase.V2RayConfigBuildUseCase
-import pw.vintr.vintrless.platform.ShareActionManager
+import pw.vintr.vintrless.platform.manager.ShareActionManager
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator

@@ -52,4 +52,9 @@ sealed class AppScreen : Screen {
 
     @Serializable
     data object AddAddressRecords : AppScreen()
+
+    @Serializable
+    data class ManualInputAddressRecords(
+        val defaultReplaceCurrent: Boolean,
+    ) : AppScreen()
 }
