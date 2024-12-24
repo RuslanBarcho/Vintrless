@@ -97,4 +97,6 @@
     <string name="load_from_file">Load from file</string>
     <string name="enter_manually">Enter manually</string>
     <string name="replace_current">Replace current</string>
+
+    <string name="manual_input_label">Manual entry (comma separated)</string>
 </resources>

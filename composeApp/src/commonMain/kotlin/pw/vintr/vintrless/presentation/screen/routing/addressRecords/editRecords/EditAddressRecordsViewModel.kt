@@ -58,12 +58,19 @@ class EditAddressRecordsViewModel(
                     AppScreen.AddAddressRecords,
                     NavigatorType.Root,
                     AddAddressRecordsResult.KEY
-                ) {
-                    handleAddAddressRecordsResult(
-                        records = it.records,
-                        replaceCurrent = it.replaceCurrent,
-                        type = loadedState.selectedAddressRecordType,
-                    )
+                ) { result ->
+                    when (result) {
+                        is AddAddressRecordsResult.RecordsSelected -> {
+                            handleAddAddressRecordsResult(
+                                records = result.records,
+                                replaceCurrent = result.replaceCurrent,
+                                type = loadedState.selectedAddressRecordType,
+                            )
+                        }
+                        is AddAddressRecordsResult.OpenManualInput -> {
+                            // TODO: open manual input
+                        }
+                    }
                 }
             }
         }

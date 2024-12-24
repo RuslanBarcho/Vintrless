@@ -53,7 +53,7 @@ class AddAddressRecordsViewModel(
 
         navigator.back(
             resultKey = AddAddressRecordsResult.KEY,
-            result = AddAddressRecordsResult(
+            result = AddAddressRecordsResult.RecordsSelected(
                 records = items,
                 replaceCurrent = _screenState.value.replaceCurrent
             )
