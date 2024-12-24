@@ -26,7 +26,7 @@ import pw.vintr.vintrless.domain.routing.model.RuleAddressRecordType
 import pw.vintr.vintrless.domain.routing.model.Ruleset
 import pw.vintr.vintrless.domain.routing.model.Ruleset.Exclude.Type.BLACKLIST
 import pw.vintr.vintrless.domain.routing.model.Ruleset.Exclude.Type.WHITELIST
-import pw.vintr.vintrless.platform.PlatformType
+import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.platformType
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.theme.Gilroy18

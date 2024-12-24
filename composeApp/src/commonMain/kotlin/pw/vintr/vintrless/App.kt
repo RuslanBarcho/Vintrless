@@ -27,7 +27,7 @@ import org.koin.compose.koinInject
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.alert.model.AlertModel.Type.*
 import pw.vintr.vintrless.domain.alert.model.AlertState
-import pw.vintr.vintrless.platform.PlatformType
+import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.presentation.navigation.*
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmDialog
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmDialogData

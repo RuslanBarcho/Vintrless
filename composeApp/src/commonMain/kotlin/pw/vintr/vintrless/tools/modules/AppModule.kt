@@ -20,7 +20,7 @@ import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileUrlInteractor
 import pw.vintr.vintrless.domain.routing.interactor.RoutingInteractor
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayConnectionInteractor
-import pw.vintr.vintrless.platform.RealmConfigurationManager.applyPlatformConfiguration
+import pw.vintr.vintrless.platform.manager.RealmConfigurationManager.applyPlatformConfiguration
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmViewModel
 import pw.vintr.vintrless.presentation.screen.home.HomeViewModel

@@ -1,4 +1,4 @@
-package pw.vintr.vintrless.platform
+package pw.vintr.vintrless.platform.manager
 
 import io.realm.kotlin.RealmConfiguration
 import pw.vintr.vintrless.tools.PathProvider
