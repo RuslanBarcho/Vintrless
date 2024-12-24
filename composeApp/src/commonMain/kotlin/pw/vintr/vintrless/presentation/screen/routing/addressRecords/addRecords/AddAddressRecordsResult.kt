@@ -11,5 +11,7 @@ sealed class AddAddressRecordsResult {
         val replaceCurrent: Boolean,
     ) : AddAddressRecordsResult()
 
-    data object OpenManualInput : AddAddressRecordsResult()
+    data class OpenManualInput(
+        val replaceCurrent: Boolean,
+    ) : AddAddressRecordsResult()
 }

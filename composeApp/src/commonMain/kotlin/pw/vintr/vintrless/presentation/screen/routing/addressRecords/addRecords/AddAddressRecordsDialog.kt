@@ -75,7 +75,7 @@ fun AddAddressRecordsDialog(
                 iconRes = Res.drawable.ic_edit,
                 title = stringResource(Res.string.enter_manually)
             ) {
-
+                viewModel.openManualInput()
             }
             Spacer(modifier = Modifier.height(20.dp))
             Row(

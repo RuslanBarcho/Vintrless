@@ -32,6 +32,7 @@ import pw.vintr.vintrless.presentation.screen.profile.scanQr.ScanProfileQRViewMo
 import pw.vintr.vintrless.presentation.screen.profile.share.ShareProfileViewModel
 import pw.vintr.vintrless.presentation.screen.routing.addressRecords.addRecords.AddAddressRecordsViewModel
 import pw.vintr.vintrless.presentation.screen.routing.addressRecords.editRecords.EditAddressRecordsViewModel
+import pw.vintr.vintrless.presentation.screen.routing.addressRecords.manualInputRecords.ManualInputAddressRecordsViewModel
 import pw.vintr.vintrless.presentation.screen.routing.rulesetList.RulesetListViewModel
 import pw.vintr.vintrless.presentation.screen.settings.SettingsViewModel
 import pw.vintr.vintrless.tools.extensions.interactor
@@ -114,4 +115,10 @@ val appModule = module {
         )
     }
     viewModel { AddAddressRecordsViewModel(get()) }
+    viewModel { params ->
+        ManualInputAddressRecordsViewModel(
+            navigator = get(),
+            defaultReplaceCurrent = params.get(),
+        )
+    }
 }

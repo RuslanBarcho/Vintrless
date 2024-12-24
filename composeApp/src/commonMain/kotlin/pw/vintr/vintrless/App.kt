@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -41,6 +40,7 @@ import pw.vintr.vintrless.presentation.screen.profile.scanQr.ScanProfileQrScreen
 import pw.vintr.vintrless.presentation.screen.profile.share.ShareProfileDialog
 import pw.vintr.vintrless.presentation.screen.routing.addressRecords.addRecords.AddAddressRecordsDialog
 import pw.vintr.vintrless.presentation.screen.routing.addressRecords.editRecords.EditAddressRecordsScreen
+import pw.vintr.vintrless.presentation.screen.routing.addressRecords.manualInputRecords.ManualInputAddressRecordsDialog
 import pw.vintr.vintrless.presentation.screen.routing.rulesetList.RulesetListScreen
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
 import pw.vintr.vintrless.presentation.theme.VintrlessTheme
@@ -203,6 +203,14 @@ fun Navigation(
 
         extendedDialog<AppScreen.AddAddressRecords> {
             AddAddressRecordsDialog()
+        }
+
+        extendedDialog<AppScreen.ManualInputAddressRecords> {
+            val route: AppScreen.ManualInputAddressRecords = it.toRoute()
+
+            ManualInputAddressRecordsDialog(
+                defaultReplaceCurrent = route.defaultReplaceCurrent,
+            )
         }
     }
 }
