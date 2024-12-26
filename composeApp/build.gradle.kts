@@ -32,7 +32,7 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     jvm("desktop")
     
     sourceSets {
@@ -225,7 +225,13 @@ compose.desktop {
             vendor = "Vintrapps"
             modules("jdk.unsupported")
 
+            // Desktop native libraries
             appResourcesRootDir = rootDir.resolve("desktopLibs")
+
+            // Desktop native icons
+            windows {
+                iconFile.set(rootDir.resolve("desktopIcons/windows/launcher.ico"))
+            }
 
             jvmArgs(
                 "-Dapple.awt.application.appearance=system"
