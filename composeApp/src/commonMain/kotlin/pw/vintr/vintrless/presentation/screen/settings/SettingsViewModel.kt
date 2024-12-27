@@ -33,6 +33,10 @@ class SettingsViewModel(
                 navigator.switchNavigatorType(NavigatorType.Root)
                 navigator.forward(AppScreen.RulesetList)
             }
+            is SettingsItem.About -> {
+                navigator.switchNavigatorType(NavigatorType.Root)
+                navigator.forward(AppScreen.AboutApp)
+            }
             else -> Unit
         }
     }

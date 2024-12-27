@@ -22,6 +22,7 @@ import pw.vintr.vintrless.domain.routing.interactor.RoutingInteractor
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayConnectionInteractor
 import pw.vintr.vintrless.platform.manager.RealmConfigurationManager.applyPlatformConfiguration
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
+import pw.vintr.vintrless.presentation.screen.about.AboutAppViewModel
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmViewModel
 import pw.vintr.vintrless.presentation.screen.home.HomeViewModel
 import pw.vintr.vintrless.presentation.screen.main.MainViewModel
@@ -121,4 +122,5 @@ val appModule = module {
             defaultReplaceCurrent = params.get(),
         )
     }
+    viewModel { AboutAppViewModel(get()) }
 }

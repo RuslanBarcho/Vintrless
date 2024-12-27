@@ -99,4 +99,5 @@
     <string name="replace_current">Replace current</string>
 
     <string name="manual_input_label">Manual entry (comma separated)</string>
+    <string name="about_app_snippet">Vintrless - V2Ray multiplatform client</string>
 </resources>

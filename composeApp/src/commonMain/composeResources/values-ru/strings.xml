@@ -99,4 +99,5 @@
     <string name="replace_current">Заменить текущие</string>
 
     <string name="manual_input_label">Ручной ввод (через запятую)</string>
+    <string name="about_app_snippet">Vintrless - V2Ray multiplatform client</string>
 </resources>
