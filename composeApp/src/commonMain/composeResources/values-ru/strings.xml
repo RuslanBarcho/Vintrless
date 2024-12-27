@@ -99,5 +99,10 @@
     <string name="replace_current">Заменить текущие</string>
 
     <string name="manual_input_label">Ручной ввод (через запятую)</string>
+
     <string name="about_app_snippet">Vintrless - V2Ray multiplatform client</string>
+    <string name="about_app_telegram_title">Telegram</string>
+    <string name="about_app_telegram_description">Новости и релизы</string>
+    <string name="about_app_github_title">Github</string>
+    <string name="about_app_github_description">Исходный код проекта</string>
 </resources>
