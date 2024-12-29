@@ -1,11 +1,15 @@
 package pw.vintr.vintrless
 
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import org.jetbrains.compose.resources.painterResource
 import pw.vintr.vintrless.v2ray.interactor.JvmV2RayInteractor
 import vintrless.composeapp.generated.resources.Res
 import vintrless.composeapp.generated.resources.ic_app_icon
+import java.awt.Dimension
 
 fun main() = application {
     Window(
@@ -14,8 +18,15 @@ fun main() = application {
             exitApplication()
         },
         title = "Vintrless",
-        icon = painterResource(Res.drawable.ic_app_icon)
+        icon = painterResource(Res.drawable.ic_app_icon),
+        state = rememberWindowState(
+            size = DpSize(
+                width = 1000.dp,
+                height = 700.dp
+            )
+        ),
     ) {
+        window.minimumSize = Dimension(600, 600)
         App()
     }
 }
