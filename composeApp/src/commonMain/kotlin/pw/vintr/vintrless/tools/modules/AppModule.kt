@@ -19,6 +19,7 @@ import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileUrlInteractor
 import pw.vintr.vintrless.domain.routing.interactor.RoutingInteractor
+import pw.vintr.vintrless.domain.userApplications.interactor.UserApplicationsInteractor
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayConnectionInteractor
 import pw.vintr.vintrless.platform.manager.RealmConfigurationManager.applyPlatformConfiguration
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
@@ -81,6 +82,7 @@ val appModule = module {
         profileInteractor = get(),
         routingInteractor = get())
     }
+    interactor { UserApplicationsInteractor() }
 
     // Presentation
     viewModel { MainViewModel(get()) }

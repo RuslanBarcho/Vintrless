@@ -1,5 +1,7 @@
 package pw.vintr.vintrless.tools.extensions
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -16,6 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
+import pw.vintr.vintrless.presentation.theme.cardShadow
 
 @Composable
 fun Modifier.cardBackground(cornerRadius: Dp = 20.dp) = this
@@ -30,6 +33,35 @@ fun Modifier.cardBackground(shape: Shape) = this
         color = VintrlessExtendedTheme.colors.cardStrokeColor,
         shape = shape
     )
+
+@Composable
+fun Modifier.selectableCardBackground(
+    selected: Boolean,
+    shape: Shape = RoundedCornerShape(12.dp),
+): Modifier {
+    val borderColor = animateColorAsState(
+        targetValue = if (selected) {
+            VintrlessExtendedTheme.colors.navBarSelected
+        } else {
+            VintrlessExtendedTheme.colors.cardStrokeColor
+        }
+    )
+    val shadowColor = animateColorAsState(
+        targetValue = if (selected) {
+            VintrlessExtendedTheme.colors.navBarSelected
+        } else {
+            VintrlessExtendedTheme.colors.shadow
+        }
+    )
+
+    return cardShadow(
+        cornersRadius = 12.dp,
+        color = shadowColor.value.copy(alpha = 0.25f)
+    )
+        .clip(shape)
+        .background(VintrlessExtendedTheme.colors.cardBackgroundColor)
+        .border(BorderStroke(1.dp, borderColor.value), shape)
+}
 
 context(BoxWithConstraintsScope)
 @Composable

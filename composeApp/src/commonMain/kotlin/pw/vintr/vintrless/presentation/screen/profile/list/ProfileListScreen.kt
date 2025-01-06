@@ -1,12 +1,10 @@
 package pw.vintr.vintrless.presentation.screen.profile.list
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,6 +28,7 @@ import pw.vintr.vintrless.presentation.uikit.selector.AppRadioButton
 import pw.vintr.vintrless.presentation.uikit.toolbar.ToolbarRegular
 import pw.vintr.vintrless.tools.extensions.Dot
 import pw.vintr.vintrless.tools.extensions.Space
+import pw.vintr.vintrless.tools.extensions.selectableCardBackground
 import vintrless.composeapp.generated.resources.*
 import vintrless.composeapp.generated.resources.Res
 import vintrless.composeapp.generated.resources.action_edit
@@ -147,28 +146,10 @@ private fun ProfileCard(
     onShareClick: () -> Unit,
     onDeleteClick: () -> Unit,
 ) {
-    val borderColor = animateColorAsState(
-        targetValue = if (selected) {
-            VintrlessExtendedTheme.colors.navBarSelected
-        } else {
-            VintrlessExtendedTheme.colors.cardStrokeColor
-        }
-    )
-    val shadowColor = animateColorAsState(
-        targetValue = if (selected) {
-            VintrlessExtendedTheme.colors.navBarSelected
-        } else {
-            VintrlessExtendedTheme.colors.shadow
-        }
-    )
-
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .cardShadow(12.dp, color = shadowColor.value.copy(alpha = 0.25f))
-            .clip(RoundedCornerShape(12.dp))
-            .background(VintrlessExtendedTheme.colors.cardBackgroundColor)
-            .border(BorderStroke(1.dp, borderColor.value), RoundedCornerShape(12.dp))
+            .selectableCardBackground(selected = selected)
             .clickable { onSelectClick() }
             .padding(24.dp)
     ) {

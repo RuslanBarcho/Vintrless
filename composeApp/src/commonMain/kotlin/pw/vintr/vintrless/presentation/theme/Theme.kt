@@ -65,6 +65,9 @@ data class VintrlessColors(
     // Scrollbar
     val scrollbarUnhover: Color = Color.Unspecified,
     val scrollbarHover: Color = Color.Unspecified,
+    // Checkbox
+    val checkmark: Color = Color.Unspecified,
+    val checkboxBackground: Color = Color.Unspecified,
 )
 
 val LocalVintrColors = staticCompositionLocalOf { VintrlessColors() }
@@ -124,6 +127,9 @@ val darkVintrColors = VintrlessColors(
     // Scrollbar
     scrollbarUnhover = AppColor.Jumbo,
     scrollbarHover = AppColor.FrenchGray,
+    // Checkbox
+    checkmark = AppColor.White,
+    checkboxBackground = AppColor.MineShaft,
 )
 
 val lightVintrColors = VintrlessColors(
@@ -181,6 +187,9 @@ val lightVintrColors = VintrlessColors(
     // Scrollbar
     scrollbarUnhover = AppColor.Jumbo,
     scrollbarHover = AppColor.FrenchGray,
+    // Checkbox
+    checkmark = AppColor.Black,
+    checkboxBackground = AppColor.AthensGray,
 )
 
 private val darkColorScheme = darkColorScheme(
@@ -257,4 +266,11 @@ fun switchColors() = SwitchDefaults.colors(
         .copy(alpha = 0.5f),
     disabledUncheckedTrackColor = VintrlessExtendedTheme.colors.switchInactiveBackgroundColor
         .copy(alpha = 0.5f),
+)
+
+@Composable
+fun checkboxColors() = CheckboxDefaults.colors(
+    checkmarkColor = VintrlessExtendedTheme.colors.checkmark,
+    checkedColor = VintrlessExtendedTheme.colors.checkboxBackground,
+    uncheckedColor = VintrlessExtendedTheme.colors.checkboxBackground,
 )
