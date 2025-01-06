@@ -6,6 +6,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.tools.PathProvider
+import pw.vintr.vintrless.tools.extensions.addShutdownHook
+import pw.vintr.vintrless.tools.extensions.close
 import pw.vintr.vintrless.v2ray.interactor.JvmV2RayInteractor
 import java.io.BufferedWriter
 import java.io.File
@@ -105,17 +107,5 @@ object WindowsV2RayService {
 
         runningProcMap.clear()
         JvmV2RayInteractor.postDisconnected()
-    }
-
-    private fun Process.close() {
-        descendants()?.forEach(ProcessHandle::destroy)
-        destroy()
-        inputStream?.close()
-        outputStream?.close()
-    }
-
-    private fun Process.addShutdownHook() {
-        val shutdownRunnable = Runnable { close() }
-        Runtime.getRuntime().addShutdownHook(Thread(shutdownRunnable))
     }
 }
