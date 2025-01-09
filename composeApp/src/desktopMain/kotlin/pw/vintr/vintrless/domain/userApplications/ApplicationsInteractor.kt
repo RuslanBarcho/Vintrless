@@ -8,6 +8,7 @@ import org.jetbrains.skiko.toBitmap
 import pw.vintr.vintrless.domain.userApplications.model.UserApplication
 import pw.vintr.vintrless.domain.system.interactor.SystemInteractor
 import pw.vintr.vintrless.domain.system.model.OS
+import pw.vintr.vintrless.domain.userApplications.model.UserApplicationPayload
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.swing.filechooser.FileSystemView
@@ -28,11 +29,27 @@ abstract class ApplicationsInteractor {
     abstract suspend fun getApplications(): List<UserApplication>
 
     suspend fun getApplicationIcon(application: UserApplication): ImageBitmap? {
-        return application.executablePath?.let { path ->
-            getExecutableBufferedImage(File(path))
-                ?.toBitmap()
-                ?.asComposeImageBitmap()
+        return when (application.payload) {
+            is UserApplicationPayload.WindowsApplicationPayload -> {
+                getFirstAvailableExecutableImage(application.payload)
+                    ?.toBitmap()
+                    ?.asComposeImageBitmap()
+            }
+            else -> null
         }
+    }
+
+    private suspend fun getFirstAvailableExecutableImage(
+        payload: UserApplicationPayload.WindowsApplicationPayload
+    ): BufferedImage? {
+        payload.relatedExecutables.forEach { relatedExecutable ->
+            val image = getExecutableBufferedImage(File(relatedExecutable.absolutePath))
+
+            if (image != null) {
+                return image
+            }
+        }
+        return null
     }
 
     private suspend fun getExecutableBufferedImage(executable: File): BufferedImage? {

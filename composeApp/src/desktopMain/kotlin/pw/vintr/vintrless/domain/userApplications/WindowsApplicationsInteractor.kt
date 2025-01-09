@@ -3,6 +3,7 @@ package pw.vintr.vintrless.domain.userApplications
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import pw.vintr.vintrless.domain.userApplications.model.UserApplication
+import pw.vintr.vintrless.domain.userApplications.model.UserApplicationPayload
 import pw.vintr.vintrless.tools.PathProvider
 import pw.vintr.vintrless.tools.extensions.Empty
 import pw.vintr.vintrless.tools.extensions.addShutdownHook
@@ -97,15 +98,22 @@ class WindowsApplicationsInteractor : ApplicationsInteractor() {
                 it.location.isNotEmpty()
             }.mapNotNull { installedApp ->
                 val folder = File(installedApp.location)
-                val executable = folder.listFiles()
+                val executables = folder.listFiles()
                     ?.toList()
-                    ?.getMainExecutable()
+                    ?.getExecutables(installedApp.name)
+                    .orEmpty()
 
-                if (executable != null) {
+                if (executables.isNotEmpty()) {
                     UserApplication(
                         name = installedApp.name,
-                        processName = executable.name,
-                        executablePath = executable.absolutePath,
+                        payload = UserApplicationPayload.WindowsApplicationPayload(
+                            relatedExecutables = executables.map { executable ->
+                                UserApplicationPayload.WindowsApplicationPayload.Executable(
+                                    processName = executable.name,
+                                    absolutePath = executable.absolutePath,
+                                )
+                            }
+                        )
                     )
                 } else {
                     null
@@ -116,27 +124,37 @@ class WindowsApplicationsInteractor : ApplicationsInteractor() {
         }.start()
     }
 
-    private fun List<File>.getMainExecutable(): File? {
-        val directories = this.filter { it.isDirectory }
+    private fun List<File>.getExecutables(applicationName: String): List<File> {
+        val executables = mutableListOf<File>()
 
-        for (file in this.filter { it.isFile }) {
-            if (
-                file.name.endsWith(EXE_EXTENSION) &&
-                !invalidExeNames.any {
-                    file.name
-                        .replace(EXE_EXTENSION, String.Empty)
-                        .equals(it, ignoreCase = true)
+        forEach { entry ->
+            if (entry.isFile) {
+                if (
+                    entry.name.endsWith(EXE_EXTENSION) &&
+                    entry.name
+                        .contains(applicationName, ignoreCase = true)
+                ) {
+                    return listOf(entry)
                 }
-            ) {
-                return file
+
+                if (
+                    entry.name.endsWith(EXE_EXTENSION) &&
+                    !invalidExeNames.any {
+                        entry.name
+                            .replace(EXE_EXTENSION, String.Empty)
+                            .equals(it, ignoreCase = true)
+                    }
+                ) {
+                    executables.add(entry)
+                }
+            } else if (entry.isDirectory) {
+                entry.listFiles()?.toList()
+                    ?.getExecutables(applicationName)
+                    ?.let { executables.addAll(it) }
             }
         }
 
-        for (directory in directories) {
-            directory.listFiles()?.toList()?.getMainExecutable()?.let { return it }
-        }
-
-        return null
+        return executables
     }
 
     private fun inheritErrorIO(src: InputStream) {

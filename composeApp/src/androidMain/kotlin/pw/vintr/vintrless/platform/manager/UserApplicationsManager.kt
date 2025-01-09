@@ -6,6 +6,7 @@ import androidx.core.graphics.drawable.toBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pw.vintr.vintrless.domain.userApplications.model.UserApplication
+import pw.vintr.vintrless.domain.userApplications.model.UserApplicationPayload
 import pw.vintr.vintrless.tools.AppContext
 
 actual object UserApplicationsManager {
@@ -20,8 +21,9 @@ actual object UserApplicationsManager {
 
                 UserApplication(
                     name = context.packageManager.getApplicationLabel(appInfo).toString(),
-                    processName = packageInfo.packageName,
-                    executablePath = null,
+                    payload = UserApplicationPayload.AndroidApplicationPayload(
+                        packageName = packageInfo.packageName,
+                    )
                 )
             }.filter { it.name.isNotEmpty() }
         }
@@ -29,7 +31,8 @@ actual object UserApplicationsManager {
 
     actual suspend fun getApplicationIcon(application: UserApplication): ImageBitmap? {
         val context = AppContext.get()
-        val iconDrawable = context.packageManager.getApplicationIcon(application.processName)
+        val payload = application.payload as? UserApplicationPayload.AndroidApplicationPayload ?: return null
+        val iconDrawable = context.packageManager.getApplicationIcon(payload.packageName)
 
         return iconDrawable
             .toBitmap()

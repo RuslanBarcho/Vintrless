@@ -7,6 +7,5 @@ package pw.vintr.vintrless.domain.userApplications.model
  */
 data class UserApplication(
     val name: String,
-    val processName: String,
-    val executablePath: String?,
+    val payload: UserApplicationPayload,
 )

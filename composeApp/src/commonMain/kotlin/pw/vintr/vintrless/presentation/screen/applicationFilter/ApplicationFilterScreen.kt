@@ -3,10 +3,7 @@ package pw.vintr.vintrless.presentation.screen.applicationFilter
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -16,9 +13,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -42,7 +38,6 @@ fun ApplicationFilterScreen(
     viewModel: ApplicationFilterViewModel = koinViewModel()
 ) {
     val screenState = viewModel.screenState.collectAsState()
-    val clipboardManager = LocalClipboardManager.current
 
     Scaffold(
         topBar = {
@@ -59,6 +54,7 @@ fun ApplicationFilterScreen(
             val wideScreen = remember(constraints) {
                 with(density) { constraints.maxWidth.toDp() } > 650.dp
             }
+            val columnsCount = if (wideScreen) 2 else 1
 
             ScreenStateLayout(
                 modifier = Modifier
@@ -66,30 +62,43 @@ fun ApplicationFilterScreen(
                     .fillMaxSize(),
                 state = screenState.value
             ) { state ->
-                LazyVerticalGrid(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
                     contentPadding = PaddingValues(
                         vertical = 20.dp,
                         horizontal = 28.dp,
                     ),
-                    columns = GridCells.Fixed(count = 2),
                 ) {
-                    items(
-                        items = state.payload.userInstalledApplications,
-                        span = { GridItemSpan(if (wideScreen) 1 else 2) },
-                    ) { application ->
-                        ApplicationCard(
-                            application = application,
-                            manuallyAdded = false,
-                            selected = false,
-                            onSelectClick = {
-                                clipboardManager.setText(AnnotatedString(application.name))
-                            },
-                            onDeleteClick = {  },
-                        )
+                    val installedApplicationsCount = state.payload.userInstalledApplications.size
+                    val rowsCount = (installedApplicationsCount + 1) / columnsCount
+
+                    items(count = rowsCount) { i ->
+                        Row(Modifier.height(IntrinsicSize.Max)) {
+                            for (j in 0 until columnsCount) {
+                                val index = i * columnsCount + j
+
+                                if (index < installedApplicationsCount) {
+                                    val application = state.payload.userInstalledApplications[index]
+
+                                    ApplicationCard(
+                                        modifier = Modifier.weight(1f),
+                                        application = application,
+                                        manuallyAdded = false,
+                                        selected = false,
+                                        onSelectClick = {  },
+                                        onDeleteClick = {  },
+                                    )
+
+                                    if (j < (columnsCount - 1)) {
+                                        Spacer(Modifier.width(20.dp))
+                                    }
+                                } else {
+                                    Spacer(Modifier.weight(1f))
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -108,8 +117,7 @@ private fun ApplicationCard(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Max)
+            .fillMaxHeight()
             .selectableCardBackground(selected = selected)
             .clickable { onSelectClick() }
             .padding(24.dp),
@@ -139,9 +147,11 @@ private fun ApplicationCard(
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = application.processName,
+                text = application.payload.payloadReadableTitle,
                 style = RubikMedium12(),
                 color = VintrlessExtendedTheme.colors.textRegular,
+                maxLines = 5,
+                overflow = TextOverflow.Ellipsis,
             )
         }
         Spacer(Modifier.width(20.dp))
