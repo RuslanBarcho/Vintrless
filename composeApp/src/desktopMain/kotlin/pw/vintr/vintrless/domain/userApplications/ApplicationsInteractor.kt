@@ -8,6 +8,7 @@ import pw.vintr.vintrless.domain.system.interactor.SystemInteractor
 import pw.vintr.vintrless.domain.system.model.OS
 import java.awt.image.BufferedImage
 import java.io.File
+import javax.swing.filechooser.FileSystemView
 
 abstract class ApplicationsInteractor {
 
@@ -27,32 +28,33 @@ abstract class ApplicationsInteractor {
     fun getApplicationIcon(application: UserApplication): ImageBitmap? {
         return application.executablePath?.let { path ->
             getExecutableBufferedImage(File(path))
-                .toBitmap()
-                .asComposeImageBitmap()
+                ?.toBitmap()
+                ?.asComposeImageBitmap()
         }
     }
 
-    private fun getExecutableBufferedImage(executable: File): BufferedImage {
-        val sf = sun.awt.shell.ShellFolder.getShellFolder(executable)
-        val icon = sf.getIcon(true)
+    private fun getExecutableBufferedImage(executable: File): BufferedImage? {
+        return runCatching {
+            val icon = FileSystemView.getFileSystemView().getSystemIcon(executable, 500, 500)
 
-        if (icon is BufferedImage) {
-            return icon
-        }
+            if (icon is BufferedImage) {
+                return@runCatching icon
+            }
 
-        // Create a buffered image with transparency
-        val bufferedImage = BufferedImage(
-            icon.getWidth(null),
-            icon.getHeight(null),
-            BufferedImage.TYPE_INT_ARGB
-        )
+            // Create a buffered image with transparency
+            val bufferedImage = BufferedImage(
+                icon.iconWidth,
+                icon.iconHeight,
+                BufferedImage.TYPE_INT_ARGB
+            )
 
-        // Draw the image on to the buffered image
-        val bGr = bufferedImage.createGraphics()
-        bGr.drawImage(icon, 0, 0, null)
-        bGr.dispose()
+            // Draw the image on to the buffered image
+            val bGr = bufferedImage.createGraphics()
+            icon.paintIcon(null, bGr, 0, 0)
+            bGr.dispose()
 
-        // Return the buffered image
-        return bufferedImage
+            // Return the buffered image
+            bufferedImage
+        }.getOrNull()
     }
 }

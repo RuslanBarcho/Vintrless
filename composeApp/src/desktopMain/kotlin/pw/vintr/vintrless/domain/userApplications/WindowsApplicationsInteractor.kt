@@ -2,12 +2,13 @@ package pw.vintr.vintrless.domain.userApplications
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import pw.vintr.vintrless.domain.userApplications.model.UserApplication
+import pw.vintr.vintrless.tools.PathProvider
 import pw.vintr.vintrless.tools.extensions.addShutdownHook
 import pw.vintr.vintrless.tools.extensions.close
 import java.io.File
 import java.io.InputStream
+import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.coroutines.suspendCoroutine
@@ -15,13 +16,13 @@ import kotlin.coroutines.suspendCoroutine
 class WindowsApplicationsInteractor : ApplicationsInteractor() {
 
     companion object {
-        private const val FIND_COMMAND = "foreach (\$UKey in 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*" +
+        private const val FIND_COMMAND = "foreach(\$UKey in 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*" +
                 "','HKLM:\\SOFTWARE\\Wow6432node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*" +
                 "','HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*" +
                 "','HKCU:\\SOFTWARE\\Wow6432node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*')" +
                 "{foreach (\$Product in (Get-ItemProperty \$UKey -ErrorAction SilentlyContinue)){" +
                 "if(\$Product.DisplayName -and \$Product.SystemComponent -ne 1){" +
-                "'{'+ 'name: ' + '\"' + \$Product.DisplayName + '\"' + ',' + 'location: ' + '\"' + \$Product.InstallLocation + '\"' + \"}\"}}}"
+                "\$Product.DisplayName + '|' + \$Product.InstallLocation}}}"
 
         private const val EXE_EXTENSION = ".exe"
         private const val INVALID_FILE_NAME = "install"
@@ -35,6 +36,8 @@ class WindowsApplicationsInteractor : ApplicationsInteractor() {
         val location: String,
     )
 
+    private val resourcesDir = File(PathProvider.resourcesPath)
+
     private var findProcess: Process? = null
 
     override suspend fun getApplications(): List<UserApplication> {
@@ -47,22 +50,36 @@ class WindowsApplicationsInteractor : ApplicationsInteractor() {
             findProcess = null
         }
 
-        val proc = ProcessBuilder("cmd", "/c", FIND_COMMAND)
+        val proc = ProcessBuilder("powershell.exe", FIND_COMMAND)
+            .directory(resourcesDir)
             .start()
             .apply { addShutdownHook() }
+
         findProcess = proc
 
         inheritErrorIO(proc.errorStream)
 
         Thread {
             val appList = mutableListOf<HLKRecord>()
-            val sc = Scanner(proc.inputStream)
+            val sc = Scanner(proc.inputStream, Charset.forName("CP866"))
 
             while (sc.hasNextLine() && proc.isAlive) {
-                val outputLine = String(sc.nextLine().toByteArray(), StandardCharsets.UTF_8)
-                val appData = Json.decodeFromString<HLKRecord>(outputLine)
+                val bytearray = sc.nextLine().toByteArray(StandardCharsets.UTF_8)
+                val outputLine = String(bytearray, StandardCharsets.UTF_8)
 
-                appList.add(appData)
+                val outputData = outputLine.split("|")
+
+                val name = outputData.getOrNull(0)
+                val location = outputData.getOrNull(1)
+
+                if (name != null && location != null) {
+                    appList.add(
+                        HLKRecord(
+                            name = name,
+                            location = location
+                        )
+                    )
+                }
             }
 
             continuation.resumeWith(Result.success(appList))

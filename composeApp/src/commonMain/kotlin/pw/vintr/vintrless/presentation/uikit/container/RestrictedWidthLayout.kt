@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pw.vintr.vintrless.tools.extensions.fillMaxWidthRestricted
@@ -13,7 +14,7 @@ import pw.vintr.vintrless.tools.extensions.fillMaxWidthRestricted
 @Composable
 fun RestrictedWidthLayout(
     restrictionWidth: Dp = 650.dp,
-    content: @Composable () -> Unit,
+    content: @Composable (constraints: Constraints) -> Unit,
 ) {
     BoxWithConstraints(
         modifier = Modifier
@@ -24,7 +25,9 @@ fun RestrictedWidthLayout(
                 .fillMaxWidthRestricted(maxWidth = restrictionWidth)
                 .align(Alignment.Center)
         ) {
-            content()
+            BoxWithConstraints {
+                content(constraints)
+            }
         }
     }
 }

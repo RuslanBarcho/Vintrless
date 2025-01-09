@@ -105,4 +105,7 @@
     <string name="about_app_telegram_description">Новости и релизы</string>
     <string name="about_app_github_title">Github</string>
     <string name="about_app_github_description">Исходный код проекта</string>
+
+    <string name="apps_filter_title">Фильтр приложений</string>
+    <string name="apps_filter_description">Проксировать или обходить конкретные программы</string>
 </resources>

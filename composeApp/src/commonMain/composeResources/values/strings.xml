@@ -105,4 +105,7 @@
     <string name="about_app_telegram_description">News &amp; releases</string>
     <string name="about_app_github_title">Github</string>
     <string name="about_app_github_description">Project source code</string>
+
+    <string name="apps_filter_title">Apps filter</string>
+    <string name="apps_filter_description">Proxy or bypass specific programs</string>
 </resources>
