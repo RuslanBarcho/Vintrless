@@ -8,7 +8,6 @@ import pw.vintr.vintrless.tools.extensions.addShutdownHook
 import pw.vintr.vintrless.tools.extensions.close
 import java.io.File
 import java.io.InputStream
-import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.coroutines.suspendCoroutine
@@ -16,7 +15,9 @@ import kotlin.coroutines.suspendCoroutine
 class WindowsApplicationsInteractor : ApplicationsInteractor() {
 
     companion object {
-        private const val FIND_COMMAND = "foreach(\$UKey in 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*" +
+        private const val FIND_COMMAND = "\$OutputEncoding = [console]::InputEncoding = " +
+                "[console]::OutputEncoding = New-Object System.Text.UTF8Encoding; " +
+                "foreach(\$UKey in 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*" +
                 "','HKLM:\\SOFTWARE\\Wow6432node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*" +
                 "','HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*" +
                 "','HKCU:\\SOFTWARE\\Wow6432node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*')" +
@@ -61,7 +62,7 @@ class WindowsApplicationsInteractor : ApplicationsInteractor() {
 
         Thread {
             val appList = mutableListOf<HLKRecord>()
-            val sc = Scanner(proc.inputStream, Charset.forName("CP866"))
+            val sc = Scanner(proc.inputStream, StandardCharsets.UTF_8)
 
             while (sc.hasNextLine() && proc.isAlive) {
                 val bytearray = sc.nextLine().toByteArray(StandardCharsets.UTF_8)
