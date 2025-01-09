@@ -32,6 +32,7 @@ import pw.vintr.vintrless.presentation.uikit.container.RestrictedWidthLayout
 import pw.vintr.vintrless.presentation.uikit.layout.ScreenStateLayout
 import pw.vintr.vintrless.presentation.uikit.toolbar.ToolbarRegular
 import pw.vintr.vintrless.tools.extensions.selectableCardBackground
+import pw.vintr.vintrless.tools.painter.suspendBitmapPainter
 import vintrless.composeapp.generated.resources.Res
 import vintrless.composeapp.generated.resources.ic_delete
 import vintrless.composeapp.generated.resources.apps_filter_title
@@ -115,15 +116,15 @@ private fun ApplicationCard(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Application icon (optional)
-        UserApplicationsManager.getApplicationIcon(application)?.let { iconBitmap ->
-            Image(
-                modifier = Modifier
-                    .size(48.dp),
-                bitmap = iconBitmap,
-                contentDescription = null,
-            )
-            Spacer(Modifier.width(20.dp))
-        }
+        Image(
+            modifier = Modifier
+                .size(48.dp),
+            painter = suspendBitmapPainter {
+                UserApplicationsManager.getApplicationIcon(application)
+            },
+            contentDescription = null,
+        )
+        Spacer(Modifier.width(20.dp))
 
         // App and process/package name
         Column(

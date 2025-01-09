@@ -9,7 +9,7 @@ actual object UserApplicationsManager {
         return listOf()
     }
 
-    actual fun getApplicationIcon(application: UserApplication): ImageBitmap? {
+    actual suspend fun getApplicationIcon(application: UserApplication): ImageBitmap? {
         return null
     }
 }

@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import pw.vintr.vintrless.domain.userApplications.model.UserApplication
 import pw.vintr.vintrless.tools.PathProvider
+import pw.vintr.vintrless.tools.extensions.Empty
 import pw.vintr.vintrless.tools.extensions.addShutdownHook
 import pw.vintr.vintrless.tools.extensions.close
 import java.io.File
@@ -26,7 +27,8 @@ class WindowsApplicationsInteractor : ApplicationsInteractor() {
                 "\$Product.DisplayName + '|' + \$Product.InstallLocation}}}"
 
         private const val EXE_EXTENSION = ".exe"
-        private const val INVALID_FILE_NAME = "install"
+
+        private val invalidExeNames = listOf("unins000", "install", "uninstall", "update")
     }
 
     @Serializable
@@ -110,7 +112,7 @@ class WindowsApplicationsInteractor : ApplicationsInteractor() {
                 }
             }
 
-            continuation.resumeWith(Result.success(applications))
+            continuation.resumeWith(Result.success(applications.sortedBy { it.name }))
         }.start()
     }
 
@@ -118,7 +120,14 @@ class WindowsApplicationsInteractor : ApplicationsInteractor() {
         val directories = this.filter { it.isDirectory }
 
         for (file in this.filter { it.isFile }) {
-            if (file.name.endsWith(EXE_EXTENSION) && !file.name.contains(INVALID_FILE_NAME)) {
+            if (
+                file.name.endsWith(EXE_EXTENSION) &&
+                !invalidExeNames.any {
+                    file.name
+                        .replace(EXE_EXTENSION, String.Empty)
+                        .equals(it, ignoreCase = true)
+                }
+            ) {
                 return file
             }
         }

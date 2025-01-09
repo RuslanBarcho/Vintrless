@@ -7,5 +7,5 @@ expect object UserApplicationsManager {
 
     suspend fun getUserApplications(): List<UserApplication>
 
-    fun getApplicationIcon(application: UserApplication): ImageBitmap?
+    suspend fun getApplicationIcon(application: UserApplication): ImageBitmap?
 }

@@ -12,7 +12,7 @@ actual object UserApplicationsManager {
         return applicationsInteractor.getApplications()
     }
 
-    actual fun getApplicationIcon(application: UserApplication): ImageBitmap? {
+    actual suspend fun getApplicationIcon(application: UserApplication): ImageBitmap? {
         return applicationsInteractor.getApplicationIcon(application)
     }
 }

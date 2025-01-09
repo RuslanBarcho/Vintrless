@@ -27,7 +27,7 @@ actual object UserApplicationsManager {
         }
     }
 
-    actual fun getApplicationIcon(application: UserApplication): ImageBitmap? {
+    actual suspend fun getApplicationIcon(application: UserApplication): ImageBitmap? {
         val context = AppContext.get()
         val iconDrawable = context.packageManager.getApplicationIcon(application.processName)
 
