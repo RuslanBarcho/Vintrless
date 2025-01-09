@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.lighthousegames.logging.logging
+import pw.vintr.vintrless.v2ray.storage.V2RayConfigStorage
 import java.io.File
 import java.lang.ref.SoftReference
 
@@ -92,6 +93,7 @@ class V2RayVpnService : VpnService(), V2RayServiceDialog {
     }
 
     private fun setup() {
+        val config = V2RayConfigStorage.getConfig(applicationContext)
         val prepare = prepare(this)
         if (prepare != null) {
             return
@@ -131,7 +133,7 @@ class V2RayVpnService : VpnService(), V2RayServiceDialog {
 //            }
         builder.addDnsServer("1.1.1.1")
 
-        builder.setSession("Test vpn name")
+        builder.setSession(config?.name ?: "Vpn Service")
 
         val selfPackageName = "pw.vintr.vintrless"
         builder.addDisallowedApplication(selfPackageName)
