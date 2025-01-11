@@ -108,4 +108,10 @@
 
     <string name="apps_filter_title">Фильтр приложений</string>
     <string name="apps_filter_description">Проксировать или обходить конкретные программы</string>
+    <string name="apps_filter_enable_setting">Использовать фильтр</string>
+    <string name="apps_filter_mode_title">Режим фильтрации</string>
+    <string name="apps_filter_blacklist">Черный список</string>
+    <string name="apps_filter_blacklist_description">VPN в этом режиме работает только с выбранными приложениями</string>
+    <string name="apps_filter_whitelist">Белый список</string>
+    <string name="apps_filter_whitelist_description">VPN в этом режиме работает со всеми приложениями кроме выбранных</string>
 </resources>

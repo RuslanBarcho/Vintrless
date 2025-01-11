@@ -2,6 +2,7 @@ package pw.vintr.vintrless.presentation.screen.applicationFilter
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import pw.vintr.vintrless.domain.applicationFilter.model.ApplicationFilterMode
 import pw.vintr.vintrless.domain.userApplications.interactor.UserApplicationsInteractor
 import pw.vintr.vintrless.domain.userApplications.model.SystemProcess
 import pw.vintr.vintrless.domain.userApplications.model.UserApplication
@@ -31,6 +32,7 @@ class ApplicationFilterViewModel(
                 enabled = false,
                 userInstalledApplications = userApplicationsInteractor.getUserApplications(),
                 manualAddedApplications = listOf(),
+                selectedFilterMode = ApplicationFilterMode.BLACK_LIST,
                 processAddFormState = ProcessAddFormState(
                     enabled = platformType() == PlatformType.JVM,
                 )
@@ -47,6 +49,11 @@ class ApplicationFilterViewModel(
 
 data class ApplicationFilterState(
     val enabled: Boolean = false,
+    val selectedFilterMode: ApplicationFilterMode,
+    val availableFilterModes: List<ApplicationFilterMode> = listOf(
+        ApplicationFilterMode.BLACK_LIST,
+        ApplicationFilterMode.WHITE_LIST,
+    ),
     val userInstalledApplications: List<UserApplication> = listOf(),
     val manualAddedApplications: List<UserApplication> = listOf(),
     val processAddFormState: ProcessAddFormState = ProcessAddFormState(),

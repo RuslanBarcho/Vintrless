@@ -108,4 +108,10 @@
 
     <string name="apps_filter_title">Apps filter</string>
     <string name="apps_filter_description">Proxy or bypass specific programs</string>
+    <string name="apps_filter_enable_setting">Use filter</string>
+    <string name="apps_filter_mode_title">Filter mode</string>
+    <string name="apps_filter_blacklist">Blacklist</string>
+    <string name="apps_filter_blacklist_description">VPN in this mode works only with selected applications</string>
+    <string name="apps_filter_whitelist">Whitelist</string>
+    <string name="apps_filter_whitelist_description">VPN in this mode works with all applications except selected ones</string>
 </resources>

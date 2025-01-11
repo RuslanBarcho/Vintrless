@@ -2,6 +2,7 @@ package pw.vintr.vintrless.domain.userApplications
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import pw.vintr.vintrless.domain.userApplications.model.UserApplication
 import pw.vintr.vintrless.domain.userApplications.model.UserApplicationPayload
 import pw.vintr.vintrless.tools.PathProvider
@@ -17,27 +18,19 @@ import kotlin.coroutines.suspendCoroutine
 class WindowsApplicationsInteractor : ApplicationsInteractor() {
 
     companion object {
-        private const val FIND_COMMAND = "\$OutputEncoding = [console]::InputEncoding = " +
-                "[console]::OutputEncoding = New-Object System.Text.UTF8Encoding; " +
-                "foreach(\$UKey in 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*" +
-                "','HKLM:\\SOFTWARE\\Wow6432node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*" +
-                "','HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*" +
-                "','HKCU:\\SOFTWARE\\Wow6432node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*')" +
-                "{foreach (\$Product in (Get-ItemProperty \$UKey -ErrorAction SilentlyContinue)){" +
-                "if(\$Product.DisplayName -and \$Product.SystemComponent -ne 1){" +
-                "\$Product.DisplayName + '|' + \$Product.InstallLocation}}}"
-
-        private const val EXE_EXTENSION = ".exe"
-
-        private val invalidExeNames = listOf("unins000", "install", "uninstall", "update")
+        private const val PROC_START_ARGUMENT = "--processStart"
     }
 
     @Serializable
-    private data class HLKRecord(
+    private data class StartMenuRecord(
         @SerialName("name")
         val name: String,
         @SerialName("location")
         val location: String,
+        @SerialName("arguments")
+        val arguments: String,
+        @SerialName("workingDirectory")
+        val workingDirectory: String,
     )
 
     private val resourcesDir = File(PathProvider.resourcesPath)
@@ -45,116 +38,70 @@ class WindowsApplicationsInteractor : ApplicationsInteractor() {
     private var findProcess: Process? = null
 
     override suspend fun getApplications(): List<UserApplication> {
-        return mapHLKToApplications(getHLKRecords())
+        return mapStartRecordsToApplications(getStartMenuRecords())
     }
 
-    private suspend fun getHLKRecords(): List<HLKRecord> = suspendCoroutine { continuation ->
+    private suspend fun getStartMenuRecords(): List<StartMenuRecord> = suspendCoroutine { continuation ->
         if (findProcess != null && findProcess?.isAlive == true) {
             findProcess?.close()
             findProcess = null
         }
 
-        val proc = ProcessBuilder("powershell.exe", FIND_COMMAND)
+        val proc = ProcessBuilder("powershell.exe", ".\\find_applications.ps1")
             .directory(resourcesDir)
             .start()
             .apply { addShutdownHook() }
 
         findProcess = proc
-
         inheritErrorIO(proc.errorStream)
 
         Thread {
-            val appList = mutableListOf<HLKRecord>()
+            val appList = mutableListOf<StartMenuRecord>()
             val sc = Scanner(proc.inputStream, StandardCharsets.UTF_8)
 
             while (sc.hasNextLine() && proc.isAlive) {
                 val bytearray = sc.nextLine().toByteArray(StandardCharsets.UTF_8)
                 val outputLine = String(bytearray, StandardCharsets.UTF_8)
 
-                val outputData = outputLine.split("|")
-
-                val name = outputData.getOrNull(0)
-                val location = outputData.getOrNull(1)
-
-                if (name != null && location != null) {
-                    appList.add(
-                        HLKRecord(
-                            name = name,
-                            location = location
-                        )
-                    )
-                }
+                runCatching {
+                    appList.add(Json.decodeFromString(outputLine))
+                }.onFailure { it.printStackTrace() }
             }
 
             continuation.resumeWith(Result.success(appList))
         }.start()
     }
 
-    private suspend fun mapHLKToApplications(
-        records: List<HLKRecord>
-    ): List<UserApplication> = suspendCoroutine { continuation ->
-        Thread {
-            val applications = records.filter {
-                it.location.isNotEmpty()
-            }.mapNotNull { installedApp ->
-                val folder = File(installedApp.location)
-                val executables = folder.listFiles()
-                    ?.toList()
-                    ?.getExecutables(installedApp.name)
-                    .orEmpty()
+    private fun mapStartRecordsToApplications(
+        records: List<StartMenuRecord>
+    ): List<UserApplication> {
+        return records.map { record ->
+            val executableName: String
+            val executablePath: String
 
-                if (executables.isNotEmpty()) {
-                    UserApplication(
-                        name = installedApp.name,
-                        payload = UserApplicationPayload.WindowsApplicationPayload(
-                            relatedExecutables = executables.map { executable ->
-                                UserApplicationPayload.WindowsApplicationPayload.Executable(
-                                    processName = executable.name,
-                                    absolutePath = executable.absolutePath,
-                                )
-                            }
+            if (record.arguments.contains(PROC_START_ARGUMENT)) {
+                executableName = record.arguments
+                    .replace(PROC_START_ARGUMENT, String.Empty)
+                    .replace("\"", String.Empty)
+                    .trim()
+                executablePath = "${record.workingDirectory}\\$executableName"
+            } else {
+                executableName = record.location.split("\\").last()
+                executablePath = record.location
+            }
+
+            UserApplication(
+                name = record.name,
+                payload = UserApplicationPayload.WindowsApplicationPayload(
+                    relatedExecutables = listOf(
+                        UserApplicationPayload.WindowsApplicationPayload.Executable(
+                            processName = executableName,
+                            absolutePath = executablePath,
                         )
                     )
-                } else {
-                    null
-                }
-            }
-
-            continuation.resumeWith(Result.success(applications.sortedBy { it.name }))
-        }.start()
-    }
-
-    private fun List<File>.getExecutables(applicationName: String): List<File> {
-        val executables = mutableListOf<File>()
-
-        forEach { entry ->
-            if (entry.isFile) {
-                if (
-                    entry.name.endsWith(EXE_EXTENSION) &&
-                    entry.name
-                        .contains(applicationName, ignoreCase = true)
-                ) {
-                    return listOf(entry)
-                }
-
-                if (
-                    entry.name.endsWith(EXE_EXTENSION) &&
-                    !invalidExeNames.any {
-                        entry.name
-                            .replace(EXE_EXTENSION, String.Empty)
-                            .equals(it, ignoreCase = true)
-                    }
-                ) {
-                    executables.add(entry)
-                }
-            } else if (entry.isDirectory) {
-                entry.listFiles()?.toList()
-                    ?.getExecutables(applicationName)
-                    ?.let { executables.addAll(it) }
-            }
-        }
-
-        return executables
+                )
+            )
+        }.sortedBy { it.name }
     }
 
     private fun inheritErrorIO(src: InputStream) {
