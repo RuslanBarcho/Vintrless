@@ -40,9 +40,15 @@ class ApplicationFilterViewModel(
         }
     }
 
-    fun toggleEnabled(value: Boolean) {
+    fun setEnabled(value: Boolean) {
         _screenState.updateLoaded { state ->
             state.copy(enabled = value)
+        }
+    }
+
+    fun setFilterMode(value: ApplicationFilterMode) {
+        _screenState.updateLoaded { state ->
+            state.copy(selectedFilterMode = value)
         }
     }
 }

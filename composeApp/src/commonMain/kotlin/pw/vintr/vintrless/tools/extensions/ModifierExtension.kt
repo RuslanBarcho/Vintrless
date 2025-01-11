@@ -63,19 +63,17 @@ fun Modifier.selectableCardBackground(
         .border(BorderStroke(1.dp, borderColor.value), shape)
 }
 
-context(BoxWithConstraintsScope)
 @Composable
-fun Modifier.fillMaxWidthRestricted(maxWidth: Dp, decreaseSize: Dp = 0.dp) = this
+fun Modifier.fillMaxWidthRestricted(scope: BoxWithConstraintsScope, maxWidth: Dp, decreaseSize: Dp = 0.dp) = this
     .width(
-        with(LocalDensity.current) { constraints.maxWidth.toDp() }
+        with(LocalDensity.current) { scope.constraints.maxWidth.toDp() }
             .coerceAtMost(maxWidth) - decreaseSize
     )
 
-context(BoxWithConstraintsScope)
 @Composable
-fun Modifier.fillMaxHeightRestricted(maxHeight: Dp, decreaseSize: Dp = 0.dp) = this
+fun Modifier.fillMaxHeightRestricted(scope: BoxWithConstraintsScope, maxHeight: Dp, decreaseSize: Dp = 0.dp) = this
     .height(
-        with(LocalDensity.current) { constraints.maxHeight.toDp() }
+        with(LocalDensity.current) { scope.constraints.maxHeight.toDp() }
             .coerceAtMost(maxHeight) - decreaseSize
     )
 

@@ -30,12 +30,13 @@ import pw.vintr.vintrless.presentation.uikit.toolbar.ToolbarRegular
 import pw.vintr.vintrless.tools.extensions.cardBackground
 import pw.vintr.vintrless.tools.extensions.selectableCardBackground
 import pw.vintr.vintrless.tools.painter.suspendBitmapPainter
+import vintrless.composeapp.generated.resources.*
 import vintrless.composeapp.generated.resources.Res
-import vintrless.composeapp.generated.resources.ic_delete
-import vintrless.composeapp.generated.resources.apps_filter_title
-import vintrless.composeapp.generated.resources.apps_filter_enable_setting
 import vintrless.composeapp.generated.resources.apps_filter_blacklist
+import vintrless.composeapp.generated.resources.apps_filter_enable_setting
+import vintrless.composeapp.generated.resources.apps_filter_title
 import vintrless.composeapp.generated.resources.apps_filter_whitelist
+import vintrless.composeapp.generated.resources.ic_delete
 
 private const val KEY_FILTER_STATUS = "key-filter-status"
 
@@ -80,20 +81,22 @@ fun ApplicationFilterScreen(
                         horizontal = 28.dp,
                     ),
                 ) {
+                    // Filter status and mode
                     item(KEY_FILTER_STATUS) {
                         ApplicationFilterSettings(
                             enabled = state.payload.enabled,
                             availableModes = state.payload.availableFilterModes,
                             selectedMode = state.payload.selectedFilterMode,
                             onEnableStateChange = {
-
+                                viewModel.setEnabled(it)
                             },
                             onFilterModeSelected = {
-
+                                viewModel.setFilterMode(it)
                             },
                         )
                     }
 
+                    // Installed apps on device
                     items(count = rowsCount) { i ->
                         Row(Modifier.height(IntrinsicSize.Max)) {
                             for (j in 0 until columnsCount) {
@@ -163,7 +166,8 @@ private fun ApplicationFilterSettings(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f),
                 text = stringResource(Res.string.apps_filter_enable_setting),
                 style = RubikMedium16(),
                 color = VintrlessExtendedTheme.colors.textRegular,
@@ -184,6 +188,24 @@ private fun ApplicationFilterSettings(
             onItemSelected = { mode ->
                 mode?.let { onFilterModeSelected(it) }
             }
+        )
+        Spacer(Modifier.height(10.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
+            text = stringResource(
+                when (selectedMode) {
+                    ApplicationFilterMode.BLACK_LIST -> {
+                        Res.string.apps_filter_blacklist_description
+                    }
+                    ApplicationFilterMode.WHITE_LIST -> {
+                        Res.string.apps_filter_whitelist_description
+                    }
+                }
+            ),
+            style = RubikMedium12(),
+            color = VintrlessExtendedTheme.colors.textSecondary,
         )
     }
 }

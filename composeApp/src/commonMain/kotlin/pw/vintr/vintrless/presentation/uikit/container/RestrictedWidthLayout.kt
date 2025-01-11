@@ -22,7 +22,7 @@ fun RestrictedWidthLayout(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidthRestricted(maxWidth = restrictionWidth)
+                .fillMaxWidthRestricted(scope = this, maxWidth = restrictionWidth)
                 .align(Alignment.Center)
         ) {
             BoxWithConstraints {
