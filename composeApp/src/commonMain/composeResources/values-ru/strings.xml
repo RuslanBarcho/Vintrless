@@ -3,6 +3,8 @@
     <string name="common_cancel">Отмена</string>
     <string name="common_ok">Ок</string>
     <string name="common_delete">Удалить</string>
+    <string name="common_add">Добавить</string>
+
     <string name="current_config">Текущий профиль</string>
     <string name="no_config">Нет профиля</string>
     <string name="no_config_description">Добавьте новый профиль VPN, чтобы начать использовать приложение</string>
@@ -114,4 +116,7 @@
     <string name="apps_filter_blacklist_description">VPN в этом режиме работает только с выбранными приложениями</string>
     <string name="apps_filter_whitelist">Белый список</string>
     <string name="apps_filter_whitelist_description">VPN в этом режиме работает со всеми приложениями кроме выбранных</string>
+    <string name="apps_filter_add_process_manual">Добавить процесс вручную</string>
+    <string name="apps_filter_app_name">Название приложения</string>
+    <string name="apps_filter_process_name">Имя процесса</string>
 </resources>

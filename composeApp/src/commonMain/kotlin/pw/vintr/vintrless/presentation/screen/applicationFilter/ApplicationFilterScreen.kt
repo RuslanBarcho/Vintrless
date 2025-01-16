@@ -17,12 +17,16 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.vintr.vintrless.domain.applicationFilter.model.ApplicationFilterMode
+import pw.vintr.vintrless.domain.userApplications.model.SystemProcess
 import pw.vintr.vintrless.domain.userApplications.model.UserApplication
 import pw.vintr.vintrless.platform.manager.UserApplicationsManager
 import pw.vintr.vintrless.presentation.theme.*
+import pw.vintr.vintrless.presentation.uikit.button.ButtonRegular
+import pw.vintr.vintrless.presentation.uikit.button.ButtonRegularSize
 import pw.vintr.vintrless.presentation.uikit.button.ButtonSecondary
 import pw.vintr.vintrless.presentation.uikit.button.ButtonSecondarySize
 import pw.vintr.vintrless.presentation.uikit.container.RestrictedWidthLayout
+import pw.vintr.vintrless.presentation.uikit.input.AppDropdownEditableField
 import pw.vintr.vintrless.presentation.uikit.input.AppDropdownField
 import pw.vintr.vintrless.presentation.uikit.input.DropdownPayload
 import pw.vintr.vintrless.presentation.uikit.layout.ScreenStateLayout
@@ -39,6 +43,8 @@ import vintrless.composeapp.generated.resources.apps_filter_whitelist
 import vintrless.composeapp.generated.resources.ic_delete
 
 private const val KEY_FILTER_STATUS = "key-filter-status"
+
+private const val KEY_PROCESS_ADD_FORM = "key-process-add-form"
 
 @Composable
 fun ApplicationFilterScreen(
@@ -94,6 +100,24 @@ fun ApplicationFilterScreen(
                                 viewModel.setFilterMode(it)
                             },
                         )
+                    }
+
+                    // Process add form (desktop only)
+                    if (state.payload.processAddFormState.enabled) {
+                        item(KEY_PROCESS_ADD_FORM) {
+                            ProcessAddForm(
+                                state = state.payload.processAddFormState,
+                                onAppNameChange = {
+                                    viewModel.setAddFormAppName(it)
+                                },
+                                onProcessNameChange = {
+                                    viewModel.setAddFormProcessName(it)
+                                },
+                                onProcessSelect = {
+                                    viewModel.setAddFormValue(it)
+                                }
+                            )
+                        }
                     }
 
                     // Installed apps on device
@@ -183,6 +207,7 @@ private fun ApplicationFilterSettings(
         AppDropdownField(
             modifier = Modifier
                 .fillMaxWidth(),
+            label = stringResource(Res.string.apps_filter_mode_title),
             items = modePayloads,
             selectedItem = selectedPayload,
             onItemSelected = { mode ->
@@ -207,6 +232,79 @@ private fun ApplicationFilterSettings(
             style = RubikMedium12(),
             color = VintrlessExtendedTheme.colors.textSecondary,
         )
+    }
+}
+
+@Composable
+private fun ProcessAddForm(
+    modifier: Modifier = Modifier,
+    state: ProcessAddFormState,
+    onAppNameChange: (String) -> Unit,
+    onProcessNameChange: (String) -> Unit,
+    onProcessSelect: (SystemProcess) -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .cardBackground()
+            .padding(horizontal = 16.dp, vertical = 20.dp)
+    ) {
+        // Title
+        Text(
+            text = stringResource(Res.string.apps_filter_add_process_manual),
+            style = Gilroy18(),
+            color = VintrlessExtendedTheme.colors.textRegular,
+        )
+        Spacer(Modifier.height(24.dp))
+
+        // Application name field with process selection dropdown
+        AppDropdownEditableField(
+            modifier = Modifier
+                .fillMaxWidth(),
+            value = state.appNameValue,
+            label = stringResource(Res.string.apps_filter_app_name),
+            items = state.processesByAppName.map { process ->
+                DropdownPayload(
+                    title = process.appName,
+                    payload = process,
+                )
+            },
+            onValueChange = onAppNameChange,
+            onItemSelected = { mode ->
+                mode?.let { onProcessSelect(it) }
+            }
+        )
+        Spacer(Modifier.height(24.dp))
+
+        // Process name field with process selection dropdown
+        AppDropdownEditableField(
+            modifier = Modifier
+                .fillMaxWidth(),
+            value = state.processNameValue,
+            label = stringResource(Res.string.apps_filter_process_name),
+            items = state.processesByProcessName.map { process ->
+                DropdownPayload(
+                    title = process.appName,
+                    payload = process,
+                )
+            },
+            onValueChange = onProcessNameChange,
+            onItemSelected = { mode ->
+                mode?.let { onProcessSelect(it) }
+            }
+        )
+        Spacer(Modifier.height(16.dp))
+
+        // Save button
+        ButtonRegular(
+            modifier = Modifier
+                .fillMaxWidth(),
+            text = stringResource(Res.string.common_add),
+            enabled = state.formIsValid,
+            size = ButtonRegularSize.MEDIUM,
+        ) {
+            // TODO: save
+        }
     }
 }
 

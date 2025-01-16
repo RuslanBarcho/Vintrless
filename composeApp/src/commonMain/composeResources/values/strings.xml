@@ -3,6 +3,8 @@
     <string name="common_cancel">Cancel</string>
     <string name="common_ok">OK</string>
     <string name="common_delete">Delete</string>
+    <string name="common_add">Add</string>
+
     <string name="current_config">Current config</string>
     <string name="no_config">No config</string>
     <string name="no_config_description">Add new VPN configuration to start using app</string>
@@ -114,4 +116,7 @@
     <string name="apps_filter_blacklist_description">VPN in this mode works only with selected applications</string>
     <string name="apps_filter_whitelist">Whitelist</string>
     <string name="apps_filter_whitelist_description">VPN in this mode works with all applications except selected ones</string>
+    <string name="apps_filter_add_process_manual">Add a process manually</string>
+    <string name="apps_filter_app_name">Application name</string>
+    <string name="apps_filter_process_name">Process name</string>
 </resources>

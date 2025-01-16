@@ -17,7 +17,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
@@ -50,10 +49,10 @@ fun AppTextField(
     showClearButton: Boolean = false,
     actionOnClear: (() -> Unit) = {},
     actionOnDone: ((String) -> Unit)? = null,
+    interactionSource: MutableInteractionSource? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
     val localFocusManager = LocalFocusManager.current
-    val interactionSource = remember { MutableInteractionSource() }
 
     Column(modifier = modifier) {
         if (label.isNotEmpty()) {

@@ -8,6 +8,7 @@ import org.jetbrains.skiko.toBitmap
 import pw.vintr.vintrless.domain.userApplications.model.UserApplication
 import pw.vintr.vintrless.domain.system.interactor.SystemInteractor
 import pw.vintr.vintrless.domain.system.model.OS
+import pw.vintr.vintrless.domain.userApplications.model.SystemProcess
 import pw.vintr.vintrless.domain.userApplications.model.UserApplicationPayload
 import java.awt.image.BufferedImage
 import java.io.File
@@ -27,6 +28,8 @@ abstract class ApplicationsInteractor {
     }
 
     abstract suspend fun getApplications(): List<UserApplication>
+
+    abstract suspend fun getRunningProcesses(): List<SystemProcess>
 
     suspend fun getApplicationIcon(application: UserApplication): ImageBitmap? {
         return when (application.payload) {

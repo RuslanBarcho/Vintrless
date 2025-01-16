@@ -11,3 +11,9 @@ fun Process.addShutdownHook() {
     val shutdownRunnable = Runnable { close() }
     Runtime.getRuntime().addShutdownHook(Thread(shutdownRunnable))
 }
+
+fun Process?.closeIfAlive() {
+    if (this?.isAlive == true) {
+        this.close()
+    }
+}

@@ -1,14 +1,17 @@
 package pw.vintr.vintrless.domain.userApplications
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import pw.vintr.vintrless.domain.userApplications.model.SystemProcess
 import pw.vintr.vintrless.domain.userApplications.model.UserApplication
 import pw.vintr.vintrless.domain.userApplications.model.UserApplicationPayload
 import pw.vintr.vintrless.tools.PathProvider
 import pw.vintr.vintrless.tools.extensions.Empty
 import pw.vintr.vintrless.tools.extensions.addShutdownHook
-import pw.vintr.vintrless.tools.extensions.close
+import pw.vintr.vintrless.tools.extensions.closeIfAlive
 import java.io.File
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
@@ -18,6 +21,7 @@ import kotlin.coroutines.suspendCoroutine
 class WindowsApplicationsInteractor : ApplicationsInteractor() {
 
     companion object {
+        private const val EXE_EXTENSION = ".exe"
         private const val PROC_START_ARGUMENT = "--processStart"
     }
 
@@ -35,24 +39,57 @@ class WindowsApplicationsInteractor : ApplicationsInteractor() {
 
     private val resourcesDir = File(PathProvider.resourcesPath)
 
-    private var findProcess: Process? = null
+    private var getApplicationsProcess: Process? = null
+
+    private var getRunningProcessesProcess: Process? = null
 
     override suspend fun getApplications(): List<UserApplication> {
         return mapStartRecordsToApplications(getStartMenuRecords())
     }
 
-    private suspend fun getStartMenuRecords(): List<StartMenuRecord> = suspendCoroutine { continuation ->
-        if (findProcess != null && findProcess?.isAlive == true) {
-            findProcess?.close()
-            findProcess = null
+    override suspend fun getRunningProcesses(): List<SystemProcess> {
+        return withContext(Dispatchers.IO) {
+            getRunningProcessesProcess.closeIfAlive()
+
+            val proc = ProcessBuilder("powershell.exe", ".\\find_processes.ps1")
+                .directory(resourcesDir)
+                .start()
+                .apply { addShutdownHook() }
+
+            getRunningProcessesProcess = proc
+            inheritErrorIO(proc.errorStream)
+
+            val processList = mutableListOf<String>()
+            val sc = Scanner(proc.inputStream, StandardCharsets.UTF_8)
+
+            while (sc.hasNextLine() && proc.isAlive) {
+                val bytearray = sc.nextLine().toByteArray(StandardCharsets.UTF_8)
+                val outputLine = String(bytearray, StandardCharsets.UTF_8)
+
+                processList.add(outputLine)
+            }
+
+            processList
+                .distinct()
+                .sorted()
+                .map { processName ->
+                    SystemProcess(
+                        appName = processName,
+                        processName = processName + EXE_EXTENSION
+                    )
+                }
         }
+    }
+
+    private suspend fun getStartMenuRecords(): List<StartMenuRecord> = suspendCoroutine { continuation ->
+        getApplicationsProcess.closeIfAlive()
 
         val proc = ProcessBuilder("powershell.exe", ".\\find_applications.ps1")
             .directory(resourcesDir)
             .start()
             .apply { addShutdownHook() }
 
-        findProcess = proc
+        getApplicationsProcess = proc
         inheritErrorIO(proc.errorStream)
 
         Thread {

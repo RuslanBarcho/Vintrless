@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import pw.vintr.vintrless.domain.userApplications.model.SystemProcess
 import pw.vintr.vintrless.domain.userApplications.model.UserApplication
 import pw.vintr.vintrless.domain.userApplications.model.UserApplicationPayload
 import pw.vintr.vintrless.tools.AppContext
@@ -28,6 +29,8 @@ actual object UserApplicationsManager {
             }.filter { it.name.isNotEmpty() }
         }
     }
+
+    actual suspend fun getRunningProcesses(): List<SystemProcess> = listOf()
 
     actual suspend fun getApplicationIcon(application: UserApplication): ImageBitmap? {
         val context = AppContext.get()
