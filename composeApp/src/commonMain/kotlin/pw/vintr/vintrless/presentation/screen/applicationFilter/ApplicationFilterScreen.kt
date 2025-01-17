@@ -28,9 +28,11 @@ import pw.vintr.vintrless.presentation.uikit.button.ButtonSecondarySize
 import pw.vintr.vintrless.presentation.uikit.container.RestrictedWidthLayout
 import pw.vintr.vintrless.presentation.uikit.input.AppDropdownEditableField
 import pw.vintr.vintrless.presentation.uikit.input.AppDropdownField
+import pw.vintr.vintrless.presentation.uikit.input.AppTextField
 import pw.vintr.vintrless.presentation.uikit.input.DropdownPayload
 import pw.vintr.vintrless.presentation.uikit.layout.ScreenStateLayout
 import pw.vintr.vintrless.presentation.uikit.toolbar.ToolbarRegular
+import pw.vintr.vintrless.tools.extensions.Empty
 import pw.vintr.vintrless.tools.extensions.cardBackground
 import pw.vintr.vintrless.tools.extensions.selectableCardBackground
 import pw.vintr.vintrless.tools.painter.suspendBitmapPainter
@@ -45,6 +47,8 @@ import vintrless.composeapp.generated.resources.ic_delete
 private const val KEY_FILTER_STATUS = "key-filter-status"
 
 private const val KEY_PROCESS_ADD_FORM = "key-process-add-form"
+
+private const val KEY_SEARCH = "key-search"
 
 @Composable
 fun ApplicationFilterScreen(
@@ -75,9 +79,6 @@ fun ApplicationFilterScreen(
                     .fillMaxSize(),
                 state = screenState.value
             ) { state ->
-                val installedApplicationsCount = state.payload.userInstalledApplications.size
-                val rowsCount = (installedApplicationsCount + 1) / columnsCount
-
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize(),
@@ -100,6 +101,7 @@ fun ApplicationFilterScreen(
                                 viewModel.setFilterMode(it)
                             },
                         )
+                        Spacer(Modifier.height(12.dp))
                     }
 
                     // Process add form (desktop only)
@@ -117,17 +119,46 @@ fun ApplicationFilterScreen(
                                     viewModel.setAddFormValue(it)
                                 }
                             )
+                            Spacer(Modifier.height(12.dp))
                         }
                     }
 
+                    // Search apps field
+                    item(KEY_SEARCH) {
+                        SearchField(
+                            value = state.payload.searchValue,
+                            onValueChange = { viewModel.setSearchValue(it) }
+                        )
+                        Spacer(Modifier.height(12.dp))
+                    }
+
                     // Installed apps on device
-                    items(count = rowsCount) { i ->
+                    val installedUserApplicationsCount = state.payload.filteredUserInstalledApplications.size
+                    val rowsCount = (installedUserApplicationsCount + 1) / columnsCount
+
+                    items(
+                        count = rowsCount,
+                        key = { i ->
+                            // Row key is a composition of row's items uuids
+                            var key = String.Empty
+
+                            for (j in 0 until columnsCount) {
+                                val itemIndex = i * columnsCount + j
+                                if (itemIndex < installedUserApplicationsCount) {
+                                    key += state.payload.filteredUserInstalledApplications[itemIndex]
+                                        .lazyListUUID
+                                }
+                            }
+
+                            key
+                        }
+                    ) { i ->
                         Row(Modifier.height(IntrinsicSize.Max)) {
                             for (j in 0 until columnsCount) {
-                                val index = i * columnsCount + j
+                                val itemIndex = i * columnsCount + j
 
-                                if (index < installedApplicationsCount) {
-                                    val application = state.payload.userInstalledApplications[index]
+                                if (itemIndex < installedUserApplicationsCount) {
+                                    val application = state.payload.filteredUserInstalledApplications[itemIndex]
 
                                     ApplicationCard(
                                         modifier = Modifier.weight(1f),
@@ -269,6 +300,7 @@ private fun ProcessAddForm(
                     payload = process,
                 )
             },
+            hint = stringResource(Res.string.field_not_specified),
             onValueChange = onAppNameChange,
             onItemSelected = { mode ->
                 mode?.let { onProcessSelect(it) }
@@ -288,6 +320,7 @@ private fun ProcessAddForm(
                     payload = process,
                 )
             },
+            hint = stringResource(Res.string.field_not_specified),
             onValueChange = onProcessNameChange,
             onItemSelected = { mode ->
                 mode?.let { onProcessSelect(it) }
@@ -306,6 +339,24 @@ private fun ProcessAddForm(
             // TODO: save
         }
     }
+}
+
+@Composable
+private fun SearchField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+) {
+    AppTextField(
+        modifier = modifier
+            .fillMaxWidth(),
+        leadingIconRes = Res.drawable.ic_search,
+        value = value,
+        hint = stringResource(Res.string.common_search),
+        showClearButton = value.isNotEmpty(),
+        actionOnClear = { onValueChange(String.Empty) },
+        onValueChange = onValueChange,
+    )
 }
 
 @Composable
@@ -329,7 +380,9 @@ private fun ApplicationCard(
         Image(
             modifier = Modifier
                 .size(48.dp),
-            painter = suspendBitmapPainter {
+            painter = suspendBitmapPainter(
+                placeholder = painterResource(Res.drawable.ic_application)
+            ) {
                 UserApplicationsManager.getApplicationIcon(application)
             },
             contentDescription = null,

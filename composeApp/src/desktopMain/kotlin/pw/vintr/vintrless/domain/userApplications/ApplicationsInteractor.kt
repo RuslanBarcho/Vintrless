@@ -5,13 +5,17 @@ import androidx.compose.ui.graphics.asComposeImageBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.skiko.toBitmap
-import pw.vintr.vintrless.domain.userApplications.model.UserApplication
 import pw.vintr.vintrless.domain.system.interactor.SystemInteractor
 import pw.vintr.vintrless.domain.system.model.OS
 import pw.vintr.vintrless.domain.userApplications.model.SystemProcess
+import pw.vintr.vintrless.domain.userApplications.model.UserApplication
 import pw.vintr.vintrless.domain.userApplications.model.UserApplicationPayload
+import pw.vintr.vintrless.tools.extensions.isBlank
+import pw.vintr.vintrless.tools.extensions.isEqualTo
 import java.awt.image.BufferedImage
 import java.io.File
+import javax.swing.ImageIcon
+import javax.swing.UIManager
 import javax.swing.filechooser.FileSystemView
 
 abstract class ApplicationsInteractor {
@@ -58,9 +62,14 @@ abstract class ApplicationsInteractor {
     private suspend fun getExecutableBufferedImage(executable: File): BufferedImage? {
         return withContext(Dispatchers.IO) {
             runCatching {
+                val defaultFileIcon = UIManager.getIcon("FileView.fileIcon")
                 val icon = FileSystemView
                     .getFileSystemView()
-                    .getSystemIcon(executable, 500, 500)
+                    .getSystemIcon(executable, 100, 100)
+
+                if (icon !is ImageIcon || icon.isEqualTo(defaultFileIcon)) {
+                    return@runCatching null
+                }
 
                 if (icon is BufferedImage) {
                     return@runCatching icon
@@ -78,8 +87,12 @@ abstract class ApplicationsInteractor {
                 icon.paintIcon(null, bGr, 0, 0)
                 bGr.dispose()
 
-                // Return the buffered image
-                bufferedImage
+                // Return the buffered image if not blank
+                if (!bufferedImage.isBlank()) {
+                    bufferedImage
+                } else {
+                    null
+                }
             }.getOrNull()
         }
     }

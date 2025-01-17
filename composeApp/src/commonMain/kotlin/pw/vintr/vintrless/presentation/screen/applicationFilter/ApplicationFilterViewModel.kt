@@ -127,6 +127,10 @@ class ApplicationFilterViewModel(
             }
         }
     }
+
+    fun setSearchValue(value: String) {
+        _screenState.updateLoaded { it.copy(searchValue = value) }
+    }
 }
 
 data class ApplicationFilterState(
@@ -141,7 +145,20 @@ data class ApplicationFilterState(
     val processAddFormState: ProcessAddFormState = ProcessAddFormState(
         runningProcessesState = RunningProcessesState()
     ),
-)
+    val searchValue: String = String.Empty,
+) {
+    val filteredUserInstalledApplications = if (searchValue.isNotEmpty()) {
+        userInstalledApplications.filter { it.name.contains(searchValue, ignoreCase = true) }
+    } else {
+        userInstalledApplications
+    }
+
+    val filteredManualAddedApplications = if (searchValue.isNotEmpty()) {
+        manualAddedApplications.filter { it.name.contains(searchValue, ignoreCase = true) }
+    } else {
+        manualAddedApplications
+    }
+}
 
 data class ProcessAddFormState(
     val enabled: Boolean = false,

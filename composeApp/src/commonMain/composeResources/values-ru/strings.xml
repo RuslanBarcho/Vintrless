@@ -4,6 +4,7 @@
     <string name="common_ok">Ок</string>
     <string name="common_delete">Удалить</string>
     <string name="common_add">Добавить</string>
+    <string name="common_search">Поиск</string>
 
     <string name="current_config">Текущий профиль</string>
     <string name="no_config">Нет профиля</string>

@@ -104,7 +104,7 @@ fun AppTextField(
                     // Leading icon
                     leadingIconRes?.let { res ->
                         Icon(
-                            modifier = Modifier.size(20.dp),
+                            modifier = Modifier.size(16.dp),
                             painter = painterResource(res),
                             tint = VintrlessExtendedTheme.colors.textFieldHint,
                             contentDescription = null

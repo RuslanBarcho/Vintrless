@@ -4,6 +4,7 @@
     <string name="common_ok">OK</string>
     <string name="common_delete">Delete</string>
     <string name="common_add">Add</string>
+    <string name="common_search">Search</string>
 
     <string name="current_config">Current config</string>
     <string name="no_config">No config</string>
