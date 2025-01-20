@@ -316,7 +316,7 @@ private fun ProcessAddForm(
             label = stringResource(Res.string.apps_filter_process_name),
             items = state.processesByProcessName.map { process ->
                 DropdownPayload(
-                    title = process.appName,
+                    title = process.processName,
                     payload = process,
                 )
             },

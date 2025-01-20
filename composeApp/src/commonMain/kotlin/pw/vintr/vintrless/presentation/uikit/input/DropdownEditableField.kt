@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
-import kotlinx.coroutines.launch
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
 import pw.vintr.vintrless.tools.extensions.Empty
 
@@ -64,6 +63,7 @@ fun <T> AppDropdownEditableField(
         DropdownMenu(
             modifier = dropdownMenuModifier
                 .exposedDropdownSize()
+                .heightIn(max = 300.dp)
                 .background(VintrlessExtendedTheme.colors.cardBackgroundColor)
                 .border(
                     width = 1.dp,
