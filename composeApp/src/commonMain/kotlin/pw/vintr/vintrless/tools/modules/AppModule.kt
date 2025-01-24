@@ -15,6 +15,11 @@ import pw.vintr.vintrless.data.routing.repository.RoutingRepository
 import pw.vintr.vintrless.data.routing.source.ExcludeRulesetCacheDataSource
 import pw.vintr.vintrless.data.storage.preference.PreferenceStorage
 import pw.vintr.vintrless.data.storage.preference.PreferenceStorageImpl
+import pw.vintr.vintrless.data.userApplications.model.ApplicationFilterCacheObject
+import pw.vintr.vintrless.data.userApplications.model.SystemProcessCacheObject
+import pw.vintr.vintrless.data.userApplications.repository.UserApplicationsRepository
+import pw.vintr.vintrless.data.userApplications.source.ApplicationFilterCacheDataSource
+import pw.vintr.vintrless.data.userApplications.source.SystemProcessCacheDataSource
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileUrlInteractor
@@ -52,6 +57,8 @@ val appModule = module {
             schema = setOf(
                 ProfileDataCacheObject::class,
                 ExcludeRulesetCacheObject::class,
+                SystemProcessCacheObject::class,
+                ApplicationFilterCacheObject::class,
             )
         )
             .schemaVersion(REALM_SCHEMA_VERSION)
@@ -74,6 +81,10 @@ val appModule = module {
     single { ExcludeRulesetCacheDataSource(get()) }
     single { RoutingRepository(get(), get()) }
 
+    single { SystemProcessCacheDataSource(get()) }
+    single { ApplicationFilterCacheDataSource(get()) }
+    single { UserApplicationsRepository(get(), get()) }
+
     // Domain
     interactor { AlertInteractor() }
     interactor { ProfileInteractor(get()) }
@@ -83,7 +94,7 @@ val appModule = module {
         profileInteractor = get(),
         routingInteractor = get())
     }
-    interactor { UserApplicationsInteractor() }
+    interactor { UserApplicationsInteractor(get()) }
 
     // Presentation
     viewModel { MainViewModel(get()) }

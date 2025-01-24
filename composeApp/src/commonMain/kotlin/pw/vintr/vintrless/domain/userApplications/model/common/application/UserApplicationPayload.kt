@@ -1,7 +1,4 @@
-package pw.vintr.vintrless.domain.userApplications.model
-
-import pw.vintr.vintrless.tools.extensions.Comma
-import pw.vintr.vintrless.tools.extensions.Space
+package pw.vintr.vintrless.domain.userApplications.model.common.application
 
 sealed class UserApplicationPayload {
 
@@ -15,7 +12,7 @@ sealed class UserApplicationPayload {
     }
 
     data class WindowsApplicationPayload(
-        val relatedExecutables: List<Executable>,
+        val relatedExecutable: Executable,
     ) : UserApplicationPayload() {
 
         data class Executable(
@@ -23,9 +20,7 @@ sealed class UserApplicationPayload {
             val absolutePath: String,
         )
 
-        override val payloadReadableTitle: String = relatedExecutables
-            .map { it.processName }
-            .distinct()
-            .joinToString(String.Comma + String.Space)
+        override val payloadReadableTitle: String = relatedExecutable
+            .processName
     }
 }

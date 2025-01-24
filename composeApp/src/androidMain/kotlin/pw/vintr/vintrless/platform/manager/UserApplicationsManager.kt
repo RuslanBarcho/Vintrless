@@ -5,9 +5,9 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import pw.vintr.vintrless.domain.userApplications.model.SystemProcess
-import pw.vintr.vintrless.domain.userApplications.model.UserApplication
-import pw.vintr.vintrless.domain.userApplications.model.UserApplicationPayload
+import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
+import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplication
+import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplicationPayload
 import pw.vintr.vintrless.tools.AppContext
 
 actual object UserApplicationsManager {

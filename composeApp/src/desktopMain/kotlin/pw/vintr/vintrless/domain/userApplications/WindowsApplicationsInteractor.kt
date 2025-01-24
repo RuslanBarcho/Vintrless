@@ -5,9 +5,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import pw.vintr.vintrless.domain.userApplications.model.SystemProcess
-import pw.vintr.vintrless.domain.userApplications.model.UserApplication
-import pw.vintr.vintrless.domain.userApplications.model.UserApplicationPayload
+import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
+import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplication
+import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplicationPayload
 import pw.vintr.vintrless.tools.PathProvider
 import pw.vintr.vintrless.tools.extensions.Empty
 import pw.vintr.vintrless.tools.extensions.addShutdownHook
@@ -130,11 +130,9 @@ class WindowsApplicationsInteractor : ApplicationsInteractor() {
             UserApplication(
                 name = record.name,
                 payload = UserApplicationPayload.WindowsApplicationPayload(
-                    relatedExecutables = listOf(
-                        UserApplicationPayload.WindowsApplicationPayload.Executable(
-                            processName = executableName,
-                            absolutePath = executablePath,
-                        )
+                    relatedExecutable = UserApplicationPayload.WindowsApplicationPayload.Executable(
+                        processName = executableName,
+                        absolutePath = executablePath,
                     )
                 )
             )

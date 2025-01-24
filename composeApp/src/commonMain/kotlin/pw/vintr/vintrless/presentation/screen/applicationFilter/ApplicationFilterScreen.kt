@@ -16,9 +16,10 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pw.vintr.vintrless.domain.applicationFilter.model.ApplicationFilterMode
-import pw.vintr.vintrless.domain.userApplications.model.SystemProcess
-import pw.vintr.vintrless.domain.userApplications.model.UserApplication
+import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterMode
+import pw.vintr.vintrless.domain.userApplications.model.common.IDeviceApplication
+import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
+import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplication
 import pw.vintr.vintrless.platform.manager.UserApplicationsManager
 import pw.vintr.vintrless.presentation.theme.*
 import pw.vintr.vintrless.presentation.uikit.button.ButtonRegular
@@ -76,7 +77,8 @@ fun ApplicationFilterScreen(
             ScreenStateLayout(
                 modifier = Modifier
                     .padding(scaffoldPadding)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .imePadding(),
                 state = screenState.value
             ) { state ->
                 LazyColumn(
@@ -117,7 +119,10 @@ fun ApplicationFilterScreen(
                                 },
                                 onProcessSelect = {
                                     viewModel.setAddFormValue(it)
-                                }
+                                },
+                                onSaveClick = {
+                                    viewModel.saveProcess()
+                                },
                             )
                             Spacer(Modifier.height(12.dp))
                         }
@@ -197,10 +202,10 @@ private fun ApplicationFilterSettings(
         DropdownPayload<ApplicationFilterMode?>(
             payload = mode,
             title = when (mode) {
-                ApplicationFilterMode.BLACK_LIST -> {
+                ApplicationFilterMode.BLACKLIST -> {
                     stringResource(Res.string.apps_filter_blacklist)
                 }
-                ApplicationFilterMode.WHITE_LIST -> {
+                ApplicationFilterMode.WHITELIST -> {
                     stringResource(Res.string.apps_filter_whitelist)
                 }
             }
@@ -252,10 +257,10 @@ private fun ApplicationFilterSettings(
                 .padding(horizontal = 12.dp),
             text = stringResource(
                 when (selectedMode) {
-                    ApplicationFilterMode.BLACK_LIST -> {
+                    ApplicationFilterMode.BLACKLIST -> {
                         Res.string.apps_filter_blacklist_description
                     }
-                    ApplicationFilterMode.WHITE_LIST -> {
+                    ApplicationFilterMode.WHITELIST -> {
                         Res.string.apps_filter_whitelist_description
                     }
                 }
@@ -273,6 +278,7 @@ private fun ProcessAddForm(
     onAppNameChange: (String) -> Unit,
     onProcessNameChange: (String) -> Unit,
     onProcessSelect: (SystemProcess) -> Unit,
+    onSaveClick: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -336,7 +342,7 @@ private fun ProcessAddForm(
             enabled = state.formIsValid,
             size = ButtonRegularSize.MEDIUM,
         ) {
-            // TODO: save
+            onSaveClick()
         }
     }
 }
@@ -362,7 +368,7 @@ private fun SearchField(
 @Composable
 private fun ApplicationCard(
     modifier: Modifier = Modifier,
-    application: UserApplication,
+    application: IDeviceApplication,
     manuallyAdded: Boolean = false,
     selected: Boolean = false,
     onSelectClick: (Boolean) -> Unit,
@@ -377,17 +383,19 @@ private fun ApplicationCard(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Application icon (optional)
-        Image(
-            modifier = Modifier
-                .size(48.dp),
-            painter = suspendBitmapPainter(
-                placeholder = painterResource(Res.drawable.ic_application)
-            ) {
-                UserApplicationsManager.getApplicationIcon(application)
-            },
-            contentDescription = null,
-        )
-        Spacer(Modifier.width(20.dp))
+        if (application is UserApplication) {
+            Image(
+                modifier = Modifier
+                    .size(48.dp),
+                painter = suspendBitmapPainter(
+                    placeholder = painterResource(Res.drawable.ic_application)
+                ) {
+                    UserApplicationsManager.getApplicationIcon(application)
+                },
+                contentDescription = null,
+            )
+            Spacer(Modifier.width(20.dp))
+        }
 
         // App and process/package name
         Column(
@@ -396,13 +404,13 @@ private fun ApplicationCard(
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = application.name,
+                text = application.appName,
                 style = Gilroy16(),
                 color = VintrlessExtendedTheme.colors.textRegular,
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = application.payload.payloadReadableTitle,
+                text = application.processName,
                 style = RubikMedium12(),
                 color = VintrlessExtendedTheme.colors.textRegular,
                 maxLines = 5,

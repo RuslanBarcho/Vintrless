@@ -7,9 +7,9 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.skiko.toBitmap
 import pw.vintr.vintrless.domain.system.interactor.SystemInteractor
 import pw.vintr.vintrless.domain.system.model.OS
-import pw.vintr.vintrless.domain.userApplications.model.SystemProcess
-import pw.vintr.vintrless.domain.userApplications.model.UserApplication
-import pw.vintr.vintrless.domain.userApplications.model.UserApplicationPayload
+import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
+import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplication
+import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplicationPayload
 import pw.vintr.vintrless.tools.extensions.isBlank
 import pw.vintr.vintrless.tools.extensions.isEqualTo
 import java.awt.image.BufferedImage
@@ -38,25 +38,12 @@ abstract class ApplicationsInteractor {
     suspend fun getApplicationIcon(application: UserApplication): ImageBitmap? {
         return when (application.payload) {
             is UserApplicationPayload.WindowsApplicationPayload -> {
-                getFirstAvailableExecutableImage(application.payload)
+                getExecutableBufferedImage(File(application.payload.relatedExecutable.absolutePath))
                     ?.toBitmap()
                     ?.asComposeImageBitmap()
             }
             else -> null
         }
-    }
-
-    private suspend fun getFirstAvailableExecutableImage(
-        payload: UserApplicationPayload.WindowsApplicationPayload
-    ): BufferedImage? {
-        payload.relatedExecutables.forEach { relatedExecutable ->
-            val image = getExecutableBufferedImage(File(relatedExecutable.absolutePath))
-
-            if (image != null) {
-                return image
-            }
-        }
-        return null
     }
 
     private suspend fun getExecutableBufferedImage(executable: File): BufferedImage? {

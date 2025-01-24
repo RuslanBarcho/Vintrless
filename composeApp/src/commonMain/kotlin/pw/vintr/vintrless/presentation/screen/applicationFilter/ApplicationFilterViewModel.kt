@@ -6,16 +6,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import pw.vintr.vintrless.domain.applicationFilter.model.ApplicationFilterMode
+import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterMode
 import pw.vintr.vintrless.domain.userApplications.interactor.UserApplicationsInteractor
-import pw.vintr.vintrless.domain.userApplications.model.SystemProcess
-import pw.vintr.vintrless.domain.userApplications.model.UserApplication
+import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
+import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplication
 import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.platformType
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
 import pw.vintr.vintrless.tools.extensions.*
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class ApplicationFilterViewModel(
     navigator: AppNavigator,
@@ -39,12 +41,13 @@ class ApplicationFilterViewModel(
         _screenState.loadWithStateHandling {
             val applications = async { userApplicationsInteractor.getUserApplications() }
             val processes = async { userApplicationsInteractor.getRunningProcesses() }
+            val savedProcesses = async { userApplicationsInteractor.getSavedProcesses() }
 
             ApplicationFilterState(
                 enabled = false,
                 userInstalledApplications = applications.await(),
-                manualAddedApplications = listOf(),
-                selectedFilterMode = ApplicationFilterMode.BLACK_LIST,
+                savedSystemProcesses = savedProcesses.await(),
+                selectedFilterMode = ApplicationFilterMode.BLACKLIST,
                 processAddFormState = ProcessAddFormState(
                     enabled = platformType() == PlatformType.JVM,
                     runningProcessesState = RunningProcessesState(
@@ -101,14 +104,41 @@ class ApplicationFilterViewModel(
         }
     }
 
+    @OptIn(ExperimentalUuidApi::class)
+    fun saveProcess() {
+        _screenState.getWithLoaded { state ->
+            SystemProcess(
+                id = Uuid.random().toString(),
+                appName = state.processAddFormState.appNameValue,
+                processName = state.processAddFormState.processNameValue,
+            )
+        }?.let { process ->
+            launch {
+                userApplicationsInteractor.saveProcess(process)
+                _screenState.updateLoaded { state ->
+                    state.copy(
+                        savedSystemProcesses = state.savedSystemProcesses
+                            .toMutableList()
+                            .apply { add(0, process) },
+                        processAddFormState = state.processAddFormState.copy(
+                            appNameValue = String.Empty,
+                            processNameValue = String.Empty,
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     private fun fetchProcesses() {
         processFetchJob.cancelIfActive()
         processFetchJob = launch(createExceptionHandler()) {
             _screenState.withLoaded { state ->
                 val currentTime = Clock.System.now().toEpochMilliseconds()
+                val lastFetchTime = state.processAddFormState.runningProcessesState.fetchTime
 
                 if (
-                    currentTime - state.processAddFormState.runningProcessesState.fetchTime >= PROCESS_FETCH_DELAY ||
+                    currentTime - lastFetchTime >= PROCESS_FETCH_DELAY ||
                     state.processAddFormState.runningProcessesState.processes.isEmpty()
                 ) {
                     val newState = RunningProcessesState(
@@ -137,11 +167,11 @@ data class ApplicationFilterState(
     val enabled: Boolean = false,
     val selectedFilterMode: ApplicationFilterMode,
     val availableFilterModes: List<ApplicationFilterMode> = listOf(
-        ApplicationFilterMode.BLACK_LIST,
-        ApplicationFilterMode.WHITE_LIST,
+        ApplicationFilterMode.BLACKLIST,
+        ApplicationFilterMode.WHITELIST,
     ),
     val userInstalledApplications: List<UserApplication> = listOf(),
-    val manualAddedApplications: List<UserApplication> = listOf(),
+    val savedSystemProcesses: List<SystemProcess> = listOf(),
     val processAddFormState: ProcessAddFormState = ProcessAddFormState(
         runningProcessesState = RunningProcessesState()
     ),
@@ -153,10 +183,10 @@ data class ApplicationFilterState(
         userInstalledApplications
     }
 
-    val filteredManualAddedApplications = if (searchValue.isNotEmpty()) {
-        manualAddedApplications.filter { it.name.contains(searchValue, ignoreCase = true) }
+    val filteredSavedSystemProcesses = if (searchValue.isNotEmpty()) {
+        savedSystemProcesses.filter { it.appName.contains(searchValue, ignoreCase = true) }
     } else {
-        manualAddedApplications
+        savedSystemProcesses
     }
 }
 

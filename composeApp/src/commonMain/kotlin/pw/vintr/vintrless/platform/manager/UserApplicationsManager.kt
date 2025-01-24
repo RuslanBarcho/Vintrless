@@ -1,8 +1,8 @@
 package pw.vintr.vintrless.platform.manager
 
 import androidx.compose.ui.graphics.ImageBitmap
-import pw.vintr.vintrless.domain.userApplications.model.SystemProcess
-import pw.vintr.vintrless.domain.userApplications.model.UserApplication
+import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
+import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplication
 
 expect object UserApplicationsManager {
 
