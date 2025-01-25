@@ -137,5 +137,5 @@ val appModule = module {
         )
     }
     viewModel { AboutAppViewModel(get()) }
-    viewModel { ApplicationFilterViewModel(get(), get()) }
+    viewModel { ApplicationFilterViewModel(get(), get(), get()) }
 }

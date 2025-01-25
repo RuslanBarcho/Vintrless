@@ -1,5 +1,6 @@
 package pw.vintr.vintrless.presentation.screen.applicationFilter
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,8 +9,11 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterMode
 import pw.vintr.vintrless.domain.userApplications.interactor.UserApplicationsInteractor
+import pw.vintr.vintrless.domain.userApplications.model.common.IDeviceApplication
 import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
 import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplication
+import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilter
+import pw.vintr.vintrless.domain.v2ray.interactor.V2RayConnectionInteractor
 import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.platformType
 import pw.vintr.vintrless.presentation.base.BaseScreenState
@@ -22,13 +26,14 @@ import kotlin.uuid.Uuid
 class ApplicationFilterViewModel(
     navigator: AppNavigator,
     private val userApplicationsInteractor: UserApplicationsInteractor,
+    private val v2RayConnectionInteractor: V2RayConnectionInteractor,
 ) : BaseViewModel(navigator) {
 
     companion object {
         private const val PROCESS_FETCH_DELAY = 10000
     }
 
-    private val _screenState = MutableStateFlow<BaseScreenState<ApplicationFilterState>>(BaseScreenState.Loading())
+    private val _screenState = MutableStateFlow<BaseScreenState<ApplicationFilterScreenState>>(BaseScreenState.Loading())
     val screenState = _screenState.asStateFlow()
 
     private var processFetchJob: Job? = null
@@ -39,21 +44,31 @@ class ApplicationFilterViewModel(
 
     private fun loadData() {
         _screenState.loadWithStateHandling {
-            val applications = async { userApplicationsInteractor.getUserApplications() }
+            // Running system processes
             val processes = async { userApplicationsInteractor.getRunningProcesses() }
+
+            // User applications + manual saved system processes
+            val applications = async { userApplicationsInteractor.getUserApplications() }
             val savedProcesses = async { userApplicationsInteractor.getSavedProcesses() }
 
-            ApplicationFilterState(
+            // Filter value
+            val filterValue = async { userApplicationsInteractor.getFilter() }
+
+            ApplicationFilterScreenState(
                 enabled = false,
                 userInstalledApplications = applications.await(),
                 savedSystemProcesses = savedProcesses.await(),
-                selectedFilterMode = ApplicationFilterMode.BLACKLIST,
                 processAddFormState = ProcessAddFormState(
                     enabled = platformType() == PlatformType.JVM,
                     runningProcessesState = RunningProcessesState(
                         processes = processes.await(),
                         fetchTime = Clock.System.now().toEpochMilliseconds(),
                     ),
+                ),
+                filterState = ApplicationFilterState(
+                    savedFilter = filterValue.await(),
+                    pickedFilter = filterValue.await().copy(),
+                    isSaving = false,
                 )
             )
         }
@@ -67,7 +82,13 @@ class ApplicationFilterViewModel(
 
     fun setFilterMode(value: ApplicationFilterMode) {
         _screenState.updateLoaded { state ->
-            state.copy(selectedFilterMode = value)
+            state.copy(
+                filterState = state.filterState.copy(
+                    pickedFilter = state.filterState.pickedFilter.copy(
+                        mode = value
+                    )
+                )
+            )
         }
     }
 
@@ -161,11 +182,65 @@ class ApplicationFilterViewModel(
     fun setSearchValue(value: String) {
         _screenState.updateLoaded { it.copy(searchValue = value) }
     }
+
+    fun toggleApplicationSelected(application: IDeviceApplication) {
+        _screenState.updateLoaded { state ->
+            val currentKeys = state.filterState.pickedFilter.filterKeys
+            val modifiedKeys = if (currentKeys.contains(application.processName)) {
+                currentKeys.toMutableSet().apply { remove(application.processName) }
+            } else {
+                currentKeys.toMutableSet().apply { add(application.processName) }
+            }
+
+            state.copy(
+                filterState = state.filterState.copy(
+                    pickedFilter = state.filterState.pickedFilter.copy(
+                        filterKeys = modifiedKeys
+                    )
+                )
+            )
+        }
+    }
+
+    fun saveFilter() {
+        launch(createExceptionHandler()) {
+            _screenState.withLoaded { state ->
+                withLoading(
+                    setLoadingCallback = { loading ->
+                        _screenState.updateLoaded { state ->
+                            state.copy(
+                                filterState = state.filterState.copy(
+                                    isSaving = loading,
+                                )
+                            )
+                        }
+                    },
+                    action = {
+                        // Save filter
+                        val filterToSave = state.filterState.pickedFilter
+                        userApplicationsInteractor.saveFilter(filterToSave)
+
+                        // Put saved filter to saved one
+                        _screenState.updateLoaded { state ->
+                            state.copy(
+                                filterState = state.filterState.copy(
+                                    savedFilter = filterToSave.copy()
+                                )
+                            )
+                        }
+
+                        // Apply filter to running V2Ray process
+                        v2RayConnectionInteractor.sendRestartCommand()
+                    }
+                )
+            }
+        }
+    }
 }
 
-data class ApplicationFilterState(
+@Stable
+data class ApplicationFilterScreenState(
     val enabled: Boolean = false,
-    val selectedFilterMode: ApplicationFilterMode,
     val availableFilterModes: List<ApplicationFilterMode> = listOf(
         ApplicationFilterMode.BLACKLIST,
         ApplicationFilterMode.WHITELIST,
@@ -176,6 +251,7 @@ data class ApplicationFilterState(
         runningProcessesState = RunningProcessesState()
     ),
     val searchValue: String = String.Empty,
+    val filterState: ApplicationFilterState,
 ) {
     val filteredUserInstalledApplications = if (searchValue.isNotEmpty()) {
         userInstalledApplications.filter { it.name.contains(searchValue, ignoreCase = true) }
@@ -188,8 +264,11 @@ data class ApplicationFilterState(
     } else {
         savedSystemProcesses
     }
+
+    val canBeSaved: Boolean = filterState.canBeSaved
 }
 
+@Stable
 data class ProcessAddFormState(
     val enabled: Boolean = false,
     val appNameValue: String = String.Empty,
@@ -212,7 +291,18 @@ data class ProcessAddFormState(
     val formIsValid: Boolean = appNameValue.isNotEmpty() && processNameValue.isNotEmpty()
 }
 
+@Stable
 data class RunningProcessesState(
     val processes: List<SystemProcess> = listOf(),
     val fetchTime: Long = 0,
 )
+
+@Stable
+data class ApplicationFilterState(
+    val savedFilter: ApplicationFilter,
+    val pickedFilter: ApplicationFilter,
+    val isSaving: Boolean,
+) {
+
+    val canBeSaved: Boolean = savedFilter != pickedFilter
+}

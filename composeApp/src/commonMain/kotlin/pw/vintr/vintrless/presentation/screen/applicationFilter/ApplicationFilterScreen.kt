@@ -1,5 +1,6 @@
 package pw.vintr.vintrless.presentation.screen.applicationFilter
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -81,107 +82,125 @@ fun ApplicationFilterScreen(
                     .imePadding(),
                 state = screenState.value
             ) { state ->
-                LazyColumn(
+                Column(
                     modifier = Modifier
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                    contentPadding = PaddingValues(
-                        vertical = 20.dp,
-                        horizontal = 28.dp,
-                    ),
+                        .fillMaxSize()
                 ) {
-                    // Filter status and mode
-                    item(KEY_FILTER_STATUS) {
-                        ApplicationFilterSettings(
-                            enabled = state.payload.enabled,
-                            availableModes = state.payload.availableFilterModes,
-                            selectedMode = state.payload.selectedFilterMode,
-                            onEnableStateChange = {
-                                viewModel.setEnabled(it)
-                            },
-                            onFilterModeSelected = {
-                                viewModel.setFilterMode(it)
-                            },
-                        )
-                        Spacer(Modifier.height(12.dp))
-                    }
-
-                    // Process add form (desktop only)
-                    if (state.payload.processAddFormState.enabled) {
-                        item(KEY_PROCESS_ADD_FORM) {
-                            ProcessAddForm(
-                                state = state.payload.processAddFormState,
-                                onAppNameChange = {
-                                    viewModel.setAddFormAppName(it)
+                    LazyColumn(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                        contentPadding = PaddingValues(
+                            vertical = 20.dp,
+                            horizontal = 28.dp,
+                        ),
+                    ) {
+                        // Filter status and mode
+                        item(KEY_FILTER_STATUS) {
+                            ApplicationFilterSettings(
+                                enabled = state.payload.enabled,
+                                availableModes = state.payload.availableFilterModes,
+                                selectedMode = state.payload.filterState.pickedFilter.mode,
+                                onEnableStateChange = {
+                                    viewModel.setEnabled(it)
                                 },
-                                onProcessNameChange = {
-                                    viewModel.setAddFormProcessName(it)
-                                },
-                                onProcessSelect = {
-                                    viewModel.setAddFormValue(it)
-                                },
-                                onSaveClick = {
-                                    viewModel.saveProcess()
+                                onFilterModeSelected = {
+                                    viewModel.setFilterMode(it)
                                 },
                             )
                             Spacer(Modifier.height(12.dp))
                         }
-                    }
 
-                    // Search apps field
-                    item(KEY_SEARCH) {
-                        SearchField(
-                            value = state.payload.searchValue,
-                            onValueChange = { viewModel.setSearchValue(it) }
-                        )
-                        Spacer(Modifier.height(12.dp))
-                    }
-
-                    // Installed apps on device
-                    val installedUserApplicationsCount = state.payload.filteredUserInstalledApplications.size
-                    val rowsCount = (installedUserApplicationsCount + 1) / columnsCount
-
-                    items(
-                        count = rowsCount,
-                        key = { i ->
-                            // Row key is a composition of row's items uuids
-                            var key = String.Empty
-
-                            for (j in 0 until columnsCount) {
-                                val itemIndex = i * columnsCount + j
-                                if (itemIndex < installedUserApplicationsCount) {
-                                    key += state.payload.filteredUserInstalledApplications[itemIndex]
-                                        .lazyListUUID
-                                }
+                        // Process add form (desktop only)
+                        if (state.payload.processAddFormState.enabled) {
+                            item(KEY_PROCESS_ADD_FORM) {
+                                ProcessAddForm(
+                                    state = state.payload.processAddFormState,
+                                    onAppNameChange = {
+                                        viewModel.setAddFormAppName(it)
+                                    },
+                                    onProcessNameChange = {
+                                        viewModel.setAddFormProcessName(it)
+                                    },
+                                    onProcessSelect = {
+                                        viewModel.setAddFormValue(it)
+                                    },
+                                    onSaveClick = {
+                                        viewModel.saveProcess()
+                                    },
+                                )
+                                Spacer(Modifier.height(12.dp))
                             }
-
-                            key
                         }
-                    ) { i ->
-                        Row(Modifier.height(IntrinsicSize.Max)) {
-                            for (j in 0 until columnsCount) {
-                                val itemIndex = i * columnsCount + j
 
-                                if (itemIndex < installedUserApplicationsCount) {
-                                    val application = state.payload.filteredUserInstalledApplications[itemIndex]
+                        // Search apps field
+                        item(KEY_SEARCH) {
+                            SearchField(
+                                value = state.payload.searchValue,
+                                onValueChange = { viewModel.setSearchValue(it) }
+                            )
+                            Spacer(Modifier.height(12.dp))
+                        }
 
-                                    ApplicationCard(
-                                        modifier = Modifier.weight(1f),
-                                        application = application,
-                                        manuallyAdded = false,
-                                        selected = false,
-                                        onSelectClick = {  },
-                                        onDeleteClick = {  },
-                                    )
+                        // Manually saved system processes
 
-                                    if (j < (columnsCount - 1)) {
-                                        Spacer(Modifier.width(20.dp))
+                        // Installed apps on device
+                        val installedUserApplicationsCount = state.payload.filteredUserInstalledApplications.size
+                        val rowsCount = (installedUserApplicationsCount + 1) / columnsCount
+
+                        items(
+                            count = rowsCount,
+                            key = { i ->
+                                // Row key is a composition of row's items uuids
+                                var key = String.Empty
+
+                                for (j in 0 until columnsCount) {
+                                    val itemIndex = i * columnsCount + j
+                                    if (itemIndex < installedUserApplicationsCount) {
+                                        key += state.payload.filteredUserInstalledApplications[itemIndex]
+                                            .lazyListUUID
                                     }
-                                } else {
-                                    Spacer(Modifier.weight(1f))
+                                }
+
+                                key
+                            }
+                        ) { i ->
+                            Row(Modifier.height(IntrinsicSize.Max)) {
+                                for (j in 0 until columnsCount) {
+                                    val itemIndex = i * columnsCount + j
+
+                                    if (itemIndex < installedUserApplicationsCount) {
+                                        val application = state.payload.filteredUserInstalledApplications[itemIndex]
+
+                                        ApplicationCard(
+                                            modifier = Modifier.weight(1f),
+                                            application = application,
+                                            manuallyAdded = false,
+                                            selected = state.payload.filterState.pickedFilter.filterKeys.contains(
+                                                application.processName,
+                                            ),
+                                            onSelectClick = { viewModel.toggleApplicationSelected(application) },
+                                            onDeleteClick = {  },
+                                        )
+
+                                        if (j < (columnsCount - 1)) {
+                                            Spacer(Modifier.width(20.dp))
+                                        }
+                                    } else {
+                                        Spacer(Modifier.weight(1f))
+                                    }
                                 }
                             }
                         }
+                    }
+
+                    // Save button (visible only if filters can be saved)
+                    BottomSaveActionButton(
+                        show = state.payload.filterState.canBeSaved,
+                        isSaving = state.payload.filterState.isSaving,
+                    ) {
+                        viewModel.saveFilter()
                     }
                 }
             }
@@ -443,5 +462,32 @@ private fun ApplicationCard(
             colors = checkboxColors(),
             onCheckedChange = { onSelectClick(it) },
         )
+    }
+}
+
+@Composable
+private fun BottomSaveActionButton(
+    modifier: Modifier = Modifier,
+    show: Boolean,
+    isSaving: Boolean,
+    saveAction: () -> Unit,
+) {
+
+    AnimatedVisibility(
+        modifier = modifier
+            .fillMaxWidth(),
+        visible = show,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically(),
+    ) {
+        ButtonRegular(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 28.dp, end = 28.dp, top = 12.dp, bottom = 20.dp),
+            isLoading = isSaving,
+            text = stringResource(Res.string.common_save),
+        ) {
+            saveAction()
+        }
     }
 }

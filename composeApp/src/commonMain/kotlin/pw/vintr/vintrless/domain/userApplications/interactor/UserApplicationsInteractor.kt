@@ -4,6 +4,7 @@ import pw.vintr.vintrless.data.userApplications.repository.UserApplicationsRepos
 import pw.vintr.vintrless.domain.base.BaseInteractor
 import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
 import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplication
+import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilter
 import pw.vintr.vintrless.platform.manager.UserApplicationsManager
 
 class UserApplicationsInteractor(
@@ -19,10 +20,21 @@ class UserApplicationsInteractor(
     }
 
     suspend fun saveProcess(process: SystemProcess) {
-        userApplicationsRepository.saveSystemProcess(process)
+        userApplicationsRepository.saveSystemProcess(process.toCacheObject())
     }
 
     suspend fun getSavedProcesses(): List<SystemProcess> {
         return userApplicationsRepository.getSavedSystemProcesses()
+            .map { SystemProcess.fromCacheObject(it) }
+    }
+
+    suspend fun saveFilter(filter: ApplicationFilter) {
+        userApplicationsRepository.saveFilter(filter.toCacheObject())
+    }
+
+    suspend fun getFilter(): ApplicationFilter {
+        return userApplicationsRepository.getFilter()?.let {
+            ApplicationFilter.fromCacheObject(it)
+        } ?: ApplicationFilter.default()
     }
 }

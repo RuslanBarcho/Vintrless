@@ -1,6 +1,7 @@
 package pw.vintr.vintrless.data.userApplications.repository
 
 import pw.vintr.vintrless.data.userApplications.model.ApplicationFilterCacheObject
+import pw.vintr.vintrless.data.userApplications.model.SystemProcessCacheObject
 import pw.vintr.vintrless.data.userApplications.source.ApplicationFilterCacheDataSource
 import pw.vintr.vintrless.data.userApplications.source.SystemProcessCacheDataSource
 import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
@@ -10,13 +11,12 @@ class UserApplicationsRepository(
     private val filterDataSource: ApplicationFilterCacheDataSource,
 ) {
 
-    suspend fun saveSystemProcess(systemProcess: SystemProcess) {
-        processDataSource.saveSystemProcess(systemProcess.toCacheObject())
+    suspend fun saveSystemProcess(systemProcess: SystemProcessCacheObject) {
+        processDataSource.saveSystemProcess(systemProcess)
     }
 
-    suspend fun getSavedSystemProcesses(): List<SystemProcess> {
+    suspend fun getSavedSystemProcesses(): List<SystemProcessCacheObject> {
         return processDataSource.getSavedSystemProcesses()
-            .map { SystemProcess.fromCacheObject(it) }
     }
 
     suspend fun saveFilter(applicationFilter: ApplicationFilterCacheObject) {
