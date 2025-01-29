@@ -5,6 +5,8 @@ import pw.vintr.vintrless.domain.base.BaseInteractor
 import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
 import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplication
 import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilter
+import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterConfig
+import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterMode
 import pw.vintr.vintrless.platform.manager.UserApplicationsManager
 
 class UserApplicationsInteractor(
@@ -36,5 +38,17 @@ class UserApplicationsInteractor(
         return userApplicationsRepository.getFilter()?.let {
             ApplicationFilter.fromCacheObject(it)
         } ?: ApplicationFilter.default()
+    }
+
+    suspend fun getFilterConfig(): ApplicationFilterConfig {
+        val filter = getFilter()
+        // TODO: receive enabled from storage
+        val enabled = false
+
+        return ApplicationFilterConfig(
+            enabled = enabled,
+            isExclude = filter.mode == ApplicationFilterMode.WHITELIST,
+            keys = filter.filterKeys,
+        )
     }
 }
