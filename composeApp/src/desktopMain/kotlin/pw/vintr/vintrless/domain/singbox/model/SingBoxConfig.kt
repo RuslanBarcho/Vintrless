@@ -2,6 +2,8 @@ package pw.vintr.vintrless.domain.singbox.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Serializable
 data class SingBoxConfig(
@@ -11,7 +13,15 @@ data class SingBoxConfig(
     val outbounds: List<Outbound>,
     val route: Route,
     val experimental: Experimental
-)
+) {
+    fun toJson(): String {
+        val json = Json {
+            encodeDefaults = true
+            explicitNulls = false
+        }
+        return json.encodeToString(value = this)
+    }
+}
 
 @Serializable
 data class Log(

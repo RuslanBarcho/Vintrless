@@ -197,7 +197,7 @@ fun ApplicationFilterScreen(
 
                     // Save button (visible only if filters can be saved)
                     BottomSaveActionButton(
-                        show = state.payload.filterState.canBeSaved,
+                        show = state.payload.canBeSaved,
                         isSaving = state.payload.filterState.isSaving,
                     ) {
                         viewModel.saveFilter()

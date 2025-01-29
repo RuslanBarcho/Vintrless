@@ -3,6 +3,7 @@ package pw.vintr.vintrless.domain.singbox.useCase
 import pw.vintr.vintrless.domain.singbox.model.Route
 import pw.vintr.vintrless.domain.singbox.model.RouteRule
 import pw.vintr.vintrless.domain.singbox.model.RuleSet
+import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterConfig
 
 object SingBoxRouteBuildUseCase {
 
@@ -58,62 +59,102 @@ object SingBoxRouteBuildUseCase {
         "140.207.198.6/32"
     )
 
-    operator fun invoke(): Route {
+    operator fun invoke(appFilterConfig: ApplicationFilterConfig): Route {
+        val rules = mutableListOf(
+            RouteRule(
+                outbound = "proxy",
+                clashMode = "Global"
+            ),
+            RouteRule(
+                outbound = "direct",
+                clashMode = "Direct"
+            ),
+            RouteRule(
+                outbound = "dns_out",
+                protocol = listOf("dns")
+            ),
+            RouteRule(
+                outbound = "dns_out",
+                port = listOf(53),
+                processName = defaultDirectProcesses
+            ),
+            RouteRule(
+                outbound = "direct",
+                processName = defaultDirectProcesses
+            ),
+            RouteRule(
+                outbound = "direct",
+                domain = listOf("example-example.com", "example-example2.com"),
+                domainSuffix = listOf(".example-example.com", ".example-example2.com")
+            ),
+            RouteRule(
+                outbound = "block",
+                network = listOf("udp"),
+                port = listOf(443)
+            ),
+            RouteRule(
+                outbound = "block",
+                ruleSet = listOf("geosite-category-ads-all")
+            ),
+            RouteRule(
+                outbound = "direct",
+                domain = listOf("dns.alidns.com", "doh.pub", "dot.pub", "doh.360.cn", "dot.360.cn"),
+                domainSuffix = listOf(".dns.alidns.com", ".doh.pub", ".dot.pub", ".doh.360.cn", ".dot.360.cn"),
+                ruleSet = listOf("geosite-cn", "geosite-geolocation-cn")
+            ),
+            RouteRule(
+                outbound = "direct",
+                ipIsPrivate = true,
+                ipCidr = defaultDirectIps,
+                ruleSet = listOf("geoip-cn")
+            ),
+        )
+
+        when {
+            // White list
+            appFilterConfig.enabled && appFilterConfig.isExclude -> {
+                rules.add(
+                    RouteRule(
+                        outbound = "direct",
+                        processName = appFilterConfig.keys.toList()
+                    )
+                )
+                rules.add(
+                    RouteRule(
+                        outbound = "proxy",
+                        portRange = listOf("0:65535")
+                    )
+                )
+            }
+            // Black list
+            appFilterConfig.enabled -> {
+                rules.add(
+                    RouteRule(
+                        outbound = "proxy",
+                        processName = appFilterConfig.keys.toList()
+                    )
+                )
+                rules.add(
+                    RouteRule(
+                        outbound = "direct",
+                        portRange = listOf("0:65535")
+                    )
+                )
+            }
+            // Filter disabled
+            else -> {
+                rules.add(
+                    RouteRule(
+                        outbound = "proxy",
+                        portRange = listOf("0:65535")
+                    )
+                )
+            }
+        }
+
         return Route(
             autoDetectInterface = true,
-            rules = listOf(
-                RouteRule(
-                    outbound = "proxy",
-                    clashMode = "Global"
-                ),
-                RouteRule(
-                    outbound = "direct",
-                    clashMode = "Direct"
-                ),
-                RouteRule(
-                    outbound = "dns_out",
-                    protocol = listOf("dns")
-                ),
-                RouteRule(
-                    outbound = "dns_out",
-                    port = listOf(53),
-                    processName = defaultDirectProcesses
-                ),
-                RouteRule(
-                    outbound = "direct",
-                    processName = defaultDirectProcesses
-                ),
-                RouteRule(
-                    outbound = "direct",
-                    domain = listOf("example-example.com", "example-example2.com"),
-                    domainSuffix = listOf(".example-example.com", ".example-example2.com")
-                ),
-                RouteRule(
-                    outbound = "block",
-                    network = listOf("udp"),
-                    port = listOf(443)
-                ),
-                RouteRule(
-                    outbound = "block",
-                    ruleSet = listOf("geosite-category-ads-all")
-                ),
-                RouteRule(
-                    outbound = "direct",
-                    domain = listOf("dns.alidns.com", "doh.pub", "dot.pub", "doh.360.cn", "dot.360.cn"),
-                    domainSuffix = listOf(".dns.alidns.com", ".doh.pub", ".dot.pub", ".doh.360.cn", ".dot.360.cn"),
-                    ruleSet = listOf("geosite-cn", "geosite-geolocation-cn")
-                ),
-                RouteRule(
-                    outbound = "direct",
-                    ipIsPrivate = true,
-                    ipCidr = defaultDirectIps,
-                    ruleSet = listOf("geoip-cn")
-                ),
-                RouteRule(
-                    outbound = "proxy",
-                    portRange = listOf("0:65535")
-                )
-            ),
+            rules = rules,
             ruleSet = listOf(
                 RuleSet(
                     tag = "geosite-category-ads-all",

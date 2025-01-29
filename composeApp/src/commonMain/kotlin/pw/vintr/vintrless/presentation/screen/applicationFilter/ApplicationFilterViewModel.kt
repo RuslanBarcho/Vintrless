@@ -33,7 +33,9 @@ class ApplicationFilterViewModel(
         private const val PROCESS_FETCH_DELAY = 10000
     }
 
-    private val _screenState = MutableStateFlow<BaseScreenState<ApplicationFilterScreenState>>(BaseScreenState.Loading())
+    private val _screenState = MutableStateFlow<BaseScreenState<ApplicationFilterScreenState>>(
+        BaseScreenState.Loading()
+    )
     val screenState = _screenState.asStateFlow()
 
     private var processFetchJob: Job? = null
@@ -52,10 +54,11 @@ class ApplicationFilterViewModel(
             val savedProcesses = async { userApplicationsInteractor.getSavedProcesses() }
 
             // Filter value
+            val enabled = async { userApplicationsInteractor.getFilterEnabled() }
             val filterValue = async { userApplicationsInteractor.getFilter() }
 
             ApplicationFilterScreenState(
-                enabled = false,
+                enabled = enabled.await(),
                 userInstalledApplications = applications.await(),
                 savedSystemProcesses = savedProcesses.await(),
                 processAddFormState = ProcessAddFormState(
@@ -75,8 +78,13 @@ class ApplicationFilterViewModel(
     }
 
     fun setEnabled(value: Boolean) {
-        _screenState.updateLoaded { state ->
-            state.copy(enabled = value)
+        launch(createExceptionHandler()) {
+            // Save & update screen state
+            userApplicationsInteractor.saveFilterEnabled(value)
+            _screenState.updateLoaded { it.copy(enabled = value) }
+
+            // Apply filter to running V2Ray process
+            v2RayConnectionInteractor.sendRestartCommand()
         }
     }
 

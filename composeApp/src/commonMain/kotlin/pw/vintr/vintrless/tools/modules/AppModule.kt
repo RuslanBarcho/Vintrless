@@ -83,16 +83,19 @@ val appModule = module {
 
     single { SystemProcessCacheDataSource(get()) }
     single { ApplicationFilterCacheDataSource(get()) }
-    single { UserApplicationsRepository(get(), get()) }
+    single { UserApplicationsRepository(get(), get(), get()) }
 
     // Domain
     interactor { AlertInteractor() }
     interactor { ProfileInteractor(get()) }
     interactor { ProfileUrlInteractor() }
     interactor { RoutingInteractor(get()) }
-    interactor { V2RayConnectionInteractor(
-        profileInteractor = get(),
-        routingInteractor = get())
+    interactor {
+        V2RayConnectionInteractor(
+            profileInteractor = get(),
+            routingInteractor = get(),
+            userApplicationInteractor = get(),
+        )
     }
     interactor { UserApplicationsInteractor(get()) }
 

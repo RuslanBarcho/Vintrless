@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
 import pw.vintr.vintrless.domain.base.BaseInteractor
-import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilter
 import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterConfig
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState

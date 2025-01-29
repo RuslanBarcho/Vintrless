@@ -19,3 +19,4 @@ captures
 /composeApp/release/
 /composeApp/db/default.realm
 /composeApp/db/default.realm.lock
+/composeApp/preferences/vintrless.preferences_pb

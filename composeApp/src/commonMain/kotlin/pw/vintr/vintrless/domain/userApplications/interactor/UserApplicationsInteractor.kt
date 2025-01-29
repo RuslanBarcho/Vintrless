@@ -40,10 +40,17 @@ class UserApplicationsInteractor(
         } ?: ApplicationFilter.default()
     }
 
+    suspend fun saveFilterEnabled(value: Boolean) {
+        userApplicationsRepository.saveFilterEnabled(value)
+    }
+
+    suspend fun getFilterEnabled(): Boolean {
+        return userApplicationsRepository.getFilterEnabled()
+    }
+
     suspend fun getFilterConfig(): ApplicationFilterConfig {
         val filter = getFilter()
-        // TODO: receive enabled from storage
-        val enabled = false
+        val enabled = getFilterEnabled()
 
         return ApplicationFilterConfig(
             enabled = enabled,
