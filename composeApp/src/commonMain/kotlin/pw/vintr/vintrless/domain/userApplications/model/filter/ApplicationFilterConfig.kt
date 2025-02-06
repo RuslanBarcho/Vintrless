@@ -14,4 +14,13 @@ data class ApplicationFilterConfig(
     val enabled: Boolean,
     val isBypass: Boolean,
     val keys: Set<String>,
-)
+) {
+
+    companion object {
+        fun empty() = ApplicationFilterConfig(
+            enabled = false,
+            isBypass = false,
+            keys = setOf(),
+        )
+    }
+}

@@ -2,4 +2,6 @@
     <string name="app_name" translatable="false">Vintrless</string>
     <string name="service_stop_action">Stop</string>
     <string name="service_connected_to">Connected to %1s</string>
+    <string name="service_connecting">Connecting</string>
+    <string name="service_disconnected">Disconnected</string>
 </resources>
