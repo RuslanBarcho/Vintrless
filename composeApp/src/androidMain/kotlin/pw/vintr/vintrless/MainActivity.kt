@@ -18,10 +18,12 @@ import androidx.lifecycle.lifecycleScope
 import io.github.vinceglb.filekit.core.FileKit
 import kotlinx.coroutines.launch
 import pw.vintr.vintrless.broadcast.BroadcastController
+import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterConfig
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.tools.AppActivity
 import pw.vintr.vintrless.v2ray.interactor.AndroidV2RayInteractor
 import pw.vintr.vintrless.v2ray.service.V2RayServiceController
+import pw.vintr.vintrless.v2ray.storage.AppFilterConfigStorage
 import pw.vintr.vintrless.v2ray.storage.V2RayConfigStorage
 
 class MainActivity : ComponentActivity() {
@@ -93,10 +95,10 @@ class MainActivity : ComponentActivity() {
             AndroidV2RayInteractor.event.collect { event ->
                 when (event) {
                     is AndroidV2RayInteractor.Event.StartV2RayViaActivity -> {
-                        startV2ray(event.config)
+                        startV2ray(event.config, event.appFilterConfig)
                     }
                     is AndroidV2RayInteractor.Event.RestartV2RayViaActivity -> {
-                        restartV2Ray(event.config)
+                        restartV2Ray(event.config, event.appFilterConfig)
                     }
                     is AndroidV2RayInteractor.Event.StopV2RayViaActivity -> {
                         stopV2Ray()
@@ -106,9 +108,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun startV2ray(config: V2RayEncodedConfig) {
+    private fun startV2ray(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig) {
         // Save config
         V2RayConfigStorage.saveConfig(applicationContext, config)
+        AppFilterConfigStorage.saveConfig(applicationContext, appFilterConfig)
 
         // Start service
         val prepareIntent = VpnService.prepare(applicationContext)
@@ -120,9 +123,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun restartV2Ray(config: V2RayEncodedConfig) {
+    private fun restartV2Ray(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig) {
         // Save config
         V2RayConfigStorage.saveConfig(applicationContext, config)
+        AppFilterConfigStorage.saveConfig(applicationContext, appFilterConfig)
 
         // Restart service
         BroadcastController.sendServiceBroadcast(this, BroadcastController.MSG_STATE_RESTART)

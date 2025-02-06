@@ -112,7 +112,7 @@ object SingBoxRouteBuildUseCase {
 
         when {
             // White list
-            appFilterConfig.enabled && appFilterConfig.isExclude -> {
+            appFilterConfig.enabled && appFilterConfig.isBypass -> {
                 rules.add(
                     RouteRule(
                         outbound = "direct",

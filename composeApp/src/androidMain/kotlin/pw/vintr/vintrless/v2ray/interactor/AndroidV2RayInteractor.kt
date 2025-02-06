@@ -14,9 +14,15 @@ import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 object AndroidV2RayInteractor : BaseInteractor(), V2RayPlatformInteractor {
 
     sealed class Event : InteractorEvent {
-        data class StartV2RayViaActivity(val config: V2RayEncodedConfig) : Event()
+        data class StartV2RayViaActivity(
+            val config: V2RayEncodedConfig,
+            val appFilterConfig: ApplicationFilterConfig
+        ) : Event()
 
-        data class RestartV2RayViaActivity(val config: V2RayEncodedConfig) : Event()
+        data class RestartV2RayViaActivity(
+            val config: V2RayEncodedConfig,
+            val appFilterConfig: ApplicationFilterConfig
+        ) : Event()
 
         data object StopV2RayViaActivity : Event()
     }
@@ -29,12 +35,12 @@ object AndroidV2RayInteractor : BaseInteractor(), V2RayPlatformInteractor {
     override val currentState: ConnectionState get() = _connectionState.value
 
     override fun startV2ray(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig) {
-        sendEventSync(Event.StartV2RayViaActivity(config))
+        sendEventSync(Event.StartV2RayViaActivity(config, appFilterConfig))
     }
 
     override fun restartV2Ray(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig) {
         if (_connectionState.value == ConnectionState.Connected) {
-            sendEventSync(Event.RestartV2RayViaActivity(config))
+            sendEventSync(Event.RestartV2RayViaActivity(config, appFilterConfig))
         }
     }
 

@@ -54,7 +54,7 @@ class UserApplicationsInteractor(
 
         return ApplicationFilterConfig(
             enabled = enabled,
-            isExclude = filter.mode == ApplicationFilterMode.WHITELIST,
+            isBypass = filter.mode == ApplicationFilterMode.WHITELIST,
             keys = filter.filterKeys,
         )
     }

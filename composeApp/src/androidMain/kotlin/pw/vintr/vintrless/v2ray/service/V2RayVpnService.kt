@@ -3,6 +3,7 @@ package pw.vintr.vintrless.v2ray.service
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.*
 import android.os.Build
 import android.os.ParcelFileDescriptor
@@ -12,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.lighthousegames.logging.logging
+import pw.vintr.vintrless.v2ray.storage.AppFilterConfigStorage
 import pw.vintr.vintrless.v2ray.storage.V2RayConfigStorage
 import java.io.File
 import java.lang.ref.SoftReference
@@ -94,6 +96,8 @@ class V2RayVpnService : VpnService(), V2RayServiceDialog {
 
     private fun setup() {
         val config = V2RayConfigStorage.getConfig(applicationContext)
+        val appFilterConfig = AppFilterConfigStorage.getConfig(applicationContext)
+
         val prepare = prepare(this)
         if (prepare != null) {
             return
@@ -136,7 +140,22 @@ class V2RayVpnService : VpnService(), V2RayServiceDialog {
         builder.setSession(config?.name ?: "Vpn Service")
 
         val selfPackageName = "pw.vintr.vintrless"
-        builder.addDisallowedApplication(selfPackageName)
+
+        // Apply application filter config.
+        if (appFilterConfig != null && appFilterConfig.enabled) {
+            if (appFilterConfig.isBypass) {
+                builder.addDisallowedApplication(selfPackageName)
+                appFilterConfig.keys.forEach {
+                    builder.tryAddDisallowedApplication(it)
+                }
+            } else {
+                appFilterConfig.keys.forEach {
+                    builder.tryAddAllowedApplication(it)
+                }
+            }
+        } else {
+            builder.addDisallowedApplication(selfPackageName)
+        }
 
         // Close the old interface since the parameters have been changed.
         try {
@@ -282,5 +301,21 @@ class V2RayVpnService : VpnService(), V2RayServiceDialog {
 
     override fun vpnProtect(socket: Int): Boolean {
         return protect(socket)
+    }
+
+    private fun Builder.tryAddDisallowedApplication(packageName: String) {
+        try {
+            addDisallowedApplication(packageName)
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun Builder.tryAddAllowedApplication(packageName: String) {
+        try {
+            addAllowedApplication(packageName)
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
     }
 }
