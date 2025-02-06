@@ -15,14 +15,21 @@ import pw.vintr.vintrless.data.routing.repository.RoutingRepository
 import pw.vintr.vintrless.data.routing.source.ExcludeRulesetCacheDataSource
 import pw.vintr.vintrless.data.storage.preference.PreferenceStorage
 import pw.vintr.vintrless.data.storage.preference.PreferenceStorageImpl
+import pw.vintr.vintrless.data.userApplications.model.ApplicationFilterCacheObject
+import pw.vintr.vintrless.data.userApplications.model.SystemProcessCacheObject
+import pw.vintr.vintrless.data.userApplications.repository.UserApplicationsRepository
+import pw.vintr.vintrless.data.userApplications.source.ApplicationFilterCacheDataSource
+import pw.vintr.vintrless.data.userApplications.source.SystemProcessCacheDataSource
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileUrlInteractor
 import pw.vintr.vintrless.domain.routing.interactor.RoutingInteractor
+import pw.vintr.vintrless.domain.userApplications.interactor.UserApplicationsInteractor
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayConnectionInteractor
 import pw.vintr.vintrless.platform.manager.RealmConfigurationManager.applyPlatformConfiguration
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
 import pw.vintr.vintrless.presentation.screen.about.AboutAppViewModel
+import pw.vintr.vintrless.presentation.screen.applicationFilter.ApplicationFilterViewModel
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmViewModel
 import pw.vintr.vintrless.presentation.screen.home.HomeViewModel
 import pw.vintr.vintrless.presentation.screen.main.MainViewModel
@@ -50,6 +57,8 @@ val appModule = module {
             schema = setOf(
                 ProfileDataCacheObject::class,
                 ExcludeRulesetCacheObject::class,
+                SystemProcessCacheObject::class,
+                ApplicationFilterCacheObject::class,
             )
         )
             .schemaVersion(REALM_SCHEMA_VERSION)
@@ -72,15 +81,23 @@ val appModule = module {
     single { ExcludeRulesetCacheDataSource(get()) }
     single { RoutingRepository(get(), get()) }
 
+    single { SystemProcessCacheDataSource(get()) }
+    single { ApplicationFilterCacheDataSource(get()) }
+    single { UserApplicationsRepository(get(), get(), get()) }
+
     // Domain
     interactor { AlertInteractor() }
     interactor { ProfileInteractor(get()) }
     interactor { ProfileUrlInteractor() }
     interactor { RoutingInteractor(get()) }
-    interactor { V2RayConnectionInteractor(
-        profileInteractor = get(),
-        routingInteractor = get())
+    interactor {
+        V2RayConnectionInteractor(
+            profileInteractor = get(),
+            routingInteractor = get(),
+            userApplicationInteractor = get(),
+        )
     }
+    interactor { UserApplicationsInteractor(get()) }
 
     // Presentation
     viewModel { MainViewModel(get()) }
@@ -123,4 +140,5 @@ val appModule = module {
         )
     }
     viewModel { AboutAppViewModel(get()) }
+    viewModel { ApplicationFilterViewModel(get(), get(), get()) }
 }

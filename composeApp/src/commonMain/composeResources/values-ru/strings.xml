@@ -3,6 +3,9 @@
     <string name="common_cancel">Отмена</string>
     <string name="common_ok">Ок</string>
     <string name="common_delete">Удалить</string>
+    <string name="common_add">Добавить</string>
+    <string name="common_search">Поиск</string>
+
     <string name="current_config">Текущий профиль</string>
     <string name="no_config">Нет профиля</string>
     <string name="no_config_description">Добавьте новый профиль VPN, чтобы начать использовать приложение</string>
@@ -105,4 +108,20 @@
     <string name="about_app_telegram_description">Новости и релизы</string>
     <string name="about_app_github_title">Github</string>
     <string name="about_app_github_description">Исходный код проекта</string>
+
+    <string name="apps_filter_title">Фильтр приложений</string>
+    <string name="apps_filter_description">Проксировать или обходить конкретные программы</string>
+    <string name="apps_filter_enable_setting">Использовать фильтр</string>
+    <string name="apps_filter_mode_title">Режим фильтрации</string>
+    <string name="apps_filter_blacklist">Черный список</string>
+    <string name="apps_filter_blacklist_description">VPN в этом режиме работает только с выбранными приложениями</string>
+    <string name="apps_filter_whitelist">Белый список</string>
+    <string name="apps_filter_whitelist_description">VPN в этом режиме работает со всеми приложениями кроме выбранных</string>
+    <string name="apps_filter_add_process_manual">Добавить процесс вручную</string>
+    <string name="apps_filter_app_name">Название приложения</string>
+    <string name="apps_filter_process_name">Имя процесса</string>
+    <string name="apps_filter_added_manually">Добавленные вручную</string>
+    <string name="apps_filter_found_on_device">Найденные на устройстве</string>
+    <string name="apps_filter_process_delete_title">Удалить процесс</string>
+    <string name="apps_filter_process_delete_text">Вы действительно хотите удалить сохраненный процесс? Отменить это будет невозможно</string>
 </resources>

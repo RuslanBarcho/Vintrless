@@ -21,6 +21,18 @@ class PreferenceStorageImpl(
         return settings.getStringOrNullFlow(key)
     }
 
+    override suspend fun saveBoolean(key: String, value: Boolean) {
+        settings.putBoolean(key, value)
+    }
+
+    override suspend fun getBoolean(key: String): Boolean {
+        return settings.getBoolean(key, defaultValue = false)
+    }
+
+    override fun getBooleanFlow(key: String): Flow<Boolean> {
+        return settings.getBooleanFlow(key, defaultValue = false)
+    }
+
     override suspend fun remove(key: String) {
         settings.remove(key)
     }

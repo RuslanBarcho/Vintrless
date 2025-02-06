@@ -60,4 +60,10 @@ sealed class AppScreen : Screen {
 
     @Serializable
     data object AboutApp : AppScreen()
+
+    @Serializable
+    data object ApplicationFilter : AppScreen()
+
+    @Serializable
+    data object ConfirmDeleteSystemProcess : AppScreen()
 }

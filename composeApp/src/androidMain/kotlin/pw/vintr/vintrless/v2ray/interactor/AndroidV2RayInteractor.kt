@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
 import pw.vintr.vintrless.domain.base.BaseInteractor
 import pw.vintr.vintrless.domain.base.InteractorEvent
+import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterConfig
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
@@ -13,9 +14,15 @@ import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 object AndroidV2RayInteractor : BaseInteractor(), V2RayPlatformInteractor {
 
     sealed class Event : InteractorEvent {
-        data class StartV2RayViaActivity(val config: V2RayEncodedConfig) : Event()
+        data class StartV2RayViaActivity(
+            val config: V2RayEncodedConfig,
+            val appFilterConfig: ApplicationFilterConfig
+        ) : Event()
 
-        data class RestartV2RayViaActivity(val config: V2RayEncodedConfig) : Event()
+        data class RestartV2RayViaActivity(
+            val config: V2RayEncodedConfig,
+            val appFilterConfig: ApplicationFilterConfig
+        ) : Event()
 
         data object StopV2RayViaActivity : Event()
     }
@@ -27,13 +34,13 @@ object AndroidV2RayInteractor : BaseInteractor(), V2RayPlatformInteractor {
 
     override val currentState: ConnectionState get() = _connectionState.value
 
-    override fun startV2ray(config: V2RayEncodedConfig) {
-        sendEventSync(Event.StartV2RayViaActivity(config))
+    override fun startV2ray(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig) {
+        sendEventSync(Event.StartV2RayViaActivity(config, appFilterConfig))
     }
 
-    override fun restartV2Ray(config: V2RayEncodedConfig) {
+    override fun restartV2Ray(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig) {
         if (_connectionState.value == ConnectionState.Connected) {
-            sendEventSync(Event.RestartV2RayViaActivity(config))
+            sendEventSync(Event.RestartV2RayViaActivity(config, appFilterConfig))
         }
     }
 

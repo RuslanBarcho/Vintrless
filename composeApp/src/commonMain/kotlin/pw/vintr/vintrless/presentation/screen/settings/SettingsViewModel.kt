@@ -18,6 +18,7 @@ class SettingsViewModel(
 
     private val _screenState = MutableStateFlow(SettingsState(
         items = listOf(
+            SettingsItem.AppFilter(),
             SettingsItem.Routing(),
             SettingsItem.About(
                 appVersionName = AppConfig.appVersionName,
@@ -29,6 +30,10 @@ class SettingsViewModel(
 
     fun onSettingItemClick(item: SettingsItem) {
         when (item) {
+            is SettingsItem.AppFilter -> {
+                navigator.switchNavigatorType(NavigatorType.Root)
+                navigator.forward(AppScreen.ApplicationFilter)
+            }
             is SettingsItem.Routing -> {
                 navigator.switchNavigatorType(NavigatorType.Root)
                 navigator.forward(AppScreen.RulesetList)
@@ -61,9 +66,9 @@ sealed class SettingsItem {
         override val descriptionRes: StringResource = Res.string.settings_app_description
     ) : SettingsItem()
 
-    data class Vpn(
-        override val titleRes: StringResource = Res.string.settings_vpn_title,
-        override val descriptionRes: StringResource = Res.string.settings_vpn_description
+    data class AppFilter(
+        override val titleRes: StringResource = Res.string.apps_filter_title,
+        override val descriptionRes: StringResource = Res.string.apps_filter_description
     ) : SettingsItem()
 
     data class Routing(

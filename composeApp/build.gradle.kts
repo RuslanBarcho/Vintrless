@@ -137,8 +137,8 @@ android {
         applicationId = "pw.vintr.vintrless"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1.0"
         multiDexEnabled = true
 
         splits {
@@ -176,11 +176,11 @@ android {
     applicationVariants.all {
         val variant = this
         val versionCodes = mapOf(
-            "armeabi-v7a" to 1,
-            "arm64-v8a" to 1,
-            "x86" to 1,
-            "x86_64" to 1,
-            "universal" to 1
+            "armeabi-v7a" to 2,
+            "arm64-v8a" to 2,
+            "x86" to 2,
+            "x86_64" to 2,
+            "universal" to 2
         )
 
         variant.outputs
@@ -221,7 +221,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Vintrless"
-            packageVersion = "1.0.0"
+            packageVersion = "1.1.0"
             vendor = "Vintrapps"
             modules("jdk.unsupported")
 

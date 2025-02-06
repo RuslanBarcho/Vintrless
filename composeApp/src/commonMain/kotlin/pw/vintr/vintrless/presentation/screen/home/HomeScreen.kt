@@ -77,8 +77,8 @@ fun HomeScreen(
                             ConnectionState.Disconnected -> {
                                 Image(
                                     modifier = Modifier
-                                        .fillMaxWidthRestricted(1170.dp)
-                                        .fillMaxHeightRestricted(578.dp),
+                                        .fillMaxWidthRestricted(scope = this, 1170.dp)
+                                        .fillMaxHeightRestricted(scope = this, 578.dp),
                                     painter = painterResource(Res.drawable.map_red),
                                     contentScale = ContentScale.Crop,
                                     contentDescription = null,
@@ -88,8 +88,8 @@ fun HomeScreen(
                             ConnectionState.Connected -> {
                                 Image(
                                     modifier = Modifier
-                                        .fillMaxWidthRestricted(1170.dp)
-                                        .fillMaxHeightRestricted(578.dp),
+                                        .fillMaxWidthRestricted(scope = this, 1170.dp)
+                                        .fillMaxHeightRestricted(scope = this, 578.dp),
                                     painter = painterResource(Res.drawable.map_blue),
                                     contentScale = ContentScale.Crop,
                                     contentDescription = null,
@@ -142,7 +142,7 @@ fun HomeScreen(
                 }
                 ConfigCard(
                     modifier = Modifier
-                        .fillMaxWidthRestricted(640.dp),
+                        .fillMaxWidthRestricted(scope = this@BoxWithConstraints, 640.dp),
                     selectedProfile = state.payload.selectedProfile,
                 ) {
                     if (state.payload.selectedProfile != null) {

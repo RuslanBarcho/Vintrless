@@ -4,8 +4,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pw.vintr.vintrless.domain.singbox.model.SingBoxConfig
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.tools.PathProvider
+import pw.vintr.vintrless.tools.extensions.addShutdownHook
+import pw.vintr.vintrless.tools.extensions.close
 import pw.vintr.vintrless.v2ray.interactor.JvmV2RayInteractor
 import java.io.BufferedWriter
 import java.io.File
@@ -30,13 +33,20 @@ object WindowsV2RayService {
 
     private var serviceStartJob: Job? = null
 
-    fun startService(config: V2RayEncodedConfig) {
+    fun startService(v2RayConfig: V2RayEncodedConfig, singBoxConfig: SingBoxConfig) {
         serviceStartJob = MainScope().launch {
             JvmV2RayInteractor.postConnecting()
 
             try {
-                // Save config to file
-                saveXrayConfig(config)
+                // Save configs to files
+                saveConfig(
+                    path = "${PathProvider.resourcesPath}\\config_xray.json",
+                    json = v2RayConfig.configJson
+                )
+                saveConfig(
+                    path = "${PathProvider.resourcesPath}\\config_singbox.json",
+                    json = singBoxConfig.toJson()
+                )
 
                 // Start xray listener
                 val xrayProc = ProcessBuilder("cmd", "/c", "xray", "run", "-c", "config_xray.json")
@@ -73,20 +83,20 @@ object WindowsV2RayService {
         }
     }
 
-    private fun saveXrayConfig(config: V2RayEncodedConfig) {
-        val xrayConfigFile = File("${PathProvider.resourcesPath}\\config_xray.json")
+    private fun saveConfig(path: String, json: String) {
+        val configFile = File(path)
 
         // Remove current config if exist
-        if (xrayConfigFile.exists()) {
-            xrayConfigFile.delete()
-            xrayConfigFile.createNewFile()
+        if (configFile.exists()) {
+            configFile.delete()
+            configFile.createNewFile()
         }
 
         // Write new config content
-        val fileWriter = FileWriter(xrayConfigFile.absoluteFile)
+        val fileWriter = FileWriter(configFile.absoluteFile)
         val bufferedWriter = BufferedWriter(fileWriter)
 
-        bufferedWriter.write(config.configJson)
+        bufferedWriter.write(json)
         bufferedWriter.close()
     }
 
@@ -105,17 +115,5 @@ object WindowsV2RayService {
 
         runningProcMap.clear()
         JvmV2RayInteractor.postDisconnected()
-    }
-
-    private fun Process.close() {
-        descendants()?.forEach(ProcessHandle::destroy)
-        destroy()
-        inputStream?.close()
-        outputStream?.close()
-    }
-
-    private fun Process.addShutdownHook() {
-        val shutdownRunnable = Runnable { close() }
-        Runtime.getRuntime().addShutdownHook(Thread(shutdownRunnable))
     }
 }

@@ -9,7 +9,7 @@ import pw.vintr.vintrless.tools.extensions.Empty
 
 /**
  * A local Android-only config storage, designed to store last used V2Ray config with additional params.
- * Should not be used for another data or outside the V2RayServiceController
+ * Should not be used for another data.
  */
 object V2RayConfigStorage {
 

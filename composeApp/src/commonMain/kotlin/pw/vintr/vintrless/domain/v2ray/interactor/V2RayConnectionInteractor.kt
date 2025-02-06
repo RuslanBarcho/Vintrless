@@ -10,6 +10,7 @@ import pw.vintr.vintrless.V2RayPlatformInteractor
 import pw.vintr.vintrless.domain.base.BaseInteractor
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.routing.interactor.RoutingInteractor
+import pw.vintr.vintrless.domain.userApplications.interactor.UserApplicationsInteractor
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.v2ray.useCase.V2RayConfigBuildUseCase
 import pw.vintr.vintrless.tools.extensions.throttleLatest
@@ -18,6 +19,7 @@ class V2RayConnectionInteractor(
     private val v2rayInteractor: V2RayPlatformInteractor = V2RayPlatformInteractor(),
     private val profileInteractor: ProfileInteractor,
     private val routingInteractor: RoutingInteractor,
+    private val userApplicationInteractor: UserApplicationsInteractor,
 ) : BaseInteractor() {
 
     private sealed class Command {
@@ -65,18 +67,20 @@ class V2RayConnectionInteractor(
                 if (v2rayInteractor.currentState != ConnectionState.Disconnected) {
                     val profile = profileInteractor.getSelectedProfile()
                     val ruleset = routingInteractor.getSelectedRuleset()
+                    val filterConfig = userApplicationInteractor.getFilterConfig()
 
                     if (profile != null) {
-                        v2rayInteractor.restartV2Ray(V2RayConfigBuildUseCase(profile, ruleset))
+                        v2rayInteractor.restartV2Ray(V2RayConfigBuildUseCase(profile, ruleset), filterConfig)
                     }
                 }
             }
             is Command.Start -> {
                 val profile = profileInteractor.getSelectedProfile()
                 val ruleset = routingInteractor.getSelectedRuleset()
+                val filterConfig = userApplicationInteractor.getFilterConfig()
 
                 if (profile != null) {
-                    v2rayInteractor.startV2ray(V2RayConfigBuildUseCase(profile, ruleset))
+                    v2rayInteractor.startV2ray(V2RayConfigBuildUseCase(profile, ruleset), filterConfig)
                 }
             }
             is Command.Stop -> {

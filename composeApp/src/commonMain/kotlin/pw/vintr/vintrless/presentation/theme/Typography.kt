@@ -42,6 +42,8 @@ fun RubikRegular14() = RubikRegular().copy(fontSize = 14.sp)
 @Composable
 fun RubikRegular16() = RubikRegular().copy(fontSize = 16.sp)
 @Composable
+fun RubikMedium12() = RubikMedium().copy(fontSize = 12.sp)
+@Composable
 fun RubikMedium14() = RubikMedium().copy(fontSize = 14.sp)
 @Composable
 fun RubikMedium16() = RubikMedium().copy(fontSize = 16.sp)
