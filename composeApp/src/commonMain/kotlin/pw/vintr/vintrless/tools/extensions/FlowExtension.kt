@@ -19,8 +19,8 @@ inline fun <T> StateFlow<BaseScreenState<T>>.withLoaded(block: (T) -> Unit) {
 inline fun <reified T, R> StateFlow<BaseScreenState<T>>.getWithLoaded(block: (T) -> R): R? {
     val lockedValue = value
 
-    return if (lockedValue is T) {
-        block(lockedValue)
+    return if (lockedValue is BaseScreenState.Loaded<T>) {
+        block(lockedValue.payload)
     } else {
         null
     }

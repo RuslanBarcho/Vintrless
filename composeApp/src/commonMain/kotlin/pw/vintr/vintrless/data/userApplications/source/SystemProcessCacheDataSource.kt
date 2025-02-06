@@ -6,7 +6,6 @@ import io.realm.kotlin.ext.query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
-import pw.vintr.vintrless.data.profile.model.ProfileDataCacheObject
 import pw.vintr.vintrless.data.userApplications.model.SystemProcessCacheObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine

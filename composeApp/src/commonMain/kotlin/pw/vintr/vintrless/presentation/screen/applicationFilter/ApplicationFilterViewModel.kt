@@ -19,6 +19,9 @@ import pw.vintr.vintrless.platformType
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
+import pw.vintr.vintrless.presentation.navigation.AppScreen
+import pw.vintr.vintrless.presentation.navigation.NavigatorType
+import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmResult
 import pw.vintr.vintrless.tools.extensions.*
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -143,6 +146,8 @@ class ApplicationFilterViewModel(
             )
         }?.let { process ->
             launch(createExceptionHandler()) {
+                print(process.toString())
+
                 userApplicationsInteractor.saveProcess(process)
                 _screenState.updateLoaded { state ->
                     state.copy(
@@ -159,7 +164,19 @@ class ApplicationFilterViewModel(
         }
     }
 
-    fun removeProcess(process: SystemProcess) {
+    fun onRemoveProcessClick(process: SystemProcess) {
+        navigator.forwardWithResult<ConfirmResult>(
+            screen = AppScreen.ConfirmDeleteSystemProcess,
+            type = NavigatorType.Root,
+            resultKey = ConfirmResult.KEY,
+        ) {
+            if (it == ConfirmResult.ACCEPT) {
+                removeProcess(process)
+            }
+        }
+    }
+
+    private fun removeProcess(process: SystemProcess) {
         launch(createExceptionHandler()) {
             _screenState.withLoaded { state ->
                 // Remove process
@@ -177,7 +194,8 @@ class ApplicationFilterViewModel(
                 _screenState.updateLoaded {
                     state.copy(
                         filterState = state.filterState.copy(
-                            savedFilter = filterToSave
+                            savedFilter = filterToSave,
+                            pickedFilter = filterToSave,
                         ),
                         savedSystemProcesses = state.savedSystemProcesses
                             .toMutableList()

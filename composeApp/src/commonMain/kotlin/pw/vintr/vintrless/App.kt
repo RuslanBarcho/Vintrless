@@ -52,6 +52,8 @@ import pw.vintr.vintrless.tools.modules.appModule
 import vintrless.composeapp.generated.resources.Res
 import vintrless.composeapp.generated.resources.profile_delete_text
 import vintrless.composeapp.generated.resources.profile_delete_title
+import vintrless.composeapp.generated.resources.apps_filter_process_delete_text
+import vintrless.composeapp.generated.resources.apps_filter_process_delete_title
 import vintrless.composeapp.generated.resources.common_delete
 
 private const val TRANSITION_DURATION = 300
@@ -218,6 +220,16 @@ fun Navigation(
         composable<AppScreen.AboutApp> { AboutAppScreen() }
 
         composable<AppScreen.ApplicationFilter> { ApplicationFilterScreen() }
+
+        extendedDialog<AppScreen.ConfirmDeleteSystemProcess> {
+            ConfirmDialog(
+                data = ConfirmDialogData.Resource(
+                    titleRes = Res.string.apps_filter_process_delete_title,
+                    messageRes = Res.string.apps_filter_process_delete_text,
+                    acceptTextRes = Res.string.common_delete,
+                )
+            )
+        }
     }
 }
 

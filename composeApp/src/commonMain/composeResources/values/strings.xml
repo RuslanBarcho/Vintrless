@@ -122,4 +122,6 @@
     <string name="apps_filter_process_name">Process name</string>
     <string name="apps_filter_added_manually">Added manually</string>
     <string name="apps_filter_found_on_device">Found on device</string>
+    <string name="apps_filter_process_delete_title">Delete process</string>
+    <string name="apps_filter_process_delete_text">Are you sure you want to delete saved process? It will be impossible to undo this</string>
 </resources>

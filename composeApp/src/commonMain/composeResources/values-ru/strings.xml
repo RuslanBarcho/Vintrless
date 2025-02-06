@@ -122,4 +122,6 @@
     <string name="apps_filter_process_name">Имя процесса</string>
     <string name="apps_filter_added_manually">Добавленные вручную</string>
     <string name="apps_filter_found_on_device">Найденные на устройстве</string>
+    <string name="apps_filter_process_delete_title">Удалить процесс</string>
+    <string name="apps_filter_process_delete_text">Вы действительно хотите удалить сохраненный процесс? Отменить это будет невозможно</string>
 </resources>

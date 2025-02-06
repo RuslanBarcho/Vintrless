@@ -174,7 +174,7 @@ fun ApplicationFilterScreen(
                                         application.processName,
                                     ),
                                     onSelectClick = { viewModel.toggleApplicationSelected(application) },
-                                    onDeleteClick = { viewModel.removeProcess(application) },
+                                    onDeleteClick = { viewModel.onRemoveProcessClick(application) },
                                 )
                             }
                         }
