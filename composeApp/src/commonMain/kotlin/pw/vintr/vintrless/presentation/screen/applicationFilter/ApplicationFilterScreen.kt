@@ -33,6 +33,7 @@ import pw.vintr.vintrless.presentation.uikit.input.AppDropdownField
 import pw.vintr.vintrless.presentation.uikit.input.AppTextField
 import pw.vintr.vintrless.presentation.uikit.input.DropdownPayload
 import pw.vintr.vintrless.presentation.uikit.layout.ScreenStateLayout
+import pw.vintr.vintrless.presentation.uikit.lazy.gridItems
 import pw.vintr.vintrless.presentation.uikit.toolbar.ToolbarRegular
 import pw.vintr.vintrless.tools.extensions.Empty
 import pw.vintr.vintrless.tools.extensions.cardBackground
@@ -51,6 +52,10 @@ private const val KEY_FILTER_STATUS = "key-filter-status"
 private const val KEY_PROCESS_ADD_FORM = "key-process-add-form"
 
 private const val KEY_SEARCH = "key-search"
+
+private const val KEY_PROCESSES_TITLE = "key-processes-title"
+
+private const val KEY_INSTALLED_TITLE = "key-installed-title"
 
 @Composable
 fun ApplicationFilterScreen(
@@ -144,54 +149,62 @@ fun ApplicationFilterScreen(
                         }
 
                         // Manually saved system processes
+                        if (state.payload.filteredSavedSystemProcesses.isNotEmpty()) {
+                            // Title
+                            item(KEY_PROCESSES_TITLE) {
+                                Text(
+                                    text = stringResource(Res.string.apps_filter_added_manually),
+                                    style = Gilroy18(),
+                                    color = VintrlessExtendedTheme.colors.textRegular,
+                                )
+                            }
+
+                            // Items
+                            gridItems(
+                                columnsCount = columnsCount,
+                                horizontalSpacer = 20.dp,
+                                items = state.payload.filteredSavedSystemProcesses,
+                                key = { it.id },
+                            ) { application ->
+                                ApplicationCard(
+                                    modifier = Modifier.weight(1f),
+                                    application = application,
+                                    manuallyAdded = true,
+                                    selected = state.payload.filterState.pickedFilter.filterKeys.contains(
+                                        application.processName,
+                                    ),
+                                    onSelectClick = { viewModel.toggleApplicationSelected(application) },
+                                    onDeleteClick = { viewModel.removeProcess(application) },
+                                )
+                            }
+                        }
 
                         // Installed apps on device
-                        val installedUserApplicationsCount = state.payload.filteredUserInstalledApplications.size
-                        val rowsCount = (installedUserApplicationsCount + 1) / columnsCount
-
-                        items(
-                            count = rowsCount,
-                            key = { i ->
-                                // Row key is a composition of row's items uuids
-                                var key = String.Empty
-
-                                for (j in 0 until columnsCount) {
-                                    val itemIndex = i * columnsCount + j
-                                    if (itemIndex < installedUserApplicationsCount) {
-                                        key += state.payload.filteredUserInstalledApplications[itemIndex]
-                                            .lazyListUUID
-                                    }
-                                }
-
-                                key
+                        if (state.payload.filteredSavedSystemProcesses.isNotEmpty()) {
+                            item(KEY_INSTALLED_TITLE) {
+                                Text(
+                                    text = stringResource(Res.string.apps_filter_found_on_device),
+                                    style = Gilroy18(),
+                                    color = VintrlessExtendedTheme.colors.textRegular,
+                                )
                             }
-                        ) { i ->
-                            Row(Modifier.height(IntrinsicSize.Max)) {
-                                for (j in 0 until columnsCount) {
-                                    val itemIndex = i * columnsCount + j
+                        }
 
-                                    if (itemIndex < installedUserApplicationsCount) {
-                                        val application = state.payload.filteredUserInstalledApplications[itemIndex]
-
-                                        ApplicationCard(
-                                            modifier = Modifier.weight(1f),
-                                            application = application,
-                                            manuallyAdded = false,
-                                            selected = state.payload.filterState.pickedFilter.filterKeys.contains(
-                                                application.processName,
-                                            ),
-                                            onSelectClick = { viewModel.toggleApplicationSelected(application) },
-                                            onDeleteClick = {  },
-                                        )
-
-                                        if (j < (columnsCount - 1)) {
-                                            Spacer(Modifier.width(20.dp))
-                                        }
-                                    } else {
-                                        Spacer(Modifier.weight(1f))
-                                    }
-                                }
-                            }
+                        gridItems(
+                            columnsCount = columnsCount,
+                            horizontalSpacer = 20.dp,
+                            items = state.payload.filteredUserInstalledApplications,
+                            key = { it.lazyListUUID },
+                        ) { application ->
+                            ApplicationCard(
+                                modifier = Modifier.weight(1f),
+                                application = application,
+                                manuallyAdded = false,
+                                selected = state.payload.filterState.pickedFilter.filterKeys.contains(
+                                    application.processName,
+                                ),
+                                onSelectClick = { viewModel.toggleApplicationSelected(application) },
+                            )
                         }
                     }
 
@@ -391,7 +404,7 @@ private fun ApplicationCard(
     manuallyAdded: Boolean = false,
     selected: Boolean = false,
     onSelectClick: (Boolean) -> Unit,
-    onDeleteClick: () -> Unit,
+    onDeleteClick: () -> Unit = {},
 ) {
     Row(
         modifier = modifier

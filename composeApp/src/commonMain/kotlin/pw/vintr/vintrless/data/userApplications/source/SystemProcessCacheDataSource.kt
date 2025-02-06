@@ -6,6 +6,7 @@ import io.realm.kotlin.ext.query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
+import pw.vintr.vintrless.data.profile.model.ProfileDataCacheObject
 import pw.vintr.vintrless.data.userApplications.model.SystemProcessCacheObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -26,6 +27,15 @@ class SystemProcessCacheDataSource(private val realm: Realm) {
                 // Save new ruleset
                 copyToRealm(systemProcess)
             }
+        }
+    }
+
+    suspend fun removeProcess(id: String) {
+        realm.write {
+            query<SystemProcessCacheObject>("id = $0", id)
+                .first()
+                .find()
+                ?.let { delete(it) }
         }
     }
 

@@ -120,4 +120,6 @@
     <string name="apps_filter_add_process_manual">Add a process manually</string>
     <string name="apps_filter_app_name">Application name</string>
     <string name="apps_filter_process_name">Process name</string>
+    <string name="apps_filter_added_manually">Added manually</string>
+    <string name="apps_filter_found_on_device">Found on device</string>
 </resources>

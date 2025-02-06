@@ -142,7 +142,7 @@ class ApplicationFilterViewModel(
                 processName = state.processAddFormState.processNameValue,
             )
         }?.let { process ->
-            launch {
+            launch(createExceptionHandler()) {
                 userApplicationsInteractor.saveProcess(process)
                 _screenState.updateLoaded { state ->
                     state.copy(
@@ -155,6 +155,38 @@ class ApplicationFilterViewModel(
                         )
                     )
                 }
+            }
+        }
+    }
+
+    fun removeProcess(process: SystemProcess) {
+        launch(createExceptionHandler()) {
+            _screenState.withLoaded { state ->
+                // Remove process
+                userApplicationsInteractor.removeProcess(process.id)
+
+                // Save filter without removed process
+                val filterToSave = state.filterState.pickedFilter.copy(
+                    filterKeys = state.filterState.pickedFilter.filterKeys
+                        .toMutableSet()
+                        .apply { remove(process.processName) }
+                )
+                userApplicationsInteractor.saveFilter(filterToSave)
+
+                // Update UI state
+                _screenState.updateLoaded {
+                    state.copy(
+                        filterState = state.filterState.copy(
+                            savedFilter = filterToSave
+                        ),
+                        savedSystemProcesses = state.savedSystemProcesses
+                            .toMutableList()
+                            .apply { remove(process) }
+                    )
+                }
+
+                // Apply filter to running V2Ray process
+                v2RayConnectionInteractor.sendRestartCommand()
             }
         }
     }

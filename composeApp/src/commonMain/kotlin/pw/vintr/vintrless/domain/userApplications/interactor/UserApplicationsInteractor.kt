@@ -25,6 +25,10 @@ class UserApplicationsInteractor(
         userApplicationsRepository.saveSystemProcess(process.toCacheObject())
     }
 
+    suspend fun removeProcess(id: String) {
+        userApplicationsRepository.removeSystemProcess(id)
+    }
+
     suspend fun getSavedProcesses(): List<SystemProcess> {
         return userApplicationsRepository.getSavedSystemProcesses()
             .map { SystemProcess.fromCacheObject(it) }

@@ -20,6 +20,10 @@ class UserApplicationsRepository(
         processDataSource.saveSystemProcess(systemProcess)
     }
 
+    suspend fun removeSystemProcess(id: String) {
+        processDataSource.removeProcess(id)
+    }
+
     suspend fun getSavedSystemProcesses(): List<SystemProcessCacheObject> {
         return processDataSource.getSavedSystemProcesses()
     }
