@@ -3,6 +3,7 @@ package pw.vintr.vintrless.tools.modules
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
+import io.realm.kotlin.migration.AutomaticSchemaMigration
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import org.koin.dsl.onClose
@@ -45,7 +46,9 @@ import pw.vintr.vintrless.presentation.screen.routing.rulesetList.RulesetListVie
 import pw.vintr.vintrless.presentation.screen.settings.SettingsViewModel
 import pw.vintr.vintrless.tools.extensions.interactor
 
-private const val REALM_SCHEMA_VERSION = 1L
+private const val REALM_SCHEMA_VERSION = 2L
+
+val realmMigration = AutomaticSchemaMigration { _ -> }
 
 @OptIn(ExperimentalSettingsApi::class)
 val appModule = module {
@@ -62,7 +65,7 @@ val appModule = module {
             )
         )
             .schemaVersion(REALM_SCHEMA_VERSION)
-            .deleteRealmIfMigrationNeeded()
+            .migration(realmMigration)
             .applyPlatformConfiguration()
             .build()
 
