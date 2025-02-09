@@ -25,6 +25,11 @@ object AndroidV2RayInteractor : BaseInteractor(), V2RayPlatformInteractor {
         ) : Event()
 
         data object StopV2RayViaActivity : Event()
+
+        data class ApplyConfigViaActivity(
+            val config: V2RayEncodedConfig,
+            val appFilterConfig: ApplicationFilterConfig
+        ) : Event()
     }
 
     private val _connectionState = MutableStateFlow(ConnectionState.Disconnected)
@@ -46,6 +51,10 @@ object AndroidV2RayInteractor : BaseInteractor(), V2RayPlatformInteractor {
 
     override fun stopV2ray() {
         sendEventSync(Event.StopV2RayViaActivity)
+    }
+
+    override fun applyConfig(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig) {
+        sendEventSync(Event.ApplyConfigViaActivity(config, appFilterConfig))
     }
 
     fun postConnecting() {

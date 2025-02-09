@@ -16,4 +16,6 @@ interface V2RayPlatformInteractor {
     fun restartV2Ray(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig)
 
     fun stopV2ray()
+
+    fun applyConfig(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig) = Unit
 }

@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -25,6 +24,9 @@ import pw.vintr.vintrless.v2ray.interactor.AndroidV2RayInteractor
 import pw.vintr.vintrless.v2ray.service.V2RayServiceController
 import pw.vintr.vintrless.v2ray.storage.AppFilterConfigStorage
 import pw.vintr.vintrless.v2ray.storage.V2RayConfigStorage
+import pw.vintr.vintrless.v2ray.useCase.V2RayStartUseCase
+import pw.vintr.vintrless.v2ray.useCase.V2RayRestartUseCase
+import pw.vintr.vintrless.v2ray.useCase.V2RayStopUseCase
 
 class MainActivity : ComponentActivity() {
 
@@ -103,37 +105,38 @@ class MainActivity : ComponentActivity() {
                     is AndroidV2RayInteractor.Event.StopV2RayViaActivity -> {
                         stopV2Ray()
                     }
+                    is AndroidV2RayInteractor.Event.ApplyConfigViaActivity -> {
+                        applyConfig(event.config, event.appFilterConfig)
+                    }
                 }
             }
         }
     }
 
     private fun startV2ray(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig) {
-        // Save config
-        V2RayConfigStorage.saveConfig(applicationContext, config)
-        AppFilterConfigStorage.saveConfig(applicationContext, appFilterConfig)
-
-        // Start service
-        val prepareIntent = VpnService.prepare(applicationContext)
-
-        if (prepareIntent != null) {
-            requestVpnPermission.launch(prepareIntent)
-        } else {
-            V2RayServiceController.startV2rayService(context = applicationContext)
-        }
+        V2RayStartUseCase(
+            context = applicationContext,
+            config = config,
+            appFilterConfig = appFilterConfig,
+            onPermissionRequestNeed = { requestVpnPermission.launch(it) }
+        )
     }
 
     private fun restartV2Ray(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig) {
-        // Save config
-        V2RayConfigStorage.saveConfig(applicationContext, config)
-        AppFilterConfigStorage.saveConfig(applicationContext, appFilterConfig)
-
-        // Restart service
-        BroadcastController.sendServiceBroadcast(this, BroadcastController.MSG_STATE_RESTART)
+        V2RayRestartUseCase(
+            context = applicationContext,
+            config = config,
+            appFilterConfig = appFilterConfig,
+        )
     }
 
     private fun stopV2Ray() {
-        BroadcastController.sendServiceBroadcast(this, BroadcastController.MSG_STATE_STOP)
+        V2RayStopUseCase(applicationContext)
+    }
+
+    private fun applyConfig(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig) {
+        V2RayConfigStorage.saveConfig(applicationContext, config)
+        AppFilterConfigStorage.saveConfig(applicationContext, appFilterConfig)
     }
 }
 
