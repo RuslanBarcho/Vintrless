@@ -100,4 +100,18 @@ class V2RayConnectionInteractor(
     fun sendStopCommand() {
         commandBufferFlow.value = Command.Stop()
     }
+
+    suspend fun applyConfiguration() {
+        val profile = profileInteractor.getSelectedProfile()
+        val ruleset = routingInteractor.getSelectedRuleset()
+        val filterConfig = userApplicationInteractor.getFilterConfig()
+
+        if (profile != null) {
+            v2rayInteractor.applyConfig(V2RayConfigBuildUseCase(profile, ruleset), filterConfig)
+
+            if (v2rayInteractor.currentState == ConnectionState.Connected) {
+                sendRestartCommand()
+            }
+        }
+    }
 }

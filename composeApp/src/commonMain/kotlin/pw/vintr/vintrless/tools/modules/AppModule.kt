@@ -116,6 +116,7 @@ val appModule = module {
             dataId = params.getOrNull(),
             profileInteractor = get(),
             alertInteractor = get(),
+            v2RayConnectionInteractor = get(),
         )
     }
     viewModel { ProfileListViewModel(get(), get(), get()) }

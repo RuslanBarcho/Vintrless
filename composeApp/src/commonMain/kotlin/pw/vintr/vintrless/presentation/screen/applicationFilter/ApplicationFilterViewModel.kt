@@ -86,8 +86,8 @@ class ApplicationFilterViewModel(
             userApplicationsInteractor.saveFilterEnabled(value)
             _screenState.updateLoaded { it.copy(enabled = value) }
 
-            // Apply filter to running V2Ray process
-            v2RayConnectionInteractor.sendRestartCommand()
+            // Apply filter to platform
+            v2RayConnectionInteractor.applyConfiguration()
         }
     }
 
@@ -203,8 +203,8 @@ class ApplicationFilterViewModel(
                     )
                 }
 
-                // Apply filter to running V2Ray process
-                v2RayConnectionInteractor.sendRestartCommand()
+                // Apply filter to platform
+                v2RayConnectionInteractor.applyConfiguration()
             }
         }
     }
@@ -287,8 +287,8 @@ class ApplicationFilterViewModel(
                             )
                         }
 
-                        // Apply filter to running V2Ray process
-                        v2RayConnectionInteractor.sendRestartCommand()
+                        // Apply filter to platform
+                        v2RayConnectionInteractor.applyConfiguration()
                     }
                 )
             }

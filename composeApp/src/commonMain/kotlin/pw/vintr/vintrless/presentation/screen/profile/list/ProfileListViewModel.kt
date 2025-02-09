@@ -33,7 +33,7 @@ class ProfileListViewModel(
     fun selectProfile(profile: ProfileData) {
         launch {
             profileInteractor.setSelectedProfile(profile.id)
-            v2RayConnectionInteractor.sendRestartCommand()
+            v2RayConnectionInteractor.applyConfiguration()
         }
     }
 

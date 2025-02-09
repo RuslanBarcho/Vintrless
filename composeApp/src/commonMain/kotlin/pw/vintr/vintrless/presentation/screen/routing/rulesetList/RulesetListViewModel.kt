@@ -50,8 +50,8 @@ class RulesetListViewModel(
                 routingInteractor.setSelectedRulesetId(ruleset.id)
                 _screenState.updateLoaded { it.copy(selectedRulesetId = ruleset.id) }
 
-                // Restart service to apply changes
-                v2RayConnectionInteractor.sendRestartCommand()
+                // Apply changes
+                v2RayConnectionInteractor.applyConfiguration()
             }
         }
     }
@@ -90,9 +90,9 @@ class RulesetListViewModel(
             val updatedState = loadRulesetState()
             _screenState.value = BaseScreenState.Loaded(updatedState)
 
-            // Restart service if selection has changed its parameters
+            // Apply changes if selection has changed its parameters
             if (updatedState.selectedRulesetId == ruleset.id) {
-                v2RayConnectionInteractor.sendRestartCommand()
+                v2RayConnectionInteractor.applyConfiguration()
             }
         }
     }

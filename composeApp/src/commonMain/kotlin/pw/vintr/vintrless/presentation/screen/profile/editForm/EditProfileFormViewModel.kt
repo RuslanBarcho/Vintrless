@@ -9,6 +9,7 @@ import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.domain.profile.model.ProfileField
 import pw.vintr.vintrless.domain.profile.model.ProfileForm
+import pw.vintr.vintrless.domain.v2ray.interactor.V2RayConnectionInteractor
 import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.base.BaseViewModel
@@ -22,6 +23,7 @@ class EditProfileFormViewModel(
     private val dataId: String? = null,
     private val profileInteractor: ProfileInteractor,
     private val alertInteractor: AlertInteractor,
+    private val v2RayConnectionInteractor: V2RayConnectionInteractor,
 ) : BaseViewModel(navigator) {
 
     private val _screenState = MutableStateFlow<BaseScreenState<EditProfileFormState>>(
@@ -74,6 +76,9 @@ class EditProfileFormViewModel(
                     action = {
                         // Save to persistent storage
                         profileInteractor.saveProfile(profile)
+
+                        // Apply configuration to platform
+                        v2RayConnectionInteractor.applyConfiguration()
 
                         // Show success message and exit
                         alertInteractor.showAlert(AlertModel.ProfileSaveSucceed())
