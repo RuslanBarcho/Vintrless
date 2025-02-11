@@ -25,7 +25,7 @@ import libv2ray.V2RayVPNServiceSupportsSet
 import org.lighthousegames.logging.logging
 import pw.vintr.vintrless.MainActivity
 import pw.vintr.vintrless.R
-import pw.vintr.vintrless.broadcast.BroadcastController
+import pw.vintr.vintrless.broadcast.V2RayBroadcastController
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.tools.AppContext
 import pw.vintr.vintrless.tools.extensions.Empty
@@ -117,32 +117,32 @@ object V2RayServiceController {
     private class ReceiveMessageHandler : BroadcastReceiver() {
         override fun onReceive(ctx: Context?, intent: Intent?) {
             val serviceControl = serviceDialog?.get() ?: return
-            when (intent?.getIntExtra(BroadcastController.BROADCAST_KEY, 0)) {
-                BroadcastController.MSG_REGISTER_CLIENT -> {
+            when (intent?.getIntExtra(V2RayBroadcastController.BROADCAST_KEY, 0)) {
+                V2RayBroadcastController.MSG_REGISTER_CLIENT -> {
                     if (v2rayPoint.isRunning) {
-                        BroadcastController.sendUIBroadcast(
+                        V2RayBroadcastController.sendUIBroadcast(
                             serviceControl.getService(),
-                            BroadcastController.MSG_STATE_RUNNING
+                            V2RayBroadcastController.MSG_STATE_RUNNING
                         )
                     } else {
-                        BroadcastController.sendUIBroadcast(
+                        V2RayBroadcastController.sendUIBroadcast(
                             serviceControl.getService(),
-                            BroadcastController.MSG_STATE_NOT_RUNNING
+                            V2RayBroadcastController.MSG_STATE_NOT_RUNNING
                         )
                     }
                 }
 
-                BroadcastController.MSG_UNREGISTER_CLIENT -> {}
+                V2RayBroadcastController.MSG_UNREGISTER_CLIENT -> {}
 
-                BroadcastController.MSG_STATE_START -> {}
+                V2RayBroadcastController.MSG_STATE_START -> {}
 
-                BroadcastController.MSG_STATE_STOP -> {
+                V2RayBroadcastController.MSG_STATE_STOP -> {
                     logging.debug { "Stopping Service" }
 
                     serviceControl.stopService()
                 }
 
-                BroadcastController.MSG_STATE_RESTART -> {
+                V2RayBroadcastController.MSG_STATE_RESTART -> {
                     logging.debug { "Restarting Service" }
 
                     serviceControl.stopService()
@@ -154,7 +154,7 @@ object V2RayServiceController {
     }
 
     fun startV2rayService(context: Context) {
-        BroadcastController.sendUIBroadcast(AppContext.get(), BroadcastController.MSG_STATE_CONNECTING)
+        V2RayBroadcastController.sendUIBroadcast(AppContext.get(), V2RayBroadcastController.MSG_STATE_CONNECTING)
 
         val intent = V2RayVpnService.newInstance(context)
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
@@ -175,7 +175,7 @@ object V2RayServiceController {
         }
 
         try {
-            val mFilter = IntentFilter(BroadcastController.BROADCAST_ACTION_SERVICE)
+            val mFilter = IntentFilter(V2RayBroadcastController.BROADCAST_ACTION_SERVICE)
             mFilter.addAction(Intent.ACTION_SCREEN_ON)
             mFilter.addAction(Intent.ACTION_SCREEN_OFF)
             mFilter.addAction(Intent.ACTION_USER_PRESENT)
@@ -203,10 +203,10 @@ object V2RayServiceController {
         }
 
         if (v2rayPoint.isRunning) {
-            BroadcastController.sendUIBroadcast(service, BroadcastController.MSG_STATE_START_SUCCESS)
+            V2RayBroadcastController.sendUIBroadcast(service, V2RayBroadcastController.MSG_STATE_START_SUCCESS)
             showNotification(config)
         } else {
-            BroadcastController.sendUIBroadcast(service, BroadcastController.MSG_STATE_START_FAILURE)
+            V2RayBroadcastController.sendUIBroadcast(service, V2RayBroadcastController.MSG_STATE_START_FAILURE)
         }
     }
 
@@ -223,7 +223,7 @@ object V2RayServiceController {
             }
         }
 
-        BroadcastController.sendUIBroadcast(service, BroadcastController.MSG_STATE_STOP_SUCCESS)
+        V2RayBroadcastController.sendUIBroadcast(service, V2RayBroadcastController.MSG_STATE_STOP_SUCCESS)
 
         try {
             service.unregisterReceiver(mMsgReceive)
@@ -248,9 +248,9 @@ object V2RayServiceController {
             flags
         )
 
-        val stopV2RayIntent = Intent(BroadcastController.BROADCAST_ACTION_SERVICE)
+        val stopV2RayIntent = Intent(V2RayBroadcastController.BROADCAST_ACTION_SERVICE)
         stopV2RayIntent.`package` = "pw.vintr.vintrless"
-        stopV2RayIntent.putExtra(BroadcastController.BROADCAST_KEY, BroadcastController.MSG_STATE_STOP)
+        stopV2RayIntent.putExtra(V2RayBroadcastController.BROADCAST_KEY, V2RayBroadcastController.MSG_STATE_STOP)
 
         val stopV2RayPendingIntent = PendingIntent.getBroadcast(
             service,
@@ -259,9 +259,9 @@ object V2RayServiceController {
             flags
         )
 
-        val restartV2RayIntent = Intent(BroadcastController.BROADCAST_ACTION_SERVICE)
+        val restartV2RayIntent = Intent(V2RayBroadcastController.BROADCAST_ACTION_SERVICE)
         restartV2RayIntent.`package` = "pw.vintr.vintrless"
-        restartV2RayIntent.putExtra(BroadcastController.BROADCAST_KEY, BroadcastController.MSG_STATE_RESTART)
+        restartV2RayIntent.putExtra(V2RayBroadcastController.BROADCAST_KEY, V2RayBroadcastController.MSG_STATE_RESTART)
 
         val restartV2RayPendingIntent = PendingIntent.getBroadcast(
             service,

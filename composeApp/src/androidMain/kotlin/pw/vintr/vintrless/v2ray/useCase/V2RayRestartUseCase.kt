@@ -1,7 +1,7 @@
 package pw.vintr.vintrless.v2ray.useCase
 
 import android.content.Context
-import pw.vintr.vintrless.broadcast.BroadcastController
+import pw.vintr.vintrless.broadcast.V2RayBroadcastController
 import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterConfig
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.v2ray.storage.AppFilterConfigStorage
@@ -19,6 +19,6 @@ object V2RayRestartUseCase {
         AppFilterConfigStorage.saveConfig(context, appFilterConfig)
 
         // Restart service
-        BroadcastController.sendServiceBroadcast(context, BroadcastController.MSG_STATE_RESTART)
+        V2RayBroadcastController.sendServiceBroadcast(context, V2RayBroadcastController.MSG_STATE_RESTART)
     }
 }

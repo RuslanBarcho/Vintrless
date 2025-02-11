@@ -57,6 +57,10 @@ object AndroidV2RayInteractor : BaseInteractor(), V2RayPlatformInteractor {
         sendEventSync(Event.ApplyConfigViaActivity(config, appFilterConfig))
     }
 
+    fun postState(connectionState: ConnectionState) {
+        _connectionState.value = connectionState
+    }
+
     fun postConnecting() {
         _connectionState.value = ConnectionState.Connecting
     }
