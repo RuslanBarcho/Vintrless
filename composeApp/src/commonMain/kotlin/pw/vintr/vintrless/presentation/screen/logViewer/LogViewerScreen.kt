@@ -52,20 +52,20 @@ fun LogViewerScreen(
         logListState.scrollToItem(logListState.layoutInfo.totalItemsCount)
     }
 
-    // Scroll to end when new logs appears
-    LaunchedEffect(screenState.value.logs.size) {
-        if (!isUserScrolling && isEndOfListReached) {
-            logListState.animateScrollToItem(logListState.layoutInfo.totalItemsCount)
-        }
-    }
-
     // Listen to behaviour changes and apply to variable
     LaunchedEffect(
         key1 = isUserScrolling,
         key2 = isListScrolling
     ) {
-        if (!isUserScrolling && !isListScrolling) {
+        if (!isUserScrolling && !isListScrolling && isUserEverScrolled) {
             isEndOfListReached = logListState.isScrolledToEnd()
+        }
+    }
+
+    // Scroll to end when new logs appears
+    LaunchedEffect(screenState.value.logs.size) {
+        if (!isUserScrolling && isEndOfListReached) {
+            logListState.animateScrollToItem(logListState.layoutInfo.totalItemsCount)
         }
     }
 
