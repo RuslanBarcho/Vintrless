@@ -2,6 +2,7 @@ package pw.vintr.vintrless.presentation.screen.logViewer
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.launch
 import pw.vintr.vintrless.domain.log.interactor.LogPlatformInteractor
 import pw.vintr.vintrless.domain.log.model.Log
 import pw.vintr.vintrless.platform.manager.ShareActionManager
@@ -11,7 +12,7 @@ import pw.vintr.vintrless.tools.extensions.NewLine
 
 class LogViewerViewModel(
     navigator: AppNavigator,
-    logPlatformInteractor: LogPlatformInteractor,
+    private val logPlatformInteractor: LogPlatformInteractor,
 ) : BaseViewModel(navigator) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -32,7 +33,9 @@ class LogViewerViewModel(
     }
 
     fun performClear() {
-
+        launch(createExceptionHandler()) {
+            logPlatformInteractor.clearLogs()
+        }
     }
 }
 

@@ -7,4 +7,6 @@ import pw.vintr.vintrless.domain.log.model.LogsContainer
 abstract class LogPlatformInteractor : BaseInteractor() {
 
     abstract val logFlow: Flow<LogsContainer>
+
+    open suspend fun clearLogs() {}
 }
