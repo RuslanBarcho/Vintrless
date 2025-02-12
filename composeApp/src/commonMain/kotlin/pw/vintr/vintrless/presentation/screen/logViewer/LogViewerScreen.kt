@@ -1,7 +1,5 @@
 package pw.vintr.vintrless.presentation.screen.logViewer
 
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,8 +9,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -22,6 +18,8 @@ import pw.vintr.vintrless.presentation.theme.AppColor.Zest
 import pw.vintr.vintrless.presentation.theme.JBMono12
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
 import pw.vintr.vintrless.presentation.uikit.toolbar.ToolbarRegular
+import pw.vintr.vintrless.tools.compose.LazyListInteractionState
+import pw.vintr.vintrless.tools.compose.lazyListInteraction
 import pw.vintr.vintrless.tools.extensions.isScrolledToEnd
 import vintrless.composeapp.generated.resources.Res
 import vintrless.composeapp.generated.resources.logs_title
@@ -34,16 +32,10 @@ fun LogViewerScreen(
 
     val logListState = rememberLazyListState()
 
-    val isListScrolling by remember {
-        derivedStateOf { logListState.isScrollInProgress }
+    var listInteraction by remember {
+        mutableStateOf<LazyListInteractionState?>(value = null)
     }
-    var isUserScrolling by remember {
-        mutableStateOf(false)
-    }
-    var isUserEverScrolled by remember {
-        mutableStateOf(false)
-    }
-    var isEndOfListReached by remember {
+    var autoScrollEnable by remember {
         mutableStateOf(true)
     }
 
@@ -53,18 +45,23 @@ fun LogViewerScreen(
     }
 
     // Listen to behaviour changes and apply to variable
-    LaunchedEffect(
-        key1 = isUserScrolling,
-        key2 = isListScrolling
-    ) {
-        if (!isUserScrolling && !isListScrolling && isUserEverScrolled) {
-            isEndOfListReached = logListState.isScrolledToEnd()
+    LaunchedEffect(key1 = listInteraction) {
+        autoScrollEnable = when (listInteraction) {
+            LazyListInteractionState.IDLE -> {
+                logListState.isScrolledToEnd()
+            }
+            LazyListInteractionState.INTERACTING -> {
+                false
+            }
+            null -> {
+                true
+            }
         }
     }
 
     // Scroll to end when new logs appears
     LaunchedEffect(screenState.value.logs.size) {
-        if (!isUserScrolling && isEndOfListReached) {
+        if (autoScrollEnable) {
             logListState.animateScrollToItem(logListState.layoutInfo.totalItemsCount)
         }
     }
@@ -86,18 +83,8 @@ fun LogViewerScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .pointerInput(Unit) {
-                            awaitEachGesture {
-                                awaitFirstDown()
-                                var event = awaitPointerEvent()
-                                while (event.type == PointerEventType.Move) {
-                                    isUserEverScrolled = true
-                                    isUserScrolling = true
-
-                                    event = awaitPointerEvent()
-                                }
-                                isUserScrolling = false
-                            }
+                        .lazyListInteraction(logListState) {
+                            listInteraction = it
                         },
                     state = logListState,
                     contentPadding = PaddingValues(20.dp)
