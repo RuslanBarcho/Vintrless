@@ -66,4 +66,7 @@ sealed class AppScreen : Screen {
 
     @Serializable
     data object ConfirmDeleteSystemProcess : AppScreen()
+
+    @Serializable
+    data object LogViewer : AppScreen()
 }

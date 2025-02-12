@@ -16,7 +16,9 @@ import androidx.navigation.Navigator
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.SharedPreferencesSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
+import pw.vintr.vintrless.domain.log.interactor.LogPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
+import pw.vintr.vintrless.log.AndroidLogInteractor
 import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
 import pw.vintr.vintrless.tools.AppContext
@@ -61,6 +63,8 @@ actual fun NativePaint.setMaskFilter(blurRadius: Float) {
 actual fun FlowSettings() = SharedPreferencesSettings.Factory(AppContext.get()).create().toFlowSettings()
 
 actual fun V2RayPlatformInteractor(): V2RayPlatformInteractor = AndroidV2RayInteractor
+
+actual fun LogPlatformInteractor(): LogPlatformInteractor = AndroidLogInteractor()
 
 actual fun cameraAvailable() = true
 

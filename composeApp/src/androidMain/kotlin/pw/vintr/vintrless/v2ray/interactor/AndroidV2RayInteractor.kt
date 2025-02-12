@@ -60,16 +60,4 @@ object AndroidV2RayInteractor : BaseInteractor(), V2RayPlatformInteractor {
     fun postState(connectionState: ConnectionState) {
         _connectionState.value = connectionState
     }
-
-    fun postConnecting() {
-        _connectionState.value = ConnectionState.Connecting
-    }
-
-    fun postConnected() {
-        _connectionState.value = ConnectionState.Connected
-    }
-
-    fun postDisconnected() {
-        _connectionState.value = ConnectionState.Disconnected
-    }
 }

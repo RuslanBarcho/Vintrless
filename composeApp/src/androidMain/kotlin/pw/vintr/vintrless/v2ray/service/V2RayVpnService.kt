@@ -209,9 +209,9 @@ class V2RayVpnService : VpnService(), V2RayServiceDialog {
         logging.debug { cmd.toString() }
 
         try {
-            val proBuilder = ProcessBuilder(cmd)
-            proBuilder.redirectErrorStream(true)
-            process = proBuilder
+            val procBuilder = ProcessBuilder(cmd)
+            procBuilder.redirectErrorStream(true)
+            process = procBuilder
                 .directory(applicationContext.filesDir)
                 .start()
             Thread {

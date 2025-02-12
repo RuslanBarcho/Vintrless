@@ -28,6 +28,11 @@ fun Gilroy() = FontFamily(
 )
 
 @Composable
+fun JBMono() = FontFamily(
+    Font(Res.font.jetbrains_mono_nl_medium),
+)
+
+@Composable
 fun BaseRubikStyle() = TextStyle(fontFamily = Rubik())
 
 @Composable
@@ -75,3 +80,9 @@ fun Gilroy24() = BaseGilroyStyle().copy(fontSize = 24.sp)
 fun Gilroy32() = BaseGilroyStyle().copy(fontSize = 32.sp)
 @Composable
 fun Gilroy36() = BaseGilroyStyle().copy(fontSize = 36.sp)
+
+@Composable
+fun BaseJBMonoStyle() = TextStyle(fontFamily = JBMono())
+
+@Composable
+fun JBMono12() = BaseJBMonoStyle().copy(fontSize = 12.sp)

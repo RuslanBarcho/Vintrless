@@ -36,4 +36,6 @@ object AppColor {
 
     val Red3 = Color(0xFFAA213D)
     val Green0 = Color(0xFF147830)
+    val RadicalRed = Color(0xFFFF2D68)
+    val Zest = Color(0xFFE88224)
 }
