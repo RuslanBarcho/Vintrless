@@ -11,7 +11,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import pw.vintr.vintrless.platform.model.PlatformType
+import pw.vintr.vintrless.platformType
 
 enum class LazyListInteractionState {
     IDLE,
@@ -30,6 +33,7 @@ suspend fun PointerInputScope.awaitLazyListInteractionState(
     block: (LazyListInteractionState) -> Unit
 ) {
     val currentContext = currentCoroutineContext()
+    val platform = platformType()
 
     var currentState = LazyListInteractionState.IDLE
     var isUserScrolling = false
@@ -41,26 +45,52 @@ suspend fun PointerInputScope.awaitLazyListInteractionState(
         }
     }
 
-    with(CoroutineScope(currentContext)) {
-        launch {
-            snapshotFlow { listState.isScrollInProgress }
-                .collectLatest { isScrolling ->
-                    if (!isUserScrolling && !isScrolling) {
-                        emit(LazyListInteractionState.IDLE)
+    when (platform) {
+        PlatformType.ANDROID,
+        PlatformType.IOS -> {
+            with(CoroutineScope(currentContext)) {
+                launch {
+                    snapshotFlow { listState.isScrollInProgress }
+                        .collectLatest { isScrolling ->
+                            if (!isUserScrolling && !isScrolling) {
+                                emit(LazyListInteractionState.IDLE)
+                            }
+                        }
+                }
+            }
+
+            awaitEachGesture {
+                awaitFirstDown()
+                var event = awaitPointerEvent()
+                while (event.type == PointerEventType.Move) {
+                    isUserScrolling = true
+                    emit(LazyListInteractionState.INTERACTING)
+                    event = awaitPointerEvent()
+                }
+
+                isUserScrolling = false
+            }
+        }
+        PlatformType.JVM -> {
+            with(CoroutineScope(currentContext)) {
+                launch {
+                    snapshotFlow { listState.isScrollInProgress }
+                        .collectLatest { isScrolling ->
+                            if (!isScrolling) {
+                                emit(LazyListInteractionState.IDLE)
+                            }
+                        }
+                }
+            }
+
+            awaitPointerEventScope {
+                while (currentContext.isActive) {
+                    val event = awaitPointerEvent()
+                    if (event.type == PointerEventType.Scroll && listState.isScrollInProgress) {
+                        emit(LazyListInteractionState.INTERACTING)
                     }
                 }
+            }
         }
-    }
-
-    awaitEachGesture {
-        awaitFirstDown()
-        var event = awaitPointerEvent()
-        while (event.type == PointerEventType.Move) {
-            isUserScrolling = true
-            emit(LazyListInteractionState.INTERACTING)
-            event = awaitPointerEvent()
-        }
-
-        isUserScrolling = false
     }
 }
