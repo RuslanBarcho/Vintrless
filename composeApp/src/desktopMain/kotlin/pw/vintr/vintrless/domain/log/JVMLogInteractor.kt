@@ -28,4 +28,8 @@ object JVMLogInteractor : LogPlatformInteractor() {
             }
         )
     }
+
+    override suspend fun clearLogs() {
+        _logFlow.value = LogsContainer(logs = boundedListOf(MAX_LOG_BUFFER))
+    }
 }

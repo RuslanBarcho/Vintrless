@@ -3,6 +3,8 @@ package pw.vintr.vintrless.presentation.screen.logViewer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
+import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
+import pw.vintr.vintrless.domain.alert.model.AlertModel
 import pw.vintr.vintrless.domain.log.interactor.LogPlatformInteractor
 import pw.vintr.vintrless.domain.log.model.Log
 import pw.vintr.vintrless.platform.manager.ShareActionManager
@@ -13,6 +15,7 @@ import pw.vintr.vintrless.tools.extensions.NewLine
 class LogViewerViewModel(
     navigator: AppNavigator,
     private val logPlatformInteractor: LogPlatformInteractor,
+    private val alertInteractor: AlertInteractor,
 ) : BaseViewModel(navigator) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -28,8 +31,11 @@ class LogViewerViewModel(
 
     fun performShare() {
         ShareActionManager.shareText(
-            screenState.value.logs.joinToString(String.NewLine)
+            screenState.value.logs.joinToString(String.NewLine) { it.payload }
         )
+        if (!ShareActionManager.canOpenActionSheet) {
+            alertInteractor.showAlert(AlertModel.LogToShareCopied())
+        }
     }
 
     fun performClear() {

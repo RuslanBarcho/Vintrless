@@ -126,4 +126,5 @@
     <string name="apps_filter_process_delete_text">Вы действительно хотите удалить сохраненный процесс? Отменить это будет невозможно</string>
 
     <string name="logs_title">Журнал событий</string>
+    <string name="logs_now_you_can_share_data">Теперь вы можете поделиться логами</string>
 </resources>

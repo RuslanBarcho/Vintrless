@@ -126,4 +126,5 @@
     <string name="apps_filter_process_delete_text">Are you sure you want to delete saved process? It will be impossible to undo this</string>
 
     <string name="logs_title">Event logs</string>
+    <string name="logs_now_you_can_share_data">Now you can share logs</string>
 </resources>
