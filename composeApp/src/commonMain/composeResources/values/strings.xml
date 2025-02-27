@@ -5,6 +5,7 @@
     <string name="common_delete">Delete</string>
     <string name="common_add">Add</string>
     <string name="common_search">Search</string>
+    <string name="common_apply">Apply</string>
 
     <string name="current_config">Current config</string>
     <string name="no_config">No config</string>
@@ -127,4 +128,9 @@
 
     <string name="logs_title">Event logs</string>
     <string name="logs_now_you_can_share_data">Now you can share logs</string>
+    <string name="logs_filter_query_label">Match search</string>
+    <string name="logs_filter_query_hint">Query</string>
+    <string name="logs_type_info">Info</string>
+    <string name="logs_type_errors">Errors</string>
+    <string name="logs_type_warnings">Warnings</string>
 </resources>

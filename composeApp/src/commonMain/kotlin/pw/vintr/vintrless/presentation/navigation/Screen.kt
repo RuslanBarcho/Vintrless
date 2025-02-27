@@ -1,7 +1,9 @@
 package pw.vintr.vintrless.presentation.navigation
 
 import kotlinx.serialization.Serializable
+import pw.vintr.vintrless.domain.log.model.LogType
 import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
+import pw.vintr.vintrless.tools.extensions.Empty
 
 interface Screen
 
@@ -69,4 +71,17 @@ sealed class AppScreen : Screen {
 
     @Serializable
     data object LogViewer : AppScreen()
+
+    @Serializable
+    data class LogFilter(
+        val query: String = String.Empty,
+        val selectedTypesOrdinals: List<Int> = LogType.entries
+            .map { it.ordinal }
+    ) : AppScreen() {
+
+        val selection: Map<LogType, Boolean>
+            get() = LogType.entries.associateWith { type ->
+                selectedTypesOrdinals.contains(type.ordinal)
+            }
+    }
 }

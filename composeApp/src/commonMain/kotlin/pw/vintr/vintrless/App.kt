@@ -33,7 +33,8 @@ import pw.vintr.vintrless.presentation.screen.about.AboutAppScreen
 import pw.vintr.vintrless.presentation.screen.applicationFilter.ApplicationFilterScreen
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmDialog
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmDialogData
-import pw.vintr.vintrless.presentation.screen.logViewer.LogViewerScreen
+import pw.vintr.vintrless.presentation.screen.log.filter.LogFilterDialog
+import pw.vintr.vintrless.presentation.screen.log.viewer.LogViewerScreen
 import pw.vintr.vintrless.presentation.screen.main.SimplifiedNavigationMainScreen
 import pw.vintr.vintrless.presentation.screen.main.MainScreen
 import pw.vintr.vintrless.presentation.screen.profile.createNew.CreateNewProfileDialog
@@ -233,6 +234,8 @@ fun Navigation(
         }
 
         composable<AppScreen.LogViewer> { LogViewerScreen() }
+
+        extendedDialog<AppScreen.LogFilter> { LogFilterDialog() }
     }
 }
 

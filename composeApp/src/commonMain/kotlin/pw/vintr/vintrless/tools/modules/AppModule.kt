@@ -34,7 +34,8 @@ import pw.vintr.vintrless.presentation.screen.about.AboutAppViewModel
 import pw.vintr.vintrless.presentation.screen.applicationFilter.ApplicationFilterViewModel
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmViewModel
 import pw.vintr.vintrless.presentation.screen.home.HomeViewModel
-import pw.vintr.vintrless.presentation.screen.logViewer.LogViewerViewModel
+import pw.vintr.vintrless.presentation.screen.log.filter.LogFilterViewModel
+import pw.vintr.vintrless.presentation.screen.log.viewer.LogViewerViewModel
 import pw.vintr.vintrless.presentation.screen.main.MainViewModel
 import pw.vintr.vintrless.presentation.screen.profile.createNew.CreateNewProfileViewModel
 import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormViewModel
@@ -151,4 +152,5 @@ val appModule = module {
     viewModel { AboutAppViewModel(get()) }
     viewModel { ApplicationFilterViewModel(get(), get(), get()) }
     viewModel { LogViewerViewModel(get(), get(), get()) }
+    viewModel { LogFilterViewModel(get()) }
 }

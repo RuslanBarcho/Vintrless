@@ -72,6 +72,7 @@ class AndroidLogInteractor : LogPlatformInteractor() {
                     Log(
                         payload = logText,
                         type = when {
+                            logText.contains("E/") -> LogType.ERROR
                             logText.contains("err", ignoreCase = true) -> LogType.ERROR
                             logText.contains("warning", ignoreCase = true) -> LogType.WARNING
                             else -> LogType.INFORMATION

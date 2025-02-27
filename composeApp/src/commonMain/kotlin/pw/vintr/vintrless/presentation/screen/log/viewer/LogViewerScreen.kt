@@ -1,4 +1,4 @@
-package pw.vintr.vintrless.presentation.screen.logViewer
+package pw.vintr.vintrless.presentation.screen.log.viewer
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

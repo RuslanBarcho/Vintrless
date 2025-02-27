@@ -1,4 +1,4 @@
-package pw.vintr.vintrless.presentation.screen.logViewer
+package pw.vintr.vintrless.presentation.screen.log.viewer
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.mapLatest
@@ -10,6 +10,7 @@ import pw.vintr.vintrless.domain.log.model.Log
 import pw.vintr.vintrless.platform.manager.ShareActionManager
 import pw.vintr.vintrless.presentation.base.BaseViewModel
 import pw.vintr.vintrless.presentation.navigation.AppNavigator
+import pw.vintr.vintrless.presentation.navigation.AppScreen
 import pw.vintr.vintrless.tools.extensions.NewLine
 
 class LogViewerViewModel(
@@ -26,7 +27,7 @@ class LogViewerViewModel(
     }.stateInThis(LogViewerScreenState())
 
     fun openFilter() {
-
+        navigator.forward(AppScreen.LogFilter())
     }
 
     fun performShare() {
