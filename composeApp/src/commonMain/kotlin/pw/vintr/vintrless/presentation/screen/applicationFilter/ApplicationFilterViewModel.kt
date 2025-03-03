@@ -165,13 +165,15 @@ class ApplicationFilterViewModel(
     }
 
     fun onRemoveProcessClick(process: SystemProcess) {
-        navigator.forwardWithResult<ConfirmResult>(
-            screen = AppScreen.ConfirmDeleteSystemProcess,
-            type = NavigatorType.Root,
-            resultKey = ConfirmResult.KEY,
-        ) {
-            if (it == ConfirmResult.ACCEPT) {
-                removeProcess(process)
+        handleResult(ConfirmResult.KEY) {
+            navigator.forwardWithResult<ConfirmResult>(
+                screen = AppScreen.ConfirmDeleteSystemProcess,
+                type = NavigatorType.Root,
+                resultKey = ConfirmResult.KEY,
+            ) {
+                if (it == ConfirmResult.ACCEPT) {
+                    removeProcess(process)
+                }
             }
         }
     }

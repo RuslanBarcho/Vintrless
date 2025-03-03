@@ -27,6 +27,7 @@ import org.koin.compose.koinInject
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.alert.model.AlertModel.Type.*
 import pw.vintr.vintrless.domain.alert.model.AlertState
+import pw.vintr.vintrless.domain.log.model.LogFilter
 import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.presentation.navigation.*
 import pw.vintr.vintrless.presentation.screen.about.AboutAppScreen
@@ -235,7 +236,16 @@ fun Navigation(
 
         composable<AppScreen.LogViewer> { LogViewerScreen() }
 
-        extendedDialog<AppScreen.LogFilter> { LogFilterDialog() }
+        extendedDialog<AppScreen.LogFilter> {
+            val route: AppScreen.LogFilter = it.toRoute()
+
+            LogFilterDialog(
+                logFilter = LogFilter(
+                    query = route.query,
+                    selection = route.selection
+                )
+            )
+        }
     }
 }
 

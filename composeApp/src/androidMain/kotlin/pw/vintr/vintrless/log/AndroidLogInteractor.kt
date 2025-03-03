@@ -47,13 +47,13 @@ class AndroidLogInteractor : LogPlatformInteractor() {
                     ))
             }
 
-            withContext(Dispatchers.IO) {
+            withContext(context = Dispatchers.IO + createExceptionHandler()) {
                 loggingProc
                     ?.inputStream
                     ?.bufferedReader()
                     ?.useLines { lines ->
                         lines.forEach { line ->
-                            appendLog(line)
+                            runCatching { appendLog(line) }
                         }
                     }
             }

@@ -152,5 +152,10 @@ val appModule = module {
     viewModel { AboutAppViewModel(get()) }
     viewModel { ApplicationFilterViewModel(get(), get(), get()) }
     viewModel { LogViewerViewModel(get(), get(), get()) }
-    viewModel { LogFilterViewModel(get()) }
+    viewModel { params ->
+        LogFilterViewModel(
+            navigator = get(),
+            logFilter = params.get(),
+        )
+    }
 }

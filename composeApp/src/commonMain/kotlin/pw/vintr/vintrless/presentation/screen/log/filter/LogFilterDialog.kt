@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+import pw.vintr.vintrless.domain.log.model.LogFilter
 import pw.vintr.vintrless.domain.log.model.LogType
 import pw.vintr.vintrless.presentation.navigation.NavigatorType
 import pw.vintr.vintrless.presentation.theme.AppColor.RadicalRed
@@ -33,8 +35,9 @@ import vintrless.composeapp.generated.resources.ic_close
 
 @Composable
 fun LogFilterDialog(
-    viewModel: LogFilterViewModel = koinViewModel(),
-    availableLogTypes: List<LogType> = listOf(LogType.INFORMATION, LogType.ERROR, LogType.WARNING)
+    availableLogTypes: List<LogType> = listOf(LogType.INFORMATION, LogType.ERROR, LogType.WARNING),
+    logFilter: LogFilter = LogFilter(),
+    viewModel: LogFilterViewModel = koinViewModel { parametersOf(logFilter) },
 ) {
     val screenState = viewModel.screenState.collectAsState()
 
@@ -64,7 +67,8 @@ fun LogFilterDialog(
             label = stringResource(Res.string.logs_filter_query_label),
             value = screenState.value.query,
             hint = stringResource(Res.string.logs_filter_query_hint),
-            onValueChange = { viewModel.setQuery(it) }
+            showClearButton = screenState.value.query.isNotEmpty(),
+            onValueChange = { viewModel.setQuery(it) },
         )
         Spacer(modifier = Modifier.height(16.dp))
         LineSeparator(
