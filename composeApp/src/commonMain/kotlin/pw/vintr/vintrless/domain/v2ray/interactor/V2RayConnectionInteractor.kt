@@ -93,7 +93,7 @@ class V2RayConnectionInteractor(
         commandBufferFlow.value = Command.Start()
     }
 
-    fun sendRestartCommand() {
+    private fun sendRestartCommand() {
         commandBufferFlow.value = Command.Restart()
     }
 

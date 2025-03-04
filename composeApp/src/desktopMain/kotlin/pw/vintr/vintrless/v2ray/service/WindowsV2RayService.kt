@@ -4,6 +4,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pw.vintr.vintrless.domain.log.JVMLogInteractor
+import pw.vintr.vintrless.domain.log.model.LogType
 import pw.vintr.vintrless.domain.singbox.model.SingBoxConfig
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.tools.PathProvider
@@ -104,7 +106,24 @@ object WindowsV2RayService {
         Thread {
             val sc = Scanner(src)
             while (sc.hasNextLine()) {
-                dest.println(String(sc.nextLine().toByteArray(), StandardCharsets.UTF_8))
+                val message = String(sc.nextLine().toByteArray(), StandardCharsets.UTF_8)
+
+                dest.println(message)
+                JVMLogInteractor.pushLog(
+                    message = message,
+                    type = when {
+                        dest == System.err ||
+                        message.contains("failed", ignoreCase = true) -> {
+                            LogType.ERROR
+                        }
+                        message.contains("warning", ignoreCase = true) -> {
+                            LogType.WARNING
+                        }
+                        else -> {
+                            LogType.INFORMATION
+                        }
+                    }
+                )
             }
         }.start()
     }

@@ -15,6 +15,9 @@ val String.Companion.Dash: String
 val String.Companion.Dot: String
     get() = "•"
 
+val String.Companion.NewLine: String
+    get() = "\n"
+
 fun String.isBoolean(): Boolean {
     return this == "true" || this == "false"
 }

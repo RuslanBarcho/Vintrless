@@ -66,6 +66,11 @@ class HomeViewModel(
         navigator.switchNavigatorType(NavigatorType.Root)
         navigator.forward(AppScreen.ProfileList)
     }
+
+    fun openLogs() {
+        navigator.switchNavigatorType(NavigatorType.Root)
+        navigator.forward(AppScreen.LogViewer)
+    }
 }
 
 data class HomeScreenState(

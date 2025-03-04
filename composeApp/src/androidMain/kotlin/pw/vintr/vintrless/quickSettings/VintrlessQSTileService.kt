@@ -1,14 +1,8 @@
 package pw.vintr.vintrless.quickSettings
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
-import androidx.core.content.ContextCompat
-import pw.vintr.vintrless.broadcast.BroadcastController
+import pw.vintr.vintrless.broadcast.V2RayBroadcastReceiver
 import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterConfig
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.v2ray.interactor.AndroidV2RayInteractor
@@ -18,28 +12,9 @@ import pw.vintr.vintrless.v2ray.useCase.V2RayStartUseCase
 import pw.vintr.vintrless.v2ray.useCase.V2RayStatusUseCase
 import pw.vintr.vintrless.v2ray.useCase.V2RayStopUseCase
 
-class VintrlessQSTileService : TileService() {
+class VintrlessQSTileService : TileService(), V2RayBroadcastReceiver.Listener {
 
-    private val mMsgReceiver = object : BroadcastReceiver() {
-        override fun onReceive(ctx: Context?, intent: Intent?) {
-            when (intent?.getIntExtra(BroadcastController.BROADCAST_KEY, 0)) {
-                BroadcastController.MSG_STATE_START_SUCCESS,
-                BroadcastController.MSG_STATE_RUNNING -> {
-                    updateTile(ConnectionState.Connected)
-                }
-
-                BroadcastController.MSG_STATE_CONNECTING -> {
-                    updateTile(ConnectionState.Connecting)
-                }
-
-                BroadcastController.MSG_STATE_NOT_RUNNING,
-                BroadcastController.MSG_STATE_START_FAILURE,
-                BroadcastController.MSG_STATE_STOP_SUCCESS -> {
-                    updateTile(ConnectionState.Disconnected)
-                }
-            }
-        }
-    }
+    private val v2RayReceiver = V2RayBroadcastReceiver()
 
     override fun onStartListening() {
         super.onStartListening()
@@ -91,22 +66,19 @@ class VintrlessQSTileService : TileService() {
         }
     }
 
+    override fun onConnectionStateChanged(state: ConnectionState) {
+        updateTile(state)
+    }
+
     private fun registerReceiver() {
-        val mFilter = IntentFilter(BroadcastController.BROADCAST_ACTION_UI)
-        ContextCompat.registerReceiver(
-            application,
-            mMsgReceiver,
-            mFilter,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ContextCompat.RECEIVER_EXPORTED
-            } else {
-                ContextCompat.RECEIVER_NOT_EXPORTED
-            }
+        v2RayReceiver.register(
+            context = applicationContext,
+            listener = this,
         )
     }
 
     private fun unregisterReceiver() {
-        applicationContext.unregisterReceiver(mMsgReceiver)
+        v2RayReceiver.unregister(applicationContext)
     }
 
     private fun updateTile(connectionState: ConnectionState) {

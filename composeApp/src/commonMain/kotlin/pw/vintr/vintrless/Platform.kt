@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.NativePaint
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
+import pw.vintr.vintrless.domain.log.interactor.LogPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
 import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
@@ -25,6 +26,8 @@ expect fun NativePaint.setMaskFilter(blurRadius: Float)
 expect fun FlowSettings(): FlowSettings
 
 expect fun V2RayPlatformInteractor(): V2RayPlatformInteractor
+
+expect fun LogPlatformInteractor(): LogPlatformInteractor
 
 expect fun cameraAvailable(): Boolean
 

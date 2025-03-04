@@ -27,12 +27,15 @@ import org.koin.compose.koinInject
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.alert.model.AlertModel.Type.*
 import pw.vintr.vintrless.domain.alert.model.AlertState
+import pw.vintr.vintrless.domain.log.model.LogFilter
 import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.presentation.navigation.*
 import pw.vintr.vintrless.presentation.screen.about.AboutAppScreen
 import pw.vintr.vintrless.presentation.screen.applicationFilter.ApplicationFilterScreen
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmDialog
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmDialogData
+import pw.vintr.vintrless.presentation.screen.log.filter.LogFilterDialog
+import pw.vintr.vintrless.presentation.screen.log.viewer.LogViewerScreen
 import pw.vintr.vintrless.presentation.screen.main.SimplifiedNavigationMainScreen
 import pw.vintr.vintrless.presentation.screen.main.MainScreen
 import pw.vintr.vintrless.presentation.screen.profile.createNew.CreateNewProfileDialog
@@ -227,6 +230,19 @@ fun Navigation(
                     titleRes = Res.string.apps_filter_process_delete_title,
                     messageRes = Res.string.apps_filter_process_delete_text,
                     acceptTextRes = Res.string.common_delete,
+                )
+            )
+        }
+
+        composable<AppScreen.LogViewer> { LogViewerScreen() }
+
+        extendedDialog<AppScreen.LogFilter> {
+            val route: AppScreen.LogFilter = it.toRoute()
+
+            LogFilterDialog(
+                logFilter = LogFilter(
+                    query = route.query,
+                    selection = route.selection
                 )
             )
         }

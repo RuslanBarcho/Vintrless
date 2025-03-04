@@ -42,6 +42,7 @@ import vintrless.composeapp.generated.resources.map_red
 import vintrless.composeapp.generated.resources.map_blue
 import vintrless.composeapp.generated.resources.ic_disconnected
 import vintrless.composeapp.generated.resources.ic_connection
+import vintrless.composeapp.generated.resources.ic_log
 
 @Composable
 fun HomeScreen(
@@ -134,9 +135,19 @@ fun HomeScreen(
                             viewModel.toggle()
                         }
                         Spacer(modifier = Modifier.weight(1f))
-                        ConnectionStateLabel(
-                            connectionState = state.payload.connectionState
-                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(
+                                12.dp,
+                                Alignment.CenterHorizontally
+                            ),
+                        ) {
+                            ConnectionStateLabel(
+                                connectionState = state.payload.connectionState
+                            )
+                            LogButton { viewModel.openLogs() }
+                        }
                         Spacer(Modifier.height(64.dp))
                     }
                 }
@@ -225,6 +236,26 @@ fun ConnectionStateLabel(
             }),
             style = Gilroy18(),
             color = VintrlessExtendedTheme.colors.textRegular,
+        )
+    }
+}
+
+@Composable
+fun LogButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .cardBackground(cornerRadius = 20.dp)
+            .clickable { onClick() }
+            .padding(vertical = 16.dp, horizontal = 18.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            painter = painterResource(Res.drawable.ic_log),
+            tint = VintrlessExtendedTheme.colors.textRegular,
+            contentDescription = null,
         )
     }
 }

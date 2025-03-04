@@ -2,10 +2,9 @@ package pw.vintr.vintrless.broadcast
 
 import android.content.Context
 import android.content.Intent
-import pw.vintr.vintrless.tools.extensions.Empty
 import java.io.Serializable
 
-object BroadcastController {
+object V2RayBroadcastController {
 
     /** Message constants for communication. */
     const val MSG_REGISTER_CLIENT = 1

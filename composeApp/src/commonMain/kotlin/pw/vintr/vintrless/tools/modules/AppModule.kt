@@ -8,6 +8,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import org.koin.dsl.onClose
 import pw.vintr.vintrless.FlowSettings
+import pw.vintr.vintrless.LogPlatformInteractor
 import pw.vintr.vintrless.data.profile.model.ProfileDataCacheObject
 import pw.vintr.vintrless.data.profile.repository.ProfileRepository
 import pw.vintr.vintrless.data.profile.source.ProfileCacheDataSource
@@ -33,6 +34,8 @@ import pw.vintr.vintrless.presentation.screen.about.AboutAppViewModel
 import pw.vintr.vintrless.presentation.screen.applicationFilter.ApplicationFilterViewModel
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmViewModel
 import pw.vintr.vintrless.presentation.screen.home.HomeViewModel
+import pw.vintr.vintrless.presentation.screen.log.filter.LogFilterViewModel
+import pw.vintr.vintrless.presentation.screen.log.viewer.LogViewerViewModel
 import pw.vintr.vintrless.presentation.screen.main.MainViewModel
 import pw.vintr.vintrless.presentation.screen.profile.createNew.CreateNewProfileViewModel
 import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormViewModel
@@ -89,6 +92,9 @@ val appModule = module {
     single { UserApplicationsRepository(get(), get(), get()) }
 
     // Domain
+    val logInteractor = LogPlatformInteractor()
+
+    interactor { logInteractor }
     interactor { AlertInteractor() }
     interactor { ProfileInteractor(get()) }
     interactor { ProfileUrlInteractor() }
@@ -145,4 +151,11 @@ val appModule = module {
     }
     viewModel { AboutAppViewModel(get()) }
     viewModel { ApplicationFilterViewModel(get(), get(), get()) }
+    viewModel { LogViewerViewModel(get(), get(), get()) }
+    viewModel { params ->
+        LogFilterViewModel(
+            navigator = get(),
+            logFilter = params.get(),
+        )
+    }
 }

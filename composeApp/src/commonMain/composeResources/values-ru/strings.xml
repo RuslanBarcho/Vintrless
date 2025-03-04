@@ -5,6 +5,7 @@
     <string name="common_delete">Удалить</string>
     <string name="common_add">Добавить</string>
     <string name="common_search">Поиск</string>
+    <string name="common_apply">Применить</string>
 
     <string name="current_config">Текущий профиль</string>
     <string name="no_config">Нет профиля</string>
@@ -124,4 +125,12 @@
     <string name="apps_filter_found_on_device">Найденные на устройстве</string>
     <string name="apps_filter_process_delete_title">Удалить процесс</string>
     <string name="apps_filter_process_delete_text">Вы действительно хотите удалить сохраненный процесс? Отменить это будет невозможно</string>
+
+    <string name="logs_title">Журнал событий</string>
+    <string name="logs_now_you_can_share_data">Теперь вы можете поделиться логами</string>
+    <string name="logs_filter_query_label">Поиск по совпадению</string>
+    <string name="logs_filter_query_hint">Запрос</string>
+    <string name="logs_type_info">Информационные</string>
+    <string name="logs_type_errors">Ошибки</string>
+    <string name="logs_type_warnings">Предупреждения</string>
 </resources>

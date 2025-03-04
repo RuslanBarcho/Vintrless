@@ -19,7 +19,9 @@ import com.russhwolf.settings.datastore.DataStoreSettings
 import okio.Path.Companion.toPath
 import org.jetbrains.skia.FilterBlurMode
 import org.jetbrains.skia.MaskFilter
+import pw.vintr.vintrless.domain.log.interactor.LogPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
+import pw.vintr.vintrless.domain.log.JVMLogInteractor
 import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
@@ -67,6 +69,8 @@ actual fun FlowSettings(): FlowSettings {
 }
 
 actual fun V2RayPlatformInteractor(): V2RayPlatformInteractor = JvmV2RayInteractor
+
+actual fun LogPlatformInteractor(): LogPlatformInteractor = JVMLogInteractor
 
 actual fun cameraAvailable() = false
 
