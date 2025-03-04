@@ -22,6 +22,7 @@ import org.jetbrains.skia.MaskFilter
 import pw.vintr.vintrless.domain.log.interactor.LogPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
 import pw.vintr.vintrless.domain.log.JVMLogInteractor
+import pw.vintr.vintrless.platform.model.DeviceOrientation
 import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
 import pw.vintr.vintrless.presentation.theme.VintrlessExtendedTheme
@@ -54,6 +55,11 @@ actual fun LazyColumnScrollbar(
             hoverDurationMillis = 300,
         )
     )
+}
+
+@Composable
+actual fun resolveOrientation(): DeviceOrientation {
+    return DeviceOrientation.PORTRAIT
 }
 
 actual fun NativePaint.setMaskFilter(blurRadius: Float) {

@@ -21,9 +21,12 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pw.vintr.vintrless.resolveOrientation
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.platform.manager.WindowManager
+import pw.vintr.vintrless.platform.model.DeviceOrientation
+import pw.vintr.vintrless.presentation.base.BaseScreenState
 import pw.vintr.vintrless.presentation.theme.*
 import pw.vintr.vintrless.presentation.uikit.button.SwitchButton
 import pw.vintr.vintrless.presentation.uikit.layout.ScreenStateLayout
@@ -49,8 +52,9 @@ fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val screenState = viewModel.screenState.collectAsState()
+    val orientation = resolveOrientation()
 
-    BoxWithConstraints (
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
@@ -62,108 +66,196 @@ fun HomeScreen(
                 .fillMaxSize(),
             state = screenState.value,
         ) { state ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                BoxWithConstraints(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Crossfade(targetState = state.payload.connectionState) {
-                        when (it) {
-                            ConnectionState.Disconnected -> {
-                                Image(
-                                    modifier = Modifier
-                                        .fillMaxWidthRestricted(scope = this, 1170.dp)
-                                        .fillMaxHeightRestricted(scope = this, 578.dp),
-                                    painter = painterResource(Res.drawable.map_red),
-                                    contentScale = ContentScale.Crop,
-                                    contentDescription = null,
-                                )
-                            }
-                            ConnectionState.Connecting,
-                            ConnectionState.Connected -> {
-                                Image(
-                                    modifier = Modifier
-                                        .fillMaxWidthRestricted(scope = this, 1170.dp)
-                                        .fillMaxHeightRestricted(scope = this, 578.dp),
-                                    painter = painterResource(Res.drawable.map_blue),
-                                    contentScale = ContentScale.Crop,
-                                    contentDescription = null,
-                                )
-                            }
-                        }
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        val pulsating: Boolean
-                        val firstColor: Color
-                        val secondColor: Color
-
-                        when (state.payload.connectionState) {
-                            ConnectionState.Disconnected -> {
-                                pulsating = false
-                                firstColor = AppColor.Siren
-                                secondColor = AppColor.Carmine
-                            }
-                            ConnectionState.Connecting -> {
-                                pulsating = true
-                                firstColor = AppColor.Cerulean
-                                secondColor = AppColor.Cyan
-                            }
-                            ConnectionState.Connected -> {
-                                pulsating = false
-                                firstColor = AppColor.Cerulean
-                                secondColor = AppColor.Cyan
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.weight(1f))
-                        SwitchButton(
-                            pulsating = pulsating,
-                            firstColor = firstColor,
-                            secondColor = secondColor,
-                        ) {
-                            viewModel.toggle()
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                12.dp,
-                                Alignment.CenterHorizontally
-                            ),
-                        ) {
-                            ConnectionStateLabel(
-                                connectionState = state.payload.connectionState
-                            )
-                            LogButton { viewModel.openLogs() }
-                        }
-                        Spacer(Modifier.height(64.dp))
-                    }
+            when (orientation) {
+                DeviceOrientation.PORTRAIT -> {
+                    VerticalContent(
+                        viewModel = viewModel,
+                        state = state,
+                    )
                 }
-                ConfigCard(
-                    modifier = Modifier
-                        .fillMaxWidthRestricted(scope = this@BoxWithConstraints, 640.dp),
-                    selectedProfile = state.payload.selectedProfile,
-                ) {
-                    if (state.payload.selectedProfile != null) {
-                        viewModel.openProfileList()
-                    } else {
-                        viewModel.openCreateNewProfile()
-                    }
+                DeviceOrientation.LANDSCAPE -> {
+                    HorizontalContent(
+                        viewModel = viewModel,
+                        state = state,
+                    )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun BoxWithConstraintsScope.VerticalContent(
+    viewModel: HomeViewModel,
+    state: BaseScreenState.Loaded<HomeScreenState>
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            contentAlignment = Alignment.Center
+        ) {
+            BackgroundMap(connectionState = state.payload.connectionState)
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                VPNSwitchButton(
+                    connectionState = state.payload.connectionState,
+                ) {
+                    viewModel.toggle()
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        12.dp,
+                        Alignment.CenterHorizontally
+                    ),
+                ) {
+                    ConnectionStateLabel(
+                        connectionState = state.payload.connectionState
+                    )
+                    LogButton { viewModel.openLogs() }
+                }
+                Spacer(Modifier.height(64.dp))
+            }
+        }
+        VerticalConfigCard(
+            modifier = Modifier
+                .fillMaxWidthRestricted(scope = this@VerticalContent, 640.dp),
+            selectedProfile = state.payload.selectedProfile,
+        ) {
+            if (state.payload.selectedProfile != null) {
+                viewModel.openProfileList()
+            } else {
+                viewModel.openCreateNewProfile()
+            }
+        }
+    }
+}
+
+@Composable
+private fun BoxWithConstraintsScope.HorizontalContent(
+    viewModel: HomeViewModel,
+    state: BaseScreenState.Loaded<HomeScreenState>
+) {
+    BackgroundMap(connectionState = state.payload.connectionState)
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                bottom = NAV_BAR_HEIGHT_DP.dp + NAV_BAR_PADDING_DP.dp + 16.dp,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            VPNSwitchButton(
+                connectionState = state.payload.connectionState,
+            ) {
+                viewModel.toggle()
+            }
+            Spacer(Modifier.width(24.dp))
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.Start,
+            ) {
+                ConnectionStateLabel(
+                    connectionState = state.payload.connectionState
+                )
+                LogButton { viewModel.openLogs() }
+            }
+        }
+        Spacer(Modifier.width(32.dp))
+        HorizontalConfigCard(
+            selectedProfile = state.payload.selectedProfile,
+        ) {
+            if (state.payload.selectedProfile != null) {
+                viewModel.openProfileList()
+            } else {
+                viewModel.openCreateNewProfile()
+            }
+        }
+    }
+}
+
+@Composable
+private fun BoxWithConstraintsScope.BackgroundMap(connectionState: ConnectionState) {
+    Crossfade(targetState = connectionState) {
+        when (it) {
+            ConnectionState.Disconnected -> {
+                Image(
+                    modifier = Modifier
+                        .fillMaxWidthRestricted(scope = this, 1170.dp)
+                        .fillMaxHeightRestricted(scope = this, 578.dp),
+                    painter = painterResource(Res.drawable.map_red),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+                )
+            }
+            ConnectionState.Connecting,
+            ConnectionState.Connected -> {
+                Image(
+                    modifier = Modifier
+                        .fillMaxWidthRestricted(scope = this, 1170.dp)
+                        .fillMaxHeightRestricted(scope = this, 578.dp),
+                    painter = painterResource(Res.drawable.map_blue),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun VPNSwitchButton(
+    connectionState: ConnectionState,
+    onClick: () -> Unit,
+) {
+    val pulsating: Boolean
+    val firstColor: Color
+    val secondColor: Color
+
+    when (connectionState) {
+        ConnectionState.Disconnected -> {
+            pulsating = false
+            firstColor = AppColor.Siren
+            secondColor = AppColor.Carmine
+        }
+        ConnectionState.Connecting -> {
+            pulsating = true
+            firstColor = AppColor.Cerulean
+            secondColor = AppColor.Cyan
+        }
+        ConnectionState.Connected -> {
+            pulsating = false
+            firstColor = AppColor.Cerulean
+            secondColor = AppColor.Cyan
+        }
+    }
+
+    SwitchButton(
+        pulsating = pulsating,
+        firstColor = firstColor,
+        secondColor = secondColor,
+    ) {
+        onClick()
     }
 }
 
@@ -261,12 +353,12 @@ fun LogButton(
 }
 
 @Composable
-fun ConfigCard(
+private fun VerticalConfigCard(
     modifier: Modifier = Modifier,
     selectedProfile: ProfileData?,
     onClick: () -> Unit,
 ) {
-    val windowCorners = remember { WindowManager.getWindowCornerRadius() }
+    val windowCorners = WindowManager.getWindowCornerRadius()
 
     Box(
         modifier = modifier
@@ -303,6 +395,61 @@ fun ConfigCard(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
+                    text = stringResource(Res.string.current_config),
+                    style = Gilroy24(),
+                    color = VintrlessExtendedTheme.colors.textRegular,
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                if (selectedProfile != null) {
+                    SelectedProfileInfo(
+                        profileData = selectedProfile
+                    )
+                } else {
+                    NoProfileSelectedInfo()
+                }
+            }
+            Spacer(modifier = Modifier.width(20.dp))
+            Icon(
+                painter = painterResource(Res.drawable.ic_arrow_right),
+                contentDescription = null,
+            )
+        }
+    }
+}
+
+@Composable
+private fun HorizontalConfigCard(
+    modifier: Modifier = Modifier,
+    selectedProfile: ProfileData?,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .widthIn(max = 320.dp)
+            .animateContentSize()
+            .cardBackground(
+                RoundedCornerShape(
+                    topStart = 50.dp,
+                    bottomStart = 50.dp,
+                )
+            )
+    ) {
+        Row(
+            modifier = Modifier
+                .clickable { onClick() }
+                .padding(
+                    top = 32.dp,
+                    start = 32.dp,
+                    end = 32.dp,
+                    bottom = 32.dp,
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f, fill = false),
+            ) {
+                Text(
                     text = stringResource(Res.string.current_config),
                     style = Gilroy24(),
                     color = VintrlessExtendedTheme.colors.textRegular,

@@ -9,6 +9,7 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import pw.vintr.vintrless.domain.log.interactor.LogPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
+import pw.vintr.vintrless.platform.model.DeviceOrientation
 import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.presentation.navigation.BottomSheetNavigator
 
@@ -19,6 +20,9 @@ expect fun applyThemeOnView(darkTheme: Boolean)
 
 @Composable
 expect fun LazyColumnScrollbar(modifier: Modifier = Modifier, listState: LazyListState)
+
+@Composable
+expect fun resolveOrientation(): DeviceOrientation
 
 expect fun NativePaint.setMaskFilter(blurRadius: Float)
 
