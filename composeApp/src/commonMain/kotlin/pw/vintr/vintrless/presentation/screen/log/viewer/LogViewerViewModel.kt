@@ -21,6 +21,10 @@ class LogViewerViewModel(
     private val alertInteractor: AlertInteractor,
 ) : BaseViewModel(navigator) {
 
+    init {
+        logPlatformInteractor.startInheritLogs()
+    }
+
     private val filterFlow = MutableStateFlow(LogFilter())
 
     val screenState = combine(
@@ -41,6 +45,23 @@ class LogViewerViewModel(
             )
         }
     }.stateInThis(LogViewerScreenState())
+
+    override fun onCleared() {
+        logPlatformInteractor.stopInheritLogs()
+        super.onCleared()
+    }
+
+    fun onResume() {
+        if (!logPlatformInteractor.isActive) {
+            logPlatformInteractor.startInheritLogs()
+        }
+    }
+
+    fun onPause() {
+        if (logPlatformInteractor.isActive) {
+            logPlatformInteractor.stopInheritLogs()
+        }
+    }
 
     fun openFilter() {
         val currentFilter = filterFlow.value

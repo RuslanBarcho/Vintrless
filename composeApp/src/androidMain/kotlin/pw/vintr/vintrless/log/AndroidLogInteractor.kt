@@ -1,10 +1,7 @@
 package pw.vintr.vintrless.log
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import pw.vintr.vintrless.domain.log.interactor.LogPlatformInteractor
 import pw.vintr.vintrless.domain.log.model.Log
 import pw.vintr.vintrless.domain.log.model.LogType
@@ -12,6 +9,7 @@ import pw.vintr.vintrless.domain.log.model.LogsContainer
 import pw.vintr.vintrless.tools.coroutines.createExceptionHandler
 import pw.vintr.vintrless.tools.extensions.cancelIfActive
 import pw.vintr.vintrless.tools.list.boundedListOf
+import java.io.InterruptedIOException
 
 class AndroidLogInteractor : LogPlatformInteractor() {
 
@@ -24,19 +22,27 @@ class AndroidLogInteractor : LogPlatformInteractor() {
     override val logFlow = _logFlow
         .shareIn(this, started = SharingStarted.Eagerly, replay = 1)
 
+    override val isActive: Boolean
+        get() = loggingJob?.isActive == true
+
     private var loggingProc: Process? = null
 
     private var loggingJob: Job? = null
 
-    init {
-        startInheritLogs()
-    }
+    override fun startInheritLogs() {
+        // Stop previous
+        if (isActive) {
+            loggingJob.cancelIfActive()
+            loggingProc?.destroy()
+        }
 
-    private fun startInheritLogs() {
-        loggingJob.cancelIfActive()
-        loggingJob = launch(createExceptionHandler()) {
-            loggingProc = withContext(Dispatchers.IO) {
-                Runtime
+        // Clear recent buffer
+        _logFlow.value = LogsContainer(logs = boundedListOf(MAX_LOG_BUFFER))
+
+        // Start new
+        loggingJob = launch(Dispatchers.IO + createExceptionHandler()) {
+            try {
+                loggingProc = Runtime
                     .getRuntime()
                     .exec(arrayOf(
                         "logcat",
@@ -45,9 +51,7 @@ class AndroidLogInteractor : LogPlatformInteractor() {
                         "-s",
                         "GoLog,tun2socks,AndroidRuntime,System.err"
                     ))
-            }
 
-            withContext(context = Dispatchers.IO + createExceptionHandler()) {
                 loggingProc
                     ?.inputStream
                     ?.bufferedReader()
@@ -56,13 +60,13 @@ class AndroidLogInteractor : LogPlatformInteractor() {
                             runCatching { appendLog(line) }
                         }
                     }
-            }
+            } catch (_: InterruptedIOException) {}
         }
     }
 
-    private fun stopInheritLogs() {
-        loggingProc?.destroy()
+    override fun stopInheritLogs() {
         loggingJob.cancelIfActive()
+        loggingProc?.destroy()
     }
 
     private fun appendLog(logText: String) {
@@ -98,5 +102,10 @@ class AndroidLogInteractor : LogPlatformInteractor() {
 
         // Start runtime logs
         startInheritLogs()
+    }
+
+    override fun close() {
+        loggingJob.cancelIfActive()
+        loggingProc?.destroy()
     }
 }

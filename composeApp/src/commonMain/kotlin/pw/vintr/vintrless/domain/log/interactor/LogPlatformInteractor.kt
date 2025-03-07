@@ -8,5 +8,11 @@ abstract class LogPlatformInteractor : BaseInteractor() {
 
     abstract val logFlow: Flow<LogsContainer>
 
+    open val isActive: Boolean = true
+
+    open fun startInheritLogs() {}
+
+    open fun stopInheritLogs() {}
+
     open suspend fun clearLogs() {}
 }

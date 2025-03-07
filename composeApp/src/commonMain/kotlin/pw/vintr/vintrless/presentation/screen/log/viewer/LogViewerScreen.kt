@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -62,6 +63,11 @@ sealed class LogViewerAction {
 fun LogViewerScreen(
     viewModel: LogViewerViewModel = koinViewModel(),
 ) {
+    LifecycleResumeEffect(Unit) {
+        viewModel.onResume()
+        onPauseOrDispose { viewModel.onPause() }
+    }
+
     val screenState = viewModel.screenState.collectAsState()
 
     val logListState = rememberLazyListState()
