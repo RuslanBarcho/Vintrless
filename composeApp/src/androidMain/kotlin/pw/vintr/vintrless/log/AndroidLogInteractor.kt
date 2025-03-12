@@ -32,8 +32,7 @@ class AndroidLogInteractor : LogPlatformInteractor() {
     override fun startInheritLogs() {
         // Stop previous
         if (isActive) {
-            loggingJob.cancelIfActive()
-            loggingProc?.destroy()
+            stopInheritLogs()
         }
 
         // Clear recent buffer
@@ -66,7 +65,9 @@ class AndroidLogInteractor : LogPlatformInteractor() {
 
     override fun stopInheritLogs() {
         loggingJob.cancelIfActive()
+
         loggingProc?.destroy()
+        loggingProc = null
     }
 
     private fun appendLog(logText: String) {
@@ -106,6 +107,8 @@ class AndroidLogInteractor : LogPlatformInteractor() {
 
     override fun close() {
         loggingJob.cancelIfActive()
+
         loggingProc?.destroy()
+        loggingProc = null
     }
 }
