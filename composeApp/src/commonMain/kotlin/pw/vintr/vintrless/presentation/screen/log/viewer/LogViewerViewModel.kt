@@ -52,13 +52,13 @@ class LogViewerViewModel(
     }
 
     fun onResume() {
-        if (!logPlatformInteractor.isActive) {
+        if (!logPlatformInteractor.isLoggingActive) {
             logPlatformInteractor.startInheritLogs()
         }
     }
 
     fun onPause() {
-        if (logPlatformInteractor.isActive) {
+        if (logPlatformInteractor.isLoggingActive) {
             logPlatformInteractor.stopInheritLogs()
         }
     }

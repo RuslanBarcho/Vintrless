@@ -9,6 +9,7 @@ import pw.vintr.vintrless.domain.log.model.LogsContainer
 import pw.vintr.vintrless.tools.coroutines.createExceptionHandler
 import pw.vintr.vintrless.tools.extensions.cancelIfActive
 import pw.vintr.vintrless.tools.list.boundedListOf
+import java.io.BufferedReader
 import java.io.InterruptedIOException
 
 class AndroidLogInteractor : LogPlatformInteractor() {
@@ -20,18 +21,20 @@ class AndroidLogInteractor : LogPlatformInteractor() {
     private val _logFlow = MutableStateFlow(LogsContainer(logs = boundedListOf(MAX_LOG_BUFFER)))
 
     override val logFlow = _logFlow
-        .shareIn(this, started = SharingStarted.Eagerly, replay = 1)
+        .shareIn(this, started = SharingStarted.Lazily, replay = 1)
 
-    override val isActive: Boolean
-        get() = loggingJob?.isActive == true
+    override val isLoggingActive: Boolean
+        get() = loggingProc != null || loggingJob?.isActive == true
 
     private var loggingProc: Process? = null
 
     private var loggingJob: Job? = null
 
+    private var bufferReader: BufferedReader? = null
+
     override fun startInheritLogs() {
         // Stop previous
-        if (isActive) {
+        if (isLoggingActive) {
             stopInheritLogs()
         }
 
@@ -51,9 +54,11 @@ class AndroidLogInteractor : LogPlatformInteractor() {
                         "GoLog,tun2socks,AndroidRuntime,System.err"
                     ))
 
-                loggingProc
+                bufferReader = loggingProc
                     ?.inputStream
                     ?.bufferedReader()
+
+                bufferReader
                     ?.useLines { lines ->
                         lines.forEach { line ->
                             runCatching { appendLog(line) }
@@ -65,9 +70,12 @@ class AndroidLogInteractor : LogPlatformInteractor() {
 
     override fun stopInheritLogs() {
         loggingJob.cancelIfActive()
-
         loggingProc?.destroy()
+        bufferReader?.close()
+
         loggingProc = null
+        loggingJob = null
+        bufferReader = null
     }
 
     private fun appendLog(logText: String) {
@@ -106,9 +114,6 @@ class AndroidLogInteractor : LogPlatformInteractor() {
     }
 
     override fun close() {
-        loggingJob.cancelIfActive()
-
-        loggingProc?.destroy()
-        loggingProc = null
+        stopInheritLogs()
     }
 }
