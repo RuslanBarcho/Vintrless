@@ -12,7 +12,7 @@ import pw.vintr.vintrless.v2ray.useCase.V2RayStartUseCase
 import pw.vintr.vintrless.v2ray.useCase.V2RayStatusUseCase
 import pw.vintr.vintrless.v2ray.useCase.V2RayStopUseCase
 
-class VintrlessQSTileService : TileService(), V2RayBroadcastReceiver.Listener {
+class VintrlessQSTileService : TileService() {
 
     private val v2RayReceiver = V2RayBroadcastReceiver()
 
@@ -66,14 +66,14 @@ class VintrlessQSTileService : TileService(), V2RayBroadcastReceiver.Listener {
         }
     }
 
-    override fun onConnectionStateChanged(state: ConnectionState) {
-        updateTile(state)
-    }
-
     private fun registerReceiver() {
         v2RayReceiver.register(
             context = applicationContext,
-            listener = this,
+            listener = object : V2RayBroadcastReceiver.Listener {
+                override fun onConnectionStateChanged(state: ConnectionState) {
+                    updateTile(state)
+                }
+            },
         )
     }
 

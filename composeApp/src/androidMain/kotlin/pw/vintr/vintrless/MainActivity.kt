@@ -23,7 +23,7 @@ import pw.vintr.vintrless.v2ray.useCase.V2RayStartUseCase
 import pw.vintr.vintrless.v2ray.useCase.V2RayRestartUseCase
 import pw.vintr.vintrless.v2ray.useCase.V2RayStopUseCase
 
-class MainActivity : ComponentActivity(), V2RayBroadcastReceiver.Listener {
+class MainActivity : ComponentActivity() {
 
     init {
         AppActivity.setUp { this }
@@ -53,25 +53,16 @@ class MainActivity : ComponentActivity(), V2RayBroadcastReceiver.Listener {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterV2RayReceiver()
-    }
-
-    override fun onConnectionStateChanged(state: ConnectionState) {
-        AndroidV2RayInteractor.postState(state)
-    }
-
     private fun registerV2RayReceiver() {
         v2RayReceiver.register(
             context = applicationContext,
-            listener = this,
+            listener = object : V2RayBroadcastReceiver.Listener {
+                override fun onConnectionStateChanged(state: ConnectionState) {
+                    AndroidV2RayInteractor.postState(state)
+                }
+            },
             sendRegisterEvent = true,
         )
-    }
-
-    private fun unregisterV2RayReceiver() {
-        v2RayReceiver.unregister(applicationContext)
     }
 
     private fun startListenInteractorEvents() {

@@ -56,7 +56,7 @@ class V2RayBroadcastReceiver : BroadcastReceiver() {
     }
 
     fun unregister(context: Context) {
-        context.unregisterReceiver(this)
         listener = null
+        context.unregisterReceiver(this)
     }
 }
