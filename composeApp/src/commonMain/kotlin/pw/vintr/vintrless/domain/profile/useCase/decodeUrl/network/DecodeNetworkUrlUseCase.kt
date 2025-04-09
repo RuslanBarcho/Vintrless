@@ -1,4 +1,4 @@
-package pw.vintr.vintrless.domain.profile.useCase.decodeUrl
+package pw.vintr.vintrless.domain.profile.useCase.decodeUrl.network
 
 import pw.vintr.vintrless.domain.profile.model.ProfileField
 import pw.vintr.vintrless.domain.v2ray.model.NetworkType

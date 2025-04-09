@@ -4,6 +4,7 @@ import com.eygraber.uri.Url
 import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.domain.profile.model.ProfileField
 import pw.vintr.vintrless.domain.profile.model.ProfileForm
+import pw.vintr.vintrless.domain.profile.useCase.decodeUrl.network.DecodeNetworkUrlUseCase
 import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import pw.vintr.vintrless.tools.extensions.getQueryParams
 
