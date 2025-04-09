@@ -25,12 +25,14 @@ object DecodeVmessUrlUseCase {
             .getDefaultData()
             .toMutableMap()
 
+        // Profile section
         profileDataMap[ProfileField.Name.key] = decodedUriSchema.ps
         profileDataMap[ProfileField.IP.key] = decodedUriSchema.add
         profileDataMap[ProfileField.Port.key] = decodedUriSchema.port
         profileDataMap[ProfileField.UserId.key] = decodedUriSchema.id
         profileDataMap[ProfileField.Security.key] = decodedUriSchema.scy
 
+        // Network section
         val networkType = NetworkType.fromString(decodedUriSchema.net)
 
         when (networkType) {
@@ -71,6 +73,12 @@ object DecodeVmessUrlUseCase {
             }
             else -> Unit
         }
+
+        // Tls section
+        profileDataMap[ProfileField.TLS.key] = decodedUriSchema.tls
+        profileDataMap[ProfileField.SNI.key] = decodedUriSchema.sni
+        profileDataMap[ProfileField.Fingerprint.key] = decodedUriSchema.fp
+        profileDataMap[ProfileField.ALPN.key] = decodedUriSchema.alpn
 
         return ProfileData(
             type = ProtocolType.VMESS,
