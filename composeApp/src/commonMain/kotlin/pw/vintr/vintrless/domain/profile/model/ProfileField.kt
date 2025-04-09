@@ -61,6 +61,24 @@ sealed class ProfileField {
         override val queryKey: String = "encryption"
     }
 
+    data object Security : ProfileField() {
+
+        override val titleRes: StringResource = Res.string.profile_field_security
+
+        override val availableValues = listOf(
+            "chacha20-poly1305",
+            "aes-128-gcm",
+            "auto",
+            "none",
+            "zero"
+        )
+
+        override val initialValue = availableValues.first()
+
+        override val key: String = "security"
+        override val queryKey: String = "scy"
+    }
+
     /**
      * Protocol section
      */
