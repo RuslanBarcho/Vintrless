@@ -2,14 +2,8 @@ package pw.vintr.vintrless.domain.profile.interactor
 
 import pw.vintr.vintrless.domain.base.BaseInteractor
 import pw.vintr.vintrless.domain.profile.model.ProfileData
-import pw.vintr.vintrless.domain.profile.useCase.decodeUrl.DecodeShadowsocksUrlUseCase
-import pw.vintr.vintrless.domain.profile.useCase.decodeUrl.DecodeSocksUrlUseCase
-import pw.vintr.vintrless.domain.profile.useCase.decodeUrl.DecodeVlessUrlUseCase
-import pw.vintr.vintrless.domain.profile.useCase.decodeUrl.DecodeVmessUrlUseCase
-import pw.vintr.vintrless.domain.profile.useCase.encodeUrl.EncodeShadowsocksUrlUseCase
-import pw.vintr.vintrless.domain.profile.useCase.encodeUrl.EncodeSocksUrlUseCase
-import pw.vintr.vintrless.domain.profile.useCase.encodeUrl.EncodeVlessUrlUseCase
-import pw.vintr.vintrless.domain.profile.useCase.encodeUrl.EncodeVmessUrlUseCase
+import pw.vintr.vintrless.domain.profile.useCase.decodeUrl.*
+import pw.vintr.vintrless.domain.profile.useCase.encodeUrl.*
 import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 
 class ProfileUrlInteractor : BaseInteractor() {
@@ -27,6 +21,12 @@ class ProfileUrlInteractor : BaseInteractor() {
             }
             ProtocolType.SOCKS -> {
                 EncodeSocksUrlUseCase(profileData)
+            }
+            ProtocolType.HTTP -> {
+                EncodeHttpUrlUseCase(profileData)
+            }
+            ProtocolType.TROJAN -> {
+                EncodeTrojanUrlUseCase(profileData)
             }
             else -> {
                 EncodeVlessUrlUseCase(profileData)
@@ -47,6 +47,12 @@ class ProfileUrlInteractor : BaseInteractor() {
             }
             urlString.startsWith(ProtocolType.SOCKS.protocolScheme) -> {
                 DecodeSocksUrlUseCase(urlString)
+            }
+            urlString.startsWith(ProtocolType.HTTP.protocolScheme) -> {
+                DecodeHttpUrlUseCase(urlString)
+            }
+            urlString.startsWith(ProtocolType.TROJAN.protocolScheme) -> {
+                DecodeTrojanUrlUseCase(urlString)
             }
             else -> {
                 throw Exception("Illegal protocol scheme")

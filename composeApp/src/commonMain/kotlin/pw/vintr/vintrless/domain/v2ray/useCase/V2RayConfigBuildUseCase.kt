@@ -7,10 +7,7 @@ import pw.vintr.vintrless.domain.v2ray.V2RayConfigDefaults
 import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.domain.v2ray.model.V2RayConfig
-import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.ShadowsocksOutboundBuildUseCase
-import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.SocksOutboundBuildUseCase
-import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.VlessOutboundBuildUseCase
-import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.VmessOutboundBuildUseCase
+import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.*
 import pw.vintr.vintrless.domain.v2ray.useCase.routing.V2RayRoutingBuildUseCase
 
 object V2RayConfigBuildUseCase {
@@ -89,10 +86,14 @@ object V2RayConfigBuildUseCase {
             ProtocolType.SOCKS -> {
                 SocksOutboundBuildUseCase(profile)
             }
-            ProtocolType.TROJAN,
+            ProtocolType.HTTP -> {
+                HttpOutboundBuildUseCase(profile)
+            }
+            ProtocolType.TROJAN -> {
+                TrojanOutboundBuildUseCase(profile)
+            }
             ProtocolType.WIREGUARD,
-            ProtocolType.HYSTERIA2,
-            ProtocolType.HTTP -> V2RayConfig.OutboundBean(protocol = "stub")
+            ProtocolType.HYSTERIA2 -> V2RayConfig.OutboundBean(protocol = "stub")
         }
 
         val direct = V2RayConfig.OutboundBean(
