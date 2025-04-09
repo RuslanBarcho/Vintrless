@@ -7,7 +7,7 @@ import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.stream.RealitySettingBu
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.stream.TlsSettingsBuildUseCase
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.transport.*
 
-object VmessOutboundBuildUseCase {
+object ShadowsocksOutboundBuildUseCase {
 
     operator fun invoke(profile: ProfileData): V2RayConfig.OutboundBean {
         val network = profile.getField(ProfileField.TransportProtocol)
@@ -21,15 +21,12 @@ object VmessOutboundBuildUseCase {
             ),
             protocol = profile.type.code,
             settings = V2RayConfig.OutboundBean.OutSettingsBean(
-                vnext = listOf(
-                    V2RayConfig.OutboundBean.OutSettingsBean.VnextBean(
+                servers = listOf(
+                    V2RayConfig.OutboundBean.OutSettingsBean.ServersBean(
                         address = profile.getField(ProfileField.IP).orEmpty(),
                         port = profile.getField(ProfileField.Port)?.toIntOrNull() ?: 443,
-                        users = listOf(V2RayConfig.OutboundBean.OutSettingsBean.VnextBean.UsersBean(
-                            id = profile.getField(ProfileField.UserId).orEmpty(),
-                            level = 8,
-                            security = profile.getField(ProfileField.VmessSecurity).orEmpty(),
-                        )),
+                        password = profile.getField(ProfileField.Password).orEmpty(),
+                        method = profile.getField(ProfileField.SSocksSecurity).orEmpty(),
                     )
                 )
             ),

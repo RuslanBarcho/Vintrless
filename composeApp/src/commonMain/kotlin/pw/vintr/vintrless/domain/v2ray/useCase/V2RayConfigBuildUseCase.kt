@@ -7,6 +7,7 @@ import pw.vintr.vintrless.domain.v2ray.V2RayConfigDefaults
 import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.domain.v2ray.model.V2RayConfig
+import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.ShadowsocksOutboundBuildUseCase
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.VlessOutboundBuildUseCase
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.VmessOutboundBuildUseCase
 import pw.vintr.vintrless.domain.v2ray.useCase.routing.V2RayRoutingBuildUseCase
@@ -75,9 +76,15 @@ object V2RayConfigBuildUseCase {
 
     private fun getOutbounds(profile: ProfileData): ArrayList<V2RayConfig.OutboundBean> {
         val proxy = when (profile.type) {
-            ProtocolType.VLESS -> VlessOutboundBuildUseCase(profile)
-            ProtocolType.VMESS -> VmessOutboundBuildUseCase(profile)
-            ProtocolType.SHADOWSOCKS,
+            ProtocolType.VLESS -> {
+                VlessOutboundBuildUseCase(profile)
+            }
+            ProtocolType.VMESS -> {
+                VmessOutboundBuildUseCase(profile)
+            }
+            ProtocolType.SHADOWSOCKS -> {
+                ShadowsocksOutboundBuildUseCase(profile)
+            }
             ProtocolType.SOCKS,
             ProtocolType.TROJAN,
             ProtocolType.WIREGUARD,

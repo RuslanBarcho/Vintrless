@@ -12,13 +12,13 @@ import vintrless.composeapp.generated.resources.profile_group_camouflage
 sealed class ProfileForm {
 
     companion object {
-        val allForms: List<ProfileForm> = listOf(Vless, Vmess)
+        val allForms: List<ProfileForm> = listOf(Vless, Vmess, ShadowSocks)
 
         fun getByType(type: ProtocolType): ProfileForm {
             return when (type) {
                 ProtocolType.VLESS -> Vless
                 ProtocolType.VMESS -> Vmess
-                ProtocolType.SHADOWSOCKS -> Vless
+                ProtocolType.SHADOWSOCKS -> ShadowSocks
                 ProtocolType.SOCKS -> Vless
                 ProtocolType.TROJAN -> Vless
                 ProtocolType.WIREGUARD -> Vless
@@ -139,7 +139,41 @@ sealed class ProfileForm {
                 titleRes = Res.string.profile_group_profile,
                 fields = listOf(
                     ProfileField.UserId,
-                    ProfileField.Security,
+                    ProfileField.VmessSecurity,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_network,
+                fields = listOf(
+                    ProfileField.TransportProtocol,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_camouflage,
+                fields = listOf(ProfileField.TLS)
+            )
+        )
+    }
+
+    @Serializable
+    data object ShadowSocks : ProfileForm() {
+
+        override val type = ProtocolType.SHADOWSOCKS
+
+        override val fieldGroups = listOf(
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_server,
+                fields = listOf(
+                    ProfileField.Name,
+                    ProfileField.IP,
+                    ProfileField.Port,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_profile,
+                fields = listOf(
+                    ProfileField.Password,
+                    ProfileField.SSocksSecurity,
                 )
             ),
             ProfileFieldGroup(

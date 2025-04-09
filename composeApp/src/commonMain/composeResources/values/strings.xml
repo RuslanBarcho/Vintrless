@@ -37,6 +37,7 @@
     <string name="profile_field_flow">Flow</string>
     <string name="profile_field_encryption">Encryption</string>
     <string name="profile_field_security">Security</string>
+    <string name="profile_field_password">Password</string>
 
     <string name="profile_field_transport_protocol">Transport protocol</string>
     <string name="profile_field_header_type">Header type</string>

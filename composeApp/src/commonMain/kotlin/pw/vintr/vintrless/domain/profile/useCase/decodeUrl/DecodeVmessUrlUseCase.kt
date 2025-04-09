@@ -30,7 +30,7 @@ object DecodeVmessUrlUseCase {
         profileDataMap[ProfileField.IP.key] = decodedUriSchema.add
         profileDataMap[ProfileField.Port.key] = decodedUriSchema.port
         profileDataMap[ProfileField.UserId.key] = decodedUriSchema.id
-        profileDataMap[ProfileField.Security.key] = decodedUriSchema.scy
+        profileDataMap[ProfileField.VmessSecurity.key] = decodedUriSchema.scy
 
         // Network section
         val networkType = NetworkType.fromString(decodedUriSchema.net)

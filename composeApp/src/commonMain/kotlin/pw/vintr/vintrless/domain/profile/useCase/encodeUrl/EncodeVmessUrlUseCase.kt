@@ -1,61 +1,20 @@
 package pw.vintr.vintrless.domain.profile.useCase.encodeUrl
 
-import com.eygraber.uri.UriCodec
 import kotlinx.serialization.json.Json
 import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.domain.profile.model.ProfileField
 import pw.vintr.vintrless.domain.profile.model.ProfileForm
 import pw.vintr.vintrless.domain.profile.model.uriSchema.VmessUriSchema
+import pw.vintr.vintrless.domain.profile.useCase.encodeUrl.base.BaseEncodeProfileUrlUseCase
 import pw.vintr.vintrless.domain.v2ray.model.NetworkType
-import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import pw.vintr.vintrless.tools.extensions.Empty
-import pw.vintr.vintrless.tools.network.IPTools
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-object EncodeProfileUrlUseCase {
-
-    operator fun invoke(profile: ProfileData): String {
-        return when (profile.type) {
-            ProtocolType.VMESS -> encodeVmess(profile)
-            else -> encodeCommon(profile)
-        }
-    }
-
-    private fun encodeCommon(profile: ProfileData): String {
-        val form = ProfileForm.getByType(profile.type)
-        val fields = form.getAllFields()
-
-        val queryList = fields
-            .filter { it.queryKey.isNotEmpty() }
-            .mapNotNull { field ->
-                profile.data[field.key]?.let { field.queryKey to it }
-            }
-
-        val query = if (queryList.isNotEmpty()) {
-            "?" + queryList.joinToString(
-                separator = "&",
-                transform = { it.first + "=" + UriCodec.encode(it.second) }
-            )
-        } else {
-            String.Empty
-        }
-
-        // Build base url part
-        val ip = IPTools.getIpv6Address(profile.ip)
-        val port = profile.data[ProfileField.Port.key].orEmpty()
-        val userId = profile.data[ProfileField.UserId.key].orEmpty()
-
-        val url = "$userId@$ip:$port"
-
-        // Build and return url with query
-        val name = UriCodec.encode(profile.name)
-
-        return "${form.type.protocolScheme}$url$query#$name"
-    }
+object EncodeVmessUrlUseCase : BaseEncodeProfileUrlUseCase() {
 
     @OptIn(ExperimentalEncodingApi::class)
-    private fun encodeVmess(profile: ProfileData): String {
+    override operator fun invoke(profile: ProfileData): String {
         val form = ProfileForm.getByType(profile.type)
         val networkType = NetworkType.fromString(profile.data[ProfileField.TransportProtocol.key].orEmpty())
 
@@ -108,7 +67,7 @@ object EncodeProfileUrlUseCase {
             add = profile.ip,
             port = profile.data[ProfileField.Port.key].orEmpty(),
             id = profile.data[ProfileField.UserId.key].orEmpty(),
-            scy = profile.data[ProfileField.Security.key].orEmpty(),
+            scy = profile.data[ProfileField.VmessSecurity.key].orEmpty(),
             aid = "0",
             net = networkType.type,
             type = type,

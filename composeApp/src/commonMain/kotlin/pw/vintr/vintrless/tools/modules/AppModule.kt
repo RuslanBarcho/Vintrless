@@ -131,6 +131,7 @@ val appModule = module {
             navigator = get(),
             dataId = params.get(),
             profileInteractor = get(),
+            profileUrlInteractor = get(),
             alertInteractor = get(),
         )
     }

@@ -2,8 +2,9 @@ package pw.vintr.vintrless.domain.v2ray.useCase.outbounds
 
 import pw.vintr.vintrless.domain.profile.model.ProfileData
 import pw.vintr.vintrless.domain.profile.model.ProfileField
-import pw.vintr.vintrless.domain.v2ray.V2RayConfigDefaults
 import pw.vintr.vintrless.domain.v2ray.model.V2RayConfig
+import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.stream.RealitySettingBuildUseCase
+import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.stream.TlsSettingsBuildUseCase
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.transport.*
 
 object VlessOutboundBuildUseCase {
@@ -11,33 +12,6 @@ object VlessOutboundBuildUseCase {
     operator fun invoke(profile: ProfileData): V2RayConfig.OutboundBean {
         val network = profile.getField(ProfileField.TransportProtocol)
             ?: ProfileField.TransportProtocol.initialValue
-
-        // Build tls or reality settings
-        val realitySettings = if (profile.getField(ProfileField.TLS) == V2RayConfigDefaults.REALITY) {
-            V2RayConfig.OutboundBean.StreamSettingsBean.TlsSettingsBean(
-                allowInsecure = false,
-                serverName = profile.getField(ProfileField.SNI),
-                fingerprint = profile.getField(ProfileField.Fingerprint),
-                publicKey = profile.getField(ProfileField.PublicKey),
-                shortId = profile.getField(ProfileField.ShortID),
-                spiderX = profile.getField(ProfileField.SpiderX),
-            )
-        } else {
-            null
-        }
-        val tlsSettings = if (profile.getField(ProfileField.TLS) == V2RayConfigDefaults.TLS) {
-            V2RayConfig.OutboundBean.StreamSettingsBean.TlsSettingsBean(
-                allowInsecure = profile.getField(ProfileField.AllowInsecure).toBoolean(),
-                serverName = profile.getField(ProfileField.SNI),
-                fingerprint = profile.getField(ProfileField.Fingerprint),
-                alpn = profile.getField(ProfileField.ALPN)
-                    ?.split(",")
-                    ?.map { it.trim() }
-                    ?.filter { it.isNotEmpty() }
-            )
-        } else {
-            null
-        }
 
         // Build outbounds
         return V2RayConfig.OutboundBean(
@@ -65,8 +39,8 @@ object VlessOutboundBuildUseCase {
             ),
             streamSettings = V2RayConfig.OutboundBean.StreamSettingsBean(
                 network = network,
-                realitySettings = realitySettings,
-                tlsSettings = tlsSettings,
+                realitySettings = RealitySettingBuildUseCase(profile),
+                tlsSettings = TlsSettingsBuildUseCase(profile),
                 security = profile.getField(ProfileField.TLS),
                 tcpSettings = TCPBuildUseCase(profile),
                 kcpSettings = KCPBuildUseCase(profile),
