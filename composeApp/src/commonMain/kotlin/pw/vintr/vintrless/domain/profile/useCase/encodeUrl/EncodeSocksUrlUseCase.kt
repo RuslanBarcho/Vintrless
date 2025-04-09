@@ -9,17 +9,17 @@ import pw.vintr.vintrless.tools.network.IPTools
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-object EncodeShadowsocksUrlUseCase : BaseEncodeProfileUrlUseCase() {
+object EncodeSocksUrlUseCase : BaseEncodeProfileUrlUseCase() {
 
     @OptIn(ExperimentalEncodingApi::class)
     override fun invoke(profile: ProfileData): String {
         val form = ProfileForm.getByType(profile.type)
 
         // Build authority info
-        val security = profile.data[ProfileField.SSocksSecurity.key]
+        val username = profile.data[ProfileField.UserName.key]
         val password = profile.data[ProfileField.Password.key]
 
-        val authInfo = "${security}:${password}"
+        val authInfo = "${username}:${password}"
 
         // Build url
         val ip = IPTools.getIpv6Address(profile.ip)

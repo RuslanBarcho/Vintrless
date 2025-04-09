@@ -38,6 +38,7 @@
     <string name="profile_field_encryption">Шифрование</string>
     <string name="profile_field_security">Безопасность</string>
     <string name="profile_field_password">Пароль</string>
+    <string name="profile_field_user">Пользователь</string>
 
     <string name="profile_field_transport_protocol">Транспортный протокол</string>
     <string name="profile_field_header_type">Тип заголовка</string>

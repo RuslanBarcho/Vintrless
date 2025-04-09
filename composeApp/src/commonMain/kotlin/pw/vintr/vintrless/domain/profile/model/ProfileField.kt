@@ -40,6 +40,11 @@ sealed class ProfileField {
         override val key: String = "userId"
     }
 
+    data object UserName : ProfileField() {
+        override val titleRes: StringResource = Res.string.profile_field_user
+        override val key: String = "username"
+    }
+
     data object Password : ProfileField() {
         override val titleRes: StringResource = Res.string.profile_field_password
         override val key: String = "password"

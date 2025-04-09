@@ -8,9 +8,9 @@ import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-object DecodeShadowsocksUrlUseCase {
+object DecodeSocksUrlUseCase {
 
-    private val partExtractRegex = """^ss://([^@]+)@([^:]+):(\d+)#(.+)$""".toRegex()
+    private val partExtractRegex = """^socks://([^@]+)@([^:]+):(\d+)#(.+)$""".toRegex()
 
     @OptIn(ExperimentalEncodingApi::class)
     operator fun invoke(urlString: String): ProfileData {
@@ -27,14 +27,14 @@ object DecodeShadowsocksUrlUseCase {
             .getDefaultData()
             .toMutableMap()
 
-        profileDataMap[ProfileField.SSocksSecurity.key] = authInfo.getOrNull(0).orEmpty()
+        profileDataMap[ProfileField.UserName.key] = authInfo.getOrNull(0).orEmpty()
         profileDataMap[ProfileField.Password.key] = authInfo.getOrNull(1).orEmpty()
         profileDataMap[ProfileField.IP.key] = ip
         profileDataMap[ProfileField.Port.key] = port
         profileDataMap[ProfileField.Name.key] = name
 
         return ProfileData(
-            type = ProtocolType.SHADOWSOCKS,
+            type = ProtocolType.SOCKS,
             data = profileDataMap,
         )
     }

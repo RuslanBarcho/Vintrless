@@ -8,6 +8,7 @@ import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.domain.v2ray.model.V2RayConfig
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.ShadowsocksOutboundBuildUseCase
+import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.SocksOutboundBuildUseCase
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.VlessOutboundBuildUseCase
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.VmessOutboundBuildUseCase
 import pw.vintr.vintrless.domain.v2ray.useCase.routing.V2RayRoutingBuildUseCase
@@ -85,7 +86,9 @@ object V2RayConfigBuildUseCase {
             ProtocolType.SHADOWSOCKS -> {
                 ShadowsocksOutboundBuildUseCase(profile)
             }
-            ProtocolType.SOCKS,
+            ProtocolType.SOCKS -> {
+                SocksOutboundBuildUseCase(profile)
+            }
             ProtocolType.TROJAN,
             ProtocolType.WIREGUARD,
             ProtocolType.HYSTERIA2,
