@@ -7,7 +7,7 @@ import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.stream.RealitySettingBu
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.stream.TlsSettingsBuildUseCase
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.transport.*
 
-object VlessOutboundBuildUseCase {
+object TrojanOutboundBuildUseCase {
 
     operator fun invoke(profile: ProfileData): V2RayConfig.OutboundBean {
         val network = profile.getField(ProfileField.TransportProtocol)
@@ -23,17 +23,11 @@ object VlessOutboundBuildUseCase {
             ),
             protocol = profile.type.code,
             settings = V2RayConfig.OutboundBean.OutSettingsBean(
-                vnext = listOf(
-                    V2RayConfig.OutboundBean.OutSettingsBean.VnextBean(
+                servers = listOf(
+                    V2RayConfig.OutboundBean.OutSettingsBean.ServersBean(
                         address = profile.getField(ProfileField.IP).orEmpty(),
                         port = profile.getField(ProfileField.Port)?.toIntOrNull() ?: 443,
-                        users = listOf(V2RayConfig.OutboundBean.OutSettingsBean.VnextBean.UsersBean(
-                            encryption = profile.getField(ProfileField.Encryption)
-                                ?: ProfileField.Encryption.initialValue,
-                            flow = profile.getField(ProfileField.Flow),
-                            id = profile.getField(ProfileField.UserId).orEmpty(),
-                            level = 8,
-                        )),
+                        password = profile.getField(ProfileField.Password).orEmpty(),
                     )
                 )
             ),

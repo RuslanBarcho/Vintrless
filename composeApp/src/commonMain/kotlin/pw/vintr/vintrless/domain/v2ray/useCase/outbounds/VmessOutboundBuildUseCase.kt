@@ -7,7 +7,7 @@ import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.stream.RealitySettingBu
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.stream.TlsSettingsBuildUseCase
 import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.transport.*
 
-object VlessOutboundBuildUseCase {
+object VmessOutboundBuildUseCase {
 
     operator fun invoke(profile: ProfileData): V2RayConfig.OutboundBean {
         val network = profile.getField(ProfileField.TransportProtocol)
@@ -18,8 +18,6 @@ object VlessOutboundBuildUseCase {
             mux = V2RayConfig.OutboundBean.MuxBean(
                 concurrency = -1,
                 enabled = false,
-                xudpConcurrency = 8,
-                xudpProxyUDP443 = ""
             ),
             protocol = profile.type.code,
             settings = V2RayConfig.OutboundBean.OutSettingsBean(
@@ -28,11 +26,9 @@ object VlessOutboundBuildUseCase {
                         address = profile.getField(ProfileField.IP).orEmpty(),
                         port = profile.getField(ProfileField.Port)?.toIntOrNull() ?: 443,
                         users = listOf(V2RayConfig.OutboundBean.OutSettingsBean.VnextBean.UsersBean(
-                            encryption = profile.getField(ProfileField.Encryption)
-                                ?: ProfileField.Encryption.initialValue,
-                            flow = profile.getField(ProfileField.Flow),
                             id = profile.getField(ProfileField.UserId).orEmpty(),
                             level = 8,
+                            security = profile.getField(ProfileField.VmessSecurity).orEmpty(),
                         )),
                     )
                 )

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.alert.model.AlertModel
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
-import pw.vintr.vintrless.domain.profile.useCase.encodeUrl.EncodeProfileUrlUseCase
+import pw.vintr.vintrless.domain.profile.interactor.ProfileUrlInteractor
 import pw.vintr.vintrless.domain.v2ray.useCase.V2RayConfigBuildUseCase
 import pw.vintr.vintrless.platform.manager.ShareActionManager
 import pw.vintr.vintrless.presentation.base.BaseScreenState
@@ -17,6 +17,7 @@ class ShareProfileViewModel(
     navigator: AppNavigator,
     private val dataId: String,
     private val profileInteractor: ProfileInteractor,
+    private val profileUrlInteractor: ProfileUrlInteractor,
     private val alertInteractor: AlertInteractor,
 ) : BaseViewModel(navigator) {
 
@@ -34,7 +35,7 @@ class ShareProfileViewModel(
             val data = requireNotNull(profileInteractor.getProfile(dataId))
 
             ShareProfileState(
-                profileUrl = EncodeProfileUrlUseCase(data),
+                profileUrl = profileUrlInteractor.encodeProfileUrl(data),
                 profileJSON = V2RayConfigBuildUseCase(data).configJson
             )
         }

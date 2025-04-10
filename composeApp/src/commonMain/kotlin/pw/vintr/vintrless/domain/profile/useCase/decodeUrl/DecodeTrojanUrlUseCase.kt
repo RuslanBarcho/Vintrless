@@ -8,24 +8,21 @@ import pw.vintr.vintrless.domain.profile.useCase.decodeUrl.network.DecodeNetwork
 import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import pw.vintr.vintrless.tools.extensions.getQueryParams
 
-object DecodeVlessUrlUseCase {
+object DecodeTrojanUrlUseCase {
 
     operator fun invoke(urlString: String): ProfileData {
         val url = Url.parse(urlString)
-        val profileDataMap = ProfileForm.Vless
+        val profileDataMap = ProfileForm.Trojan
             .getDefaultData()
             .toMutableMap()
 
         val queryParams = url.getQueryParams()
-        val flow = queryParams["flow"]
 
         // Base data
         profileDataMap[ProfileField.Name.key] = url.fragment ?: "Profile"
         profileDataMap[ProfileField.IP.key] = url.host
         profileDataMap[ProfileField.Port.key] = url.port.toString()
-        profileDataMap[ProfileField.UserId.key] = url.userInfo.orEmpty()
-        profileDataMap[ProfileField.Encryption.key] = queryParams["encryption"] ?: "none"
-        flow?.let { profileDataMap[ProfileField.Flow.key] = it }
+        profileDataMap[ProfileField.Password.key] = url.userInfo.orEmpty()
 
         // Network
         profileDataMap.putAll(DecodeNetworkUrlUseCase(queryParams))
@@ -60,7 +57,7 @@ object DecodeVlessUrlUseCase {
         }
 
         return ProfileData(
-            type = ProtocolType.VLESS,
+            type = ProtocolType.TROJAN,
             data = profileDataMap,
         )
     }

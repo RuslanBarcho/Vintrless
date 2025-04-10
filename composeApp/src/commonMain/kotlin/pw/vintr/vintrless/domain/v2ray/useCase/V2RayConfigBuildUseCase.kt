@@ -7,7 +7,7 @@ import pw.vintr.vintrless.domain.v2ray.V2RayConfigDefaults
 import pw.vintr.vintrless.domain.v2ray.model.ProtocolType
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.domain.v2ray.model.V2RayConfig
-import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.VlessOutboundBuildUseCase
+import pw.vintr.vintrless.domain.v2ray.useCase.outbounds.*
 import pw.vintr.vintrless.domain.v2ray.useCase.routing.V2RayRoutingBuildUseCase
 
 object V2RayConfigBuildUseCase {
@@ -74,14 +74,28 @@ object V2RayConfigBuildUseCase {
 
     private fun getOutbounds(profile: ProfileData): ArrayList<V2RayConfig.OutboundBean> {
         val proxy = when (profile.type) {
-            ProtocolType.VLESS -> VlessOutboundBuildUseCase(profile)
-            ProtocolType.VMESS,
-            ProtocolType.SHADOWSOCKS,
-            ProtocolType.SOCKS,
-            ProtocolType.TROJAN,
-            ProtocolType.WIREGUARD,
-            ProtocolType.HYSTERIA2,
-            ProtocolType.HTTP -> V2RayConfig.OutboundBean(protocol = "stub")
+            ProtocolType.VLESS -> {
+                VlessOutboundBuildUseCase(profile)
+            }
+            ProtocolType.VMESS -> {
+                VmessOutboundBuildUseCase(profile)
+            }
+            ProtocolType.SHADOWSOCKS -> {
+                ShadowsocksOutboundBuildUseCase(profile)
+            }
+            ProtocolType.SOCKS -> {
+                SocksOutboundBuildUseCase(profile)
+            }
+            ProtocolType.HTTP -> {
+                HttpOutboundBuildUseCase(profile)
+            }
+            ProtocolType.TROJAN -> {
+                TrojanOutboundBuildUseCase(profile)
+            }
+            ProtocolType.WIREGUARD -> {
+                WireguardOutboundBuildUseCase(profile)
+            }
+            ProtocolType.HYSTERIA2 -> V2RayConfig.OutboundBean(protocol = "stub")
         }
 
         val direct = V2RayConfig.OutboundBean(

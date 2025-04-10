@@ -36,6 +36,14 @@
     <string name="profile_field_user_id">ID</string>
     <string name="profile_field_flow">Flow</string>
     <string name="profile_field_encryption">Encryption</string>
+    <string name="profile_field_security">Security</string>
+    <string name="profile_field_password">Password</string>
+    <string name="profile_field_server_public_key">Public key</string>
+    <string name="profile_field_server_private_key">Private key</string>
+    <string name="profile_field_server_additional_key">Additional encryption key</string>
+    <string name="profile_field_reserved">Reserved</string>
+    <string name="profile_field_local_address">Local address</string>
+    <string name="profile_field_mtu">MTU</string>
 
     <string name="profile_field_transport_protocol">Transport protocol</string>
     <string name="profile_field_header_type">Header type</string>

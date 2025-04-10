@@ -12,18 +12,18 @@ import vintrless.composeapp.generated.resources.profile_group_camouflage
 sealed class ProfileForm {
 
     companion object {
-        val allForms: List<ProfileForm> = listOf(Vless)
+        val allForms: List<ProfileForm> = listOf(Vless, Vmess, Shadowsocks, Socks, Http, Trojan, WireGuard)
 
         fun getByType(type: ProtocolType): ProfileForm {
             return when (type) {
                 ProtocolType.VLESS -> Vless
-                ProtocolType.VMESS -> Vless
-                ProtocolType.SHADOWSOCKS -> Vless
-                ProtocolType.SOCKS -> Vless
-                ProtocolType.TROJAN -> Vless
-                ProtocolType.WIREGUARD -> Vless
+                ProtocolType.VMESS -> Vmess
+                ProtocolType.SHADOWSOCKS -> Shadowsocks
+                ProtocolType.SOCKS -> Socks
+                ProtocolType.HTTP -> Http
+                ProtocolType.TROJAN -> Trojan
+                ProtocolType.WIREGUARD -> WireGuard
                 ProtocolType.HYSTERIA2 -> Vless
-                ProtocolType.HTTP -> Vless
             }
         }
     }
@@ -118,6 +118,178 @@ sealed class ProfileForm {
                 titleRes = Res.string.profile_group_camouflage,
                 fields = listOf(ProfileField.TLS)
             )
+        )
+    }
+
+    @Serializable
+    data object Vmess : ProfileForm() {
+
+        override val type = ProtocolType.VMESS
+
+        override val fieldGroups = listOf(
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_server,
+                fields = listOf(
+                    ProfileField.Name,
+                    ProfileField.IP,
+                    ProfileField.Port,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_profile,
+                fields = listOf(
+                    ProfileField.UserId,
+                    ProfileField.VmessSecurity,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_network,
+                fields = listOf(
+                    ProfileField.TransportProtocol,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_camouflage,
+                fields = listOf(ProfileField.TLS)
+            )
+        )
+    }
+
+    @Serializable
+    data object Shadowsocks : ProfileForm() {
+
+        override val type = ProtocolType.SHADOWSOCKS
+
+        override val fieldGroups = listOf(
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_server,
+                fields = listOf(
+                    ProfileField.Name,
+                    ProfileField.IP,
+                    ProfileField.Port,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_profile,
+                fields = listOf(
+                    ProfileField.Password,
+                    ProfileField.SSocksSecurity,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_network,
+                fields = listOf(
+                    ProfileField.TransportProtocol,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_camouflage,
+                fields = listOf(ProfileField.TLS)
+            )
+        )
+    }
+
+    @Serializable
+    data object Socks : ProfileForm() {
+
+        override val type = ProtocolType.SOCKS
+
+        override val fieldGroups = listOf(
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_server,
+                fields = listOf(
+                    ProfileField.Name,
+                    ProfileField.IP,
+                    ProfileField.Port,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_profile,
+                fields = listOf(
+                    ProfileField.UserName,
+                    ProfileField.Password,
+                )
+            ),
+        )
+    }
+
+    @Serializable
+    data object Http : ProfileForm() {
+
+        override val type = ProtocolType.HTTP
+
+        override val fieldGroups = listOf(
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_server,
+                fields = listOf(
+                    ProfileField.Name,
+                    ProfileField.IP,
+                    ProfileField.Port,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_profile,
+                fields = listOf(
+                    ProfileField.UserName,
+                    ProfileField.Password,
+                )
+            ),
+        )
+    }
+
+    @Serializable
+    data object Trojan : ProfileForm() {
+
+        override val type = ProtocolType.TROJAN
+
+        override val fieldGroups = listOf(
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_server,
+                fields = listOf(
+                    ProfileField.Name,
+                    ProfileField.IP,
+                    ProfileField.Port,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_profile,
+                fields = listOf(
+                    ProfileField.Password,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_network,
+                fields = listOf(
+                    ProfileField.TransportProtocol,
+                )
+            ),
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_camouflage,
+                fields = listOf(ProfileField.TLS)
+            )
+        )
+    }
+
+    @Serializable
+    data object WireGuard : ProfileForm() {
+
+        override val type = ProtocolType.WIREGUARD
+
+        override val fieldGroups = listOf(
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_server,
+                fields = listOf(
+                    ProfileField.Name,
+                    ProfileField.IP,
+                    ProfileField.Port,
+                    ProfileField.ServerPrivateKey,
+                    ProfileField.ServerPublicKey,
+                    ProfileField.ServerAdditionalKey,
+                    ProfileField.Reserved,
+                    ProfileField.LocalAddress,
+                    ProfileField.MTU,
+                ),
+            ),
         )
     }
 }

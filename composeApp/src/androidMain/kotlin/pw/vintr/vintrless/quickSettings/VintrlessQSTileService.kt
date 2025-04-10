@@ -16,6 +16,13 @@ class VintrlessQSTileService : TileService() {
 
     private val v2RayReceiver = V2RayBroadcastReceiver()
 
+    override fun onCreate() {
+        super.onCreate()
+
+        // Register service events receiver
+        registerReceiver()
+    }
+
     override fun onStartListening() {
         super.onStartListening()
 
@@ -29,16 +36,13 @@ class VintrlessQSTileService : TileService() {
                 AndroidV2RayInteractor.currentState
             },
         )
-
-        // Register service events receiver
-        registerReceiver()
     }
 
-    override fun onStopListening() {
-        super.onStopListening()
-
+    override fun onDestroy() {
         // Unregister service events receiver
         unregisterReceiver()
+
+        super.onDestroy()
     }
 
     override fun onClick() {
