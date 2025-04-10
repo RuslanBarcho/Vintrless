@@ -209,6 +209,45 @@ android {
 }
 
 compose.desktop {
+    fun getSourceDesktopResourcesDir(): File {
+        return rootDir
+            .resolve("desktopLibs")
+    }
+
+    fun getTargetDesktopResourcesDir(): File {
+        return layout.buildDirectory.asFile.get()
+            .resolve("processed-desktop-resources")
+    }
+
+    val prepareDesktopCommonResources by tasks.register<Copy>("prepareDesktopCommonResources") {
+        from("${getSourceDesktopResourcesDir().path}/common")
+        into("${getTargetDesktopResourcesDir().path}/common")
+
+        outputs.dir("${getTargetDesktopResourcesDir().path}/common")
+    }
+
+    val prepareDesktopPlatformResources by tasks.register<Copy>("prepareDesktopPlatformResources") {
+        val platform = when {
+            System.getProperty("os.name").contains("Windows") -> "windows"
+            System.getProperty("os.name").contains("Mac") -> "macos"
+            else -> "linux"
+        }
+        val arch = when {
+            System.getProperty("os.arch").contains("aarch64") -> "arm64"
+            else -> "x64"
+        }
+
+        from("${getSourceDesktopResourcesDir().path}/$platform-$arch")
+        into("${getTargetDesktopResourcesDir().path}/$platform")
+
+        outputs.dir("${getTargetDesktopResourcesDir().path}/$platform")
+    }
+
+    // IMPORTANT! Run this manually before building desktop
+    val prepareDesktopResources by tasks.register<Sync>("prepareDesktopResources") {
+        dependsOn(prepareDesktopCommonResources, prepareDesktopPlatformResources)
+    }
+
     composeExeManifest {
         enabled = true
         manifestMode = ManifestMode.EMBED
@@ -226,7 +265,7 @@ compose.desktop {
             modules("jdk.unsupported")
 
             // Desktop native libraries
-            appResourcesRootDir = rootDir.resolve("desktopLibs")
+            appResourcesRootDir = getTargetDesktopResourcesDir()
 
             // Desktop native icons
             windows {
