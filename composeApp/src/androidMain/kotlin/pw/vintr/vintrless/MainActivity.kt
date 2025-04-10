@@ -1,6 +1,8 @@
 package pw.vintr.vintrless
 
+import android.content.ComponentName
 import android.os.Bundle
+import android.service.quicksettings.TileService
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,6 +16,7 @@ import pw.vintr.vintrless.broadcast.V2RayBroadcastReceiver
 import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterConfig
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
+import pw.vintr.vintrless.quickSettings.VintrlessQSTileService
 import pw.vintr.vintrless.tools.AppActivity
 import pw.vintr.vintrless.v2ray.interactor.AndroidV2RayInteractor
 import pw.vintr.vintrless.v2ray.service.V2RayServiceController
@@ -108,8 +111,19 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun applyConfig(config: V2RayEncodedConfig, appFilterConfig: ApplicationFilterConfig) {
+        // Save config
         V2RayConfigStorage.saveConfig(applicationContext, config)
         AppFilterConfigStorage.saveConfig(applicationContext, appFilterConfig)
+
+        // Request QS tile update
+        updateQSTile()
+    }
+
+    private fun updateQSTile() {
+        TileService.requestListeningState(
+            applicationContext,
+            ComponentName(applicationContext, VintrlessQSTileService::class.java)
+        )
     }
 }
 
