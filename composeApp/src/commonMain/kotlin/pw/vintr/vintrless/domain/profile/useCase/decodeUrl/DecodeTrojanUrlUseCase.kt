@@ -12,7 +12,7 @@ object DecodeTrojanUrlUseCase {
 
     operator fun invoke(urlString: String): ProfileData {
         val url = Url.parse(urlString)
-        val profileDataMap = ProfileForm.Vless
+        val profileDataMap = ProfileForm.Trojan
             .getDefaultData()
             .toMutableMap()
 

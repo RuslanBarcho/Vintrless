@@ -12,13 +12,13 @@ import vintrless.composeapp.generated.resources.profile_group_camouflage
 sealed class ProfileForm {
 
     companion object {
-        val allForms: List<ProfileForm> = listOf(Vless, Vmess, ShadowSocks, Socks, Http, Trojan, WireGuard)
+        val allForms: List<ProfileForm> = listOf(Vless, Vmess, Shadowsocks, Socks, Http, Trojan, WireGuard)
 
         fun getByType(type: ProtocolType): ProfileForm {
             return when (type) {
                 ProtocolType.VLESS -> Vless
                 ProtocolType.VMESS -> Vmess
-                ProtocolType.SHADOWSOCKS -> ShadowSocks
+                ProtocolType.SHADOWSOCKS -> Shadowsocks
                 ProtocolType.SOCKS -> Socks
                 ProtocolType.HTTP -> Http
                 ProtocolType.TROJAN -> Trojan
@@ -156,7 +156,7 @@ sealed class ProfileForm {
     }
 
     @Serializable
-    data object ShadowSocks : ProfileForm() {
+    data object Shadowsocks : ProfileForm() {
 
         override val type = ProtocolType.SHADOWSOCKS
 

@@ -23,7 +23,7 @@ object DecodeSocksUrlUseCase {
         val port = urlParts.groupValues[3]
         val name = UriCodec.decode(urlParts.groupValues[4])
 
-        val profileDataMap = ProfileForm.ShadowSocks
+        val profileDataMap = ProfileForm.Socks
             .getDefaultData()
             .toMutableMap()
 
