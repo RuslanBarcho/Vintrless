@@ -92,7 +92,9 @@ object V2RayConfigBuildUseCase {
             ProtocolType.TROJAN -> {
                 TrojanOutboundBuildUseCase(profile)
             }
-            ProtocolType.WIREGUARD,
+            ProtocolType.WIREGUARD -> {
+                WireguardOutboundBuildUseCase(profile)
+            }
             ProtocolType.HYSTERIA2 -> V2RayConfig.OutboundBean(protocol = "stub")
         }
 

@@ -28,6 +28,9 @@ class ProfileUrlInteractor : BaseInteractor() {
             ProtocolType.TROJAN -> {
                 EncodeTrojanUrlUseCase(profileData)
             }
+            ProtocolType.WIREGUARD -> {
+                EncodeWireguardUrlUseCase(profileData)
+            }
             else -> {
                 EncodeVlessUrlUseCase(profileData)
             }
@@ -53,6 +56,9 @@ class ProfileUrlInteractor : BaseInteractor() {
             }
             urlString.startsWith(ProtocolType.TROJAN.protocolScheme) -> {
                 DecodeTrojanUrlUseCase(urlString)
+            }
+            urlString.startsWith(ProtocolType.WIREGUARD.protocolScheme) -> {
+                DecodeWireguardUrlUseCase(urlString)
             }
             else -> {
                 throw Exception("Illegal protocol scheme")

@@ -12,7 +12,7 @@ import vintrless.composeapp.generated.resources.profile_group_camouflage
 sealed class ProfileForm {
 
     companion object {
-        val allForms: List<ProfileForm> = listOf(Vless, Vmess, ShadowSocks, Socks, Http, Trojan)
+        val allForms: List<ProfileForm> = listOf(Vless, Vmess, ShadowSocks, Socks, Http, Trojan, WireGuard)
 
         fun getByType(type: ProtocolType): ProfileForm {
             return when (type) {
@@ -22,7 +22,7 @@ sealed class ProfileForm {
                 ProtocolType.SOCKS -> Socks
                 ProtocolType.HTTP -> Http
                 ProtocolType.TROJAN -> Trojan
-                ProtocolType.WIREGUARD -> Vless
+                ProtocolType.WIREGUARD -> WireGuard
                 ProtocolType.HYSTERIA2 -> Vless
             }
         }
@@ -267,6 +267,29 @@ sealed class ProfileForm {
                 titleRes = Res.string.profile_group_camouflage,
                 fields = listOf(ProfileField.TLS)
             )
+        )
+    }
+
+    @Serializable
+    data object WireGuard : ProfileForm() {
+
+        override val type = ProtocolType.WIREGUARD
+
+        override val fieldGroups = listOf(
+            ProfileFieldGroup(
+                titleRes = Res.string.profile_group_server,
+                fields = listOf(
+                    ProfileField.Name,
+                    ProfileField.IP,
+                    ProfileField.Port,
+                    ProfileField.ServerPrivateKey,
+                    ProfileField.ServerPublicKey,
+                    ProfileField.ServerAdditionalKey,
+                    ProfileField.Reserved,
+                    ProfileField.LocalAddress,
+                    ProfileField.MTU,
+                ),
+            ),
         )
     }
 }

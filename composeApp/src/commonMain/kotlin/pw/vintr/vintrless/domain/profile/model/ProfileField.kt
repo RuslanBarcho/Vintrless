@@ -50,6 +50,44 @@ sealed class ProfileField {
         override val key: String = "password"
     }
 
+    data object ServerPrivateKey : ProfileField() {
+        override val titleRes: StringResource = Res.string.profile_field_server_private_key
+        override val key: String = "server-private-key"
+    }
+
+    data object ServerPublicKey : ProfileField() {
+        override val titleRes: StringResource = Res.string.profile_field_server_public_key
+        override val key: String = "server-public-key"
+        override val queryKey: String = "publickey"
+    }
+
+    data object ServerAdditionalKey : ProfileField() {
+        override val titleRes: StringResource = Res.string.profile_field_server_additional_key
+        override val key: String = "server-additional-key"
+        override val queryKey: String = "presharedkey"
+    }
+
+    data object Reserved : ProfileField() {
+        override val titleRes: StringResource = Res.string.profile_field_reserved
+        override val initialValue = "0,0,0"
+        override val key: String = "reserved"
+        override val queryKey: String = "reserved"
+    }
+
+    data object LocalAddress : ProfileField() {
+        override val titleRes: StringResource = Res.string.profile_field_local_address
+        override val initialValue = "172.16.0.2/32,2606:4700:110:8f81:d551:a0:532e:a2b3/128"
+        override val key: String = "address"
+        override val queryKey: String = "address"
+    }
+
+    data object MTU : ProfileField() {
+        override val titleRes: StringResource = Res.string.profile_field_mtu
+        override val initialValue = "1420"
+        override val key: String = "mtu"
+        override val queryKey: String = "mtu"
+    }
+
     data object Flow : ProfileField() {
 
         override val titleRes: StringResource = Res.string.profile_field_flow
