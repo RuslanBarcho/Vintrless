@@ -1,7 +1,11 @@
 package pw.vintr.vintrless.presentation.screen.log.viewer
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.alert.model.AlertModel
@@ -21,21 +25,31 @@ class LogViewerViewModel(
     private val alertInteractor: AlertInteractor,
 ) : BaseViewModel(navigator) {
 
+    companion object {
+        private const val LOGS_DEBOUNCE_MILLIS = 100L
+    }
+
     init {
         logPlatformInteractor.startInheritLogs()
     }
 
     private val filterFlow = MutableStateFlow(LogFilter())
 
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val screenState = combine(
         logPlatformInteractor.logFlow,
         filterFlow
     ) { logs, filter ->
+        Pair(logs.logs, filter)
+    }.debounce(timeoutMillis = LOGS_DEBOUNCE_MILLIS).mapLatest {
+        val logs = it.first
+        val filter = it.second
+
         if (filter.isEmpty) {
-            LogViewerScreenState(logs.logs)
+            LogViewerScreenState(logs)
         } else {
             LogViewerScreenState(
-                logs = logs.logs.filter { log ->
+                logs = logs.filter { log ->
                     val queryValid = filter.query.isEmpty() ||
                             log.payload.contains(filter.query, ignoreCase = true)
                     val typeValid = filter.selection[log.type] == true
