@@ -16,7 +16,7 @@ object SingBoxConfigBuildUseCase {
                 Inbound(
                     type = "tun",
                     tag = "tun-in",
-                    interfaceName = "singbox_tun",
+                    interfaceName = "utun999",
                     inet4Address = "172.19.0.1/30",
                     mtu = 9000,
                     autoRoute = true,

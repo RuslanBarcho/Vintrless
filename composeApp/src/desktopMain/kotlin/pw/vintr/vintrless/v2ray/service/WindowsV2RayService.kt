@@ -20,7 +20,7 @@ import java.io.PrintStream
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-object WindowsV2RayService {
+object WindowsV2RayService : DesktopV2RayService {
 
     enum class ProcType {
         TUN,
@@ -35,7 +35,7 @@ object WindowsV2RayService {
 
     private var serviceStartJob: Job? = null
 
-    fun startService(v2RayConfig: V2RayEncodedConfig, singBoxConfig: SingBoxConfig) {
+    override fun startService(v2RayConfig: V2RayEncodedConfig, singBoxConfig: SingBoxConfig) {
         serviceStartJob = MainScope().launch {
             JvmV2RayInteractor.postConnecting()
 
@@ -128,7 +128,7 @@ object WindowsV2RayService {
         }.start()
     }
 
-    fun stopService() {
+    override fun stopService() {
         runningProcMap[ProcType.TUN]?.close()
         runningProcMap[ProcType.XRAY]?.close()
 

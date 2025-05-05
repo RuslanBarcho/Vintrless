@@ -2,7 +2,6 @@ package pw.vintr.vintrless.domain.singbox.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Serializable
@@ -12,7 +11,7 @@ data class SingBoxConfig(
     val inbounds: List<Inbound>,
     val outbounds: List<Outbound>,
     val route: Route,
-    val experimental: Experimental
+    val experimental: Experimental?
 ) {
     fun toJson(): String {
         val json = Json {
@@ -48,7 +47,8 @@ data class Server(
 data class Rule(
     @SerialName("server") val server: String,
     @SerialName("clash_mode") val clashMode: String? = null,
-    @SerialName("rule_set") val ruleSet: List<String>? = null
+    @SerialName("rule_set") val ruleSet: List<String>? = null,
+    @SerialName("domain") val domain: List<String>? = null
 )
 
 @Serializable
