@@ -141,4 +141,8 @@
     <string name="logs_type_info">Info</string>
     <string name="logs_type_errors">Errors</string>
     <string name="logs_type_warnings">Warnings</string>
+
+    <string name="sudo_enter_password_auth_required">Authentication Required</string>
+    <string name="sudo_enter_password_reason">For the tun engine to work correctly, you must enter the root password</string>
+    <string name="sudo_enter_password_submit">Submit</string>
 </resources>

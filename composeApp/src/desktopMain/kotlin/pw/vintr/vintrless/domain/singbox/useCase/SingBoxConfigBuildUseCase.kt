@@ -16,13 +16,13 @@ object SingBoxConfigBuildUseCase {
                 Inbound(
                     type = "tun",
                     tag = "tun-in",
-                    interfaceName = "utun999",
+                    interfaceName = "utun768",
                     inet4Address = "172.19.0.1/30",
                     mtu = 9000,
                     autoRoute = true,
                     strictRoute = true,
-                    stack = "gvisor",
-                    sniff = true
+                    stack = "system",
+                    sniff = true,
                 )
             ),
             outbounds = listOf(
@@ -47,10 +47,10 @@ object SingBoxConfigBuildUseCase {
                 )
             ),
             route = SingBoxRouteBuildUseCase(appFilterConfig),
-            experimental = Experimental(
-                cacheFile = CacheFile(enabled = true),
-                clashApi = ClashApi(externalController = "127.0.0.1:10814")
-            )
+//            experimental = Experimental(
+//                cacheFile = CacheFile(enabled = true),
+//                clashApi = ClashApi(externalController = "127.0.0.1:10814")
+//            )
         )
     }
 }

@@ -36,6 +36,7 @@ object SingBoxRouteBuildUseCase {
         "juicity-client.exe",
         "juicity.exe",
         "xray",
+        "sing-box"
     )
 
     private val defaultDirectIps = listOf(

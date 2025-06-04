@@ -142,4 +142,8 @@
     <string name="logs_type_info">Информационные</string>
     <string name="logs_type_errors">Ошибки</string>
     <string name="logs_type_warnings">Предупреждения</string>
+
+    <string name="sudo_enter_password_auth_required">Необходима авторизация</string>
+    <string name="sudo_enter_password_reason">Для корректной работы tun-движка, необходимо ввести root-пароль</string>
+    <string name="sudo_enter_password_submit">Применить</string>
 </resources>

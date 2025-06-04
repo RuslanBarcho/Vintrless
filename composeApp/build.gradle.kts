@@ -271,6 +271,10 @@ compose.desktop {
             windows {
                 iconFile.set(rootDir.resolve("desktopIcons/windows/launcher.ico"))
             }
+            macOS {
+                iconFile.set(rootDir.resolve("desktopIcons/macos/launcher.icns"))
+                dockName = "Vintrless"
+            }
 
             jvmArgs(
                 "-Dapple.awt.application.appearance=system"
