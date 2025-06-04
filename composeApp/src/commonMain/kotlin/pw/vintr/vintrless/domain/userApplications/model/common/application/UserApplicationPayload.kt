@@ -23,4 +23,12 @@ sealed class UserApplicationPayload {
         override val payloadReadableTitle: String = relatedExecutable
             .processName
     }
+
+    data class MacOSApplicationPayload(
+        val processName: String,
+        val absolutePath: String
+    ) : UserApplicationPayload() {
+
+        override val payloadReadableTitle: String = processName
+    }
 }

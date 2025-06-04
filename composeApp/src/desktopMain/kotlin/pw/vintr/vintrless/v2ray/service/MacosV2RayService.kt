@@ -29,46 +29,11 @@ object MacosV2RayService : DesktopV2RayService {
 
     private var serviceStartJob: Job? = null
 
-    private suspend fun getSudoPassword(reason: String): String? = withContext(Dispatchers.IO) {
-        try {
-            val script = """
-            set dialogResult to display dialog "$reason" ¬
-                with title "Authentication Required" ¬
-                default answer "" ¬
-                with hidden answer ¬
-                buttons {"Cancel", "OK"} ¬
-                default button "OK" ¬
-                cancel button "Cancel"
-            
-            if button returned of dialogResult is "OK" then
-                return text returned of dialogResult
-            else
-                return "CANCEL"
-            end if
-        """.trimIndent()
-
-            val proc = ProcessBuilder("osascript", "-e", script)
-                .redirectErrorStream(true)
-                .start()
-
-            val result = proc.inputStream.bufferedReader().use { it.readText().trim() }
-
-            when {
-                result == "CANCEL" -> null
-                result.isNotEmpty() -> result
-                else -> null
-            }
-        } catch (e: Exception) {
-            println("Failed to get password: ${e.message}")
-            null
-        }
-    }
-
     override fun startService(v2RayConfig: V2RayEncodedConfig, singBoxConfig: SingBoxConfig) {
         serviceStartJob = MainScope().launch {
             val password = SystemInteractor.getSudoPassword()
 
-            if (password != null ) {
+            if (password != null) {
                 JvmV2RayInteractor.postConnecting()
 
                 try {

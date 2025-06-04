@@ -1,21 +1,26 @@
 package pw.vintr.vintrless.domain.userApplications
 
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asComposeImageBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.jetbrains.skiko.toBitmap
 import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
 import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplication
 import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplicationPayload
 import pw.vintr.vintrless.tools.PathProvider
-import pw.vintr.vintrless.tools.extensions.Empty
-import pw.vintr.vintrless.tools.extensions.addShutdownHook
-import pw.vintr.vintrless.tools.extensions.closeIfAlive
+import pw.vintr.vintrless.tools.extensions.*
+import java.awt.image.BufferedImage
 import java.io.File
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
 import java.util.*
+import javax.swing.ImageIcon
+import javax.swing.UIManager
+import javax.swing.filechooser.FileSystemView
 import kotlin.coroutines.suspendCoroutine
 
 class WindowsApplicationsInteractor : ApplicationsInteractor() {
@@ -146,5 +151,54 @@ class WindowsApplicationsInteractor : ApplicationsInteractor() {
                 System.err.println(String(sc.nextLine().toByteArray(), StandardCharsets.UTF_8))
             }
         }.start()
+    }
+
+    override suspend fun getApplicationIcon(application: UserApplication): ImageBitmap? {
+        return when (application.payload) {
+            is UserApplicationPayload.WindowsApplicationPayload -> {
+                getExecutableBufferedImage(File(application.payload.relatedExecutable.absolutePath))
+                    ?.toBitmap()
+                    ?.asComposeImageBitmap()
+            }
+            else -> null
+        }
+    }
+
+    private suspend fun getExecutableBufferedImage(executable: File): BufferedImage? {
+        return withContext(Dispatchers.IO) {
+            runCatching {
+                val defaultFileIcon = UIManager.getIcon("FileView.fileIcon")
+                val icon = FileSystemView
+                    .getFileSystemView()
+                    .getSystemIcon(executable, 100, 100)
+
+                if (icon !is ImageIcon || icon.isEqualTo(defaultFileIcon)) {
+                    return@runCatching null
+                }
+
+                if (icon is BufferedImage) {
+                    return@runCatching icon
+                }
+
+                // Create a buffered image with transparency
+                val bufferedImage = BufferedImage(
+                    icon.iconWidth,
+                    icon.iconHeight,
+                    BufferedImage.TYPE_INT_ARGB
+                )
+
+                // Draw the image on to the buffered image
+                val bGr = bufferedImage.createGraphics()
+                icon.paintIcon(null, bGr, 0, 0)
+                bGr.dispose()
+
+                // Return the buffered image if not blank
+                if (!bufferedImage.isBlank()) {
+                    bufferedImage
+                } else {
+                    null
+                }
+            }.getOrNull()
+        }
     }
 }

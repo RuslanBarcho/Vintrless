@@ -10,7 +10,7 @@ import androidx.compose.ui.window.rememberWindowState
 import org.jetbrains.compose.resources.painterResource
 import pw.vintr.vintrless.domain.system.interactor.SystemInteractor
 import pw.vintr.vintrless.v2ray.interactor.JvmV2RayInteractor
-import pw.vintr.vintrless.presentation.PasswordWindow
+import pw.vintr.vintrless.presentation.SudoPasswordWindow
 import vintrless.composeapp.generated.resources.Res
 import vintrless.composeapp.generated.resources.ic_app_icon
 import java.awt.Dimension
@@ -20,7 +20,7 @@ fun main() {
     setProperty("apple.awt.application.name", "Vintrless")
 
     application {
-        PasswordWindow(SystemInteractor.sudoPasswordState)
+        SudoPasswordWindow(SystemInteractor.sudoPasswordState)
 
         Window(
             onCloseRequest = {

@@ -34,7 +34,7 @@ import java.awt.Cursor
 import kotlin.coroutines.resume
 
 @Composable
-fun PasswordWindow(
+fun SudoPasswordWindow(
     state: SudoPasswordState,
 ) {
     val windowState = rememberWindowState(
@@ -56,8 +56,8 @@ fun PasswordWindow(
                 title = stringResource(Res.string.sudo_enter_password_auth_required),
                 onCloseRequest = {
                     state.isWindowOpen = false
-                    state.continuation?.resume(null)
-                    state.continuation = null
+                    state.continuation.forEach { it.resume(null) }
+                    state.continuation = listOf()
                 },
                 visible = state.isWindowOpen,
                 resizable = false,
@@ -107,8 +107,8 @@ fun PasswordWindow(
                         text = stringResource(Res.string.sudo_enter_password_submit),
                         onClick = {
                             state.isWindowOpen = false
-                            state.continuation?.resume(state.password)
-                            state.continuation = null
+                            state.continuation.forEach { it.resume(state.password) }
+                            state.continuation = listOf()
                         }
                     )
                 }

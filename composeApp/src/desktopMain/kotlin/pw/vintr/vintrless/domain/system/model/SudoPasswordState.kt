@@ -8,5 +8,5 @@ import kotlinx.coroutines.CancellableContinuation
 class SudoPasswordState {
     var password by mutableStateOf<String?>(null)
     var isWindowOpen by mutableStateOf(false)
-    var continuation: CancellableContinuation<String?>? by mutableStateOf(null)
+    var continuation: List<CancellableContinuation<String?>> by mutableStateOf(listOf())
 }

@@ -28,7 +28,7 @@ object SystemInteractor: BaseInteractor() {
     suspend fun getSudoPassword(): String? {
         return if (sudoPasswordState.password == null) {
             suspendCancellableCoroutine { continuation ->
-                sudoPasswordState.continuation = continuation
+                sudoPasswordState.continuation += continuation
                 sudoPasswordState.isWindowOpen = true
             }
         } else {
