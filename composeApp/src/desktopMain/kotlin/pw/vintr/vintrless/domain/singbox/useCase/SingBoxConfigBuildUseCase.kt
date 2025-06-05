@@ -47,10 +47,10 @@ object SingBoxConfigBuildUseCase {
                 )
             ),
             route = SingBoxRouteBuildUseCase(appFilterConfig),
-//            experimental = Experimental(
-//                cacheFile = CacheFile(enabled = true),
-//                clashApi = ClashApi(externalController = "127.0.0.1:10814")
-//            )
+            experimental = Experimental(
+                cacheFile = CacheFile(enabled = true),
+                clashApi = ClashApi(externalController = "127.0.0.1:10814")
+            )
         )
     }
 }

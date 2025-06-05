@@ -3,6 +3,7 @@ package pw.vintr.vintrless.domain.system.interactor
 import kotlinx.coroutines.suspendCancellableCoroutine
 import pw.vintr.vintrless.domain.base.BaseInteractor
 import pw.vintr.vintrless.domain.system.model.OS
+import pw.vintr.vintrless.domain.system.model.SudoPasswordRequestReason
 import pw.vintr.vintrless.domain.system.model.SudoPasswordState
 
 object SystemInteractor: BaseInteractor() {
@@ -25,8 +26,10 @@ object SystemInteractor: BaseInteractor() {
         }
     }
 
-    suspend fun getSudoPassword(): String? {
+    suspend fun getSudoPassword(requestReason: SudoPasswordRequestReason): String? {
         return if (sudoPasswordState.password == null) {
+            sudoPasswordState.requestReason = requestReason
+
             suspendCancellableCoroutine { continuation ->
                 sudoPasswordState.continuation += continuation
                 sudoPasswordState.isWindowOpen = true

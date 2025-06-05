@@ -5,6 +5,7 @@ import pw.vintr.vintrless.domain.log.JVMLogInteractor
 import pw.vintr.vintrless.domain.log.model.LogType
 import pw.vintr.vintrless.domain.singbox.model.SingBoxConfig
 import pw.vintr.vintrless.domain.system.interactor.SystemInteractor
+import pw.vintr.vintrless.domain.system.model.SudoPasswordRequestReason
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.tools.PathProvider
 import pw.vintr.vintrless.tools.extensions.addShutdownHook
@@ -31,7 +32,7 @@ object MacosV2RayService : DesktopV2RayService {
 
     override fun startService(v2RayConfig: V2RayEncodedConfig, singBoxConfig: SingBoxConfig) {
         serviceStartJob = MainScope().launch {
-            val password = SystemInteractor.getSudoPassword()
+            val password = SystemInteractor.getSudoPassword(SudoPasswordRequestReason.START_TUN)
 
             if (password != null) {
                 JvmV2RayInteractor.postConnecting()

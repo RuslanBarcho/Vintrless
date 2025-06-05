@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.skiko.toBitmap
 import pw.vintr.vintrless.domain.system.interactor.SystemInteractor
+import pw.vintr.vintrless.domain.system.model.SudoPasswordRequestReason
 import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplication
 import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplicationPayload
 import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
@@ -21,7 +22,7 @@ class MacOSApplicationsInteractor : ApplicationsInteractor() {
 
     override suspend fun getApplications(): List<UserApplication> = withContext(Dispatchers.IO) {
         val applications = mutableListOf<UserApplication>()
-        val password = SystemInteractor.getSudoPassword()
+        val password = SystemInteractor.getSudoPassword(SudoPasswordRequestReason.GET_APPLICATIONS_INFO)
 
         // System applications (might need sudo for some locations)
         if (password != null) {
@@ -112,7 +113,7 @@ class MacOSApplicationsInteractor : ApplicationsInteractor() {
     }
 
     override suspend fun getRunningProcesses(): List<SystemProcess> = withContext(Dispatchers.IO) {
-        val password = SystemInteractor.getSudoPassword()
+        val password = SystemInteractor.getSudoPassword(SudoPasswordRequestReason.GET_APPLICATIONS_INFO)
 
         return@withContext if (password != null) {
             // Use ps with sudo for more detailed process info
