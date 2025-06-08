@@ -6,7 +6,9 @@ import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.ModalBottomSheetValue
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,7 +30,6 @@ import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
 import pw.vintr.vintrless.domain.alert.model.AlertModel.Type.*
 import pw.vintr.vintrless.domain.alert.model.AlertState
 import pw.vintr.vintrless.domain.log.model.LogFilter
-import pw.vintr.vintrless.platform.model.PlatformType
 import pw.vintr.vintrless.presentation.navigation.*
 import pw.vintr.vintrless.presentation.screen.about.AboutAppScreen
 import pw.vintr.vintrless.presentation.screen.applicationFilter.ApplicationFilterScreen
@@ -36,7 +37,6 @@ import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmDialog
 import pw.vintr.vintrless.presentation.screen.confirmDialog.ConfirmDialogData
 import pw.vintr.vintrless.presentation.screen.log.filter.LogFilterDialog
 import pw.vintr.vintrless.presentation.screen.log.viewer.LogViewerScreen
-import pw.vintr.vintrless.presentation.screen.main.SimplifiedNavigationMainScreen
 import pw.vintr.vintrless.presentation.screen.main.MainScreen
 import pw.vintr.vintrless.presentation.screen.profile.createNew.CreateNewProfileDialog
 import pw.vintr.vintrless.presentation.screen.profile.editForm.EditProfileFormScreen
@@ -154,15 +154,7 @@ fun Navigation(
         exitTransition = { fadeOut(animationSpec = tween(TRANSITION_DURATION)) },
     ) {
         composable<AppScreen.Main> {
-            when (platformType()) {
-                PlatformType.ANDROID -> {
-                    MainScreen()
-                }
-                PlatformType.JVM,
-                PlatformType.IOS -> {
-                    SimplifiedNavigationMainScreen()
-                }
-            }
+            MainScreen()
         }
 
         extendedDialog<AppScreen.CreateNewProfile> { CreateNewProfileDialog() }
