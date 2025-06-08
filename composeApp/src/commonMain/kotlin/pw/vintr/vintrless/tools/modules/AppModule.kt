@@ -111,7 +111,7 @@ val appModule = module {
     // Presentation
     viewModel { MainViewModel(get()) }
     viewModel { ConfirmViewModel(get()) }
-    viewModel { HomeViewModel(get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { SettingsViewModel(get()) }
     viewModel { CreateNewProfileViewModel(get(), get(), get(), get()) }
     viewModel { ScanProfileQRViewModel(get(), get(), get()) }

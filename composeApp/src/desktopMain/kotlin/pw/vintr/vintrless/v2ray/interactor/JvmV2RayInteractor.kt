@@ -7,10 +7,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import pw.vintr.vintrless.domain.base.BaseInteractor
+import pw.vintr.vintrless.domain.base.InteractorEvent
 import pw.vintr.vintrless.domain.singbox.useCase.SingBoxConfigBuildUseCase
 import pw.vintr.vintrless.domain.system.interactor.SystemInteractor
 import pw.vintr.vintrless.domain.system.model.OS
 import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterConfig
+import pw.vintr.vintrless.domain.v2ray.interactor.V2RayConnectionInteractor
 import pw.vintr.vintrless.domain.v2ray.interactor.V2RayPlatformInteractor
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
@@ -59,5 +61,9 @@ object JvmV2RayInteractor : BaseInteractor(), V2RayPlatformInteractor {
 
     fun postDisconnected() {
         _connectionState.value = ConnectionState.Disconnected
+    }
+
+    fun postWrongSudoPassword() {
+        sendEventSync(V2RayConnectionInteractor.Event.ShowWrongSudoPasswordError)
     }
 }

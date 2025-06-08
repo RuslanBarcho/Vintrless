@@ -1,19 +1,15 @@
 package pw.vintr.vintrless.v2ray.service
 
 import kotlinx.coroutines.*
-import pw.vintr.vintrless.domain.log.JVMLogInteractor
-import pw.vintr.vintrless.domain.log.model.LogType
 import pw.vintr.vintrless.domain.singbox.model.SingBoxConfig
 import pw.vintr.vintrless.domain.system.interactor.SystemInteractor
 import pw.vintr.vintrless.domain.system.model.SudoPasswordRequestReason
 import pw.vintr.vintrless.domain.v2ray.model.V2RayEncodedConfig
 import pw.vintr.vintrless.tools.PathProvider
-import pw.vintr.vintrless.tools.extensions.addShutdownHook
-import pw.vintr.vintrless.tools.extensions.close
+import pw.vintr.vintrless.tools.exception.WrongSudoPasswordException
+import pw.vintr.vintrless.tools.extensions.*
 import pw.vintr.vintrless.v2ray.interactor.JvmV2RayInteractor
 import java.io.*
-import java.nio.charset.StandardCharsets
-import java.util.*
 
 object MacosV2RayService : DesktopV2RayService {
 
@@ -53,8 +49,8 @@ object MacosV2RayService : DesktopV2RayService {
                         .directory(resourcesDir)
                         .start()
 
-                    inheritIO(xrayProc.inputStream, System.out)
-                    inheritIO(xrayProc.errorStream, System.err)
+                    inheritProcessIO(xrayProc.inputStream, System.out)
+                    inheritProcessIO(xrayProc.errorStream, System.err)
                     xrayProc.addShutdownHook()
 
                     runningProcMap[ProcType.XRAY] = xrayProc
@@ -69,13 +65,14 @@ object MacosV2RayService : DesktopV2RayService {
                         .directory(resourcesDir)
                         .start()
 
-                    tunProc.outputStream.bufferedWriter().use {
-                        it.write("$password\n")
-                        it.flush()
+                    val passwordResult = tunProc.handleSudoPassword(password)
+                    if (!passwordResult) {
+                        throw WrongSudoPasswordException()
                     }
 
-                    inheritIO(tunProc.inputStream, System.out)
-                    inheritIO(tunProc.errorStream, System.err)
+                    inheritProcessIO(tunProc.inputStream, System.out)
+                    inheritProcessIO(tunProc.errorStream, System.err)
+
                     tunProc.addShutdownHook()
 
                     runningProcMap[ProcType.TUN] = tunProc
@@ -87,6 +84,11 @@ object MacosV2RayService : DesktopV2RayService {
 
                     stopService()
                     JvmV2RayInteractor.postDisconnected()
+
+                    if (exception is WrongSudoPasswordException) {
+                        SystemInteractor.clearSudoPassword()
+                        JvmV2RayInteractor.postWrongSudoPassword()
+                    }
                 }
             }
         }
@@ -107,32 +109,6 @@ object MacosV2RayService : DesktopV2RayService {
 
         bufferedWriter.write(json.replace("\\", "/"))
         bufferedWriter.close()
-    }
-
-    private fun inheritIO(src: InputStream, dest: PrintStream) {
-        Thread {
-            val sc = Scanner(src)
-            while (sc.hasNextLine()) {
-                val message = String(sc.nextLine().toByteArray(), StandardCharsets.UTF_8)
-
-                dest.println(message)
-                JVMLogInteractor.pushLog(
-                    message = message,
-                    type = when {
-                        dest == System.err ||
-                                message.contains("failed", ignoreCase = true) -> {
-                            LogType.ERROR
-                        }
-                        message.contains("warning", ignoreCase = true) -> {
-                            LogType.WARNING
-                        }
-                        else -> {
-                            LogType.INFORMATION
-                        }
-                    }
-                )
-            }
-        }.start()
     }
 
     override fun stopService() {

@@ -9,6 +9,8 @@ import vintrless.composeapp.generated.resources.error_alert_title
 import vintrless.composeapp.generated.resources.now_you_can_share_data
 import vintrless.composeapp.generated.resources.profile_save_success_message
 import vintrless.composeapp.generated.resources.profile_save_success_title
+import vintrless.composeapp.generated.resources.sudo_password_wrong_title
+import vintrless.composeapp.generated.resources.sudo_password_wrong_message
 
 sealed class AlertModel {
 
@@ -53,5 +55,13 @@ sealed class AlertModel {
     ) : AlertModel() {
 
         override val type = Type.POSITIVE
+    }
+
+    data class WrongSudoPassword(
+        override val titleRes: StringResource = Res.string.sudo_password_wrong_title,
+        override val messageRes: StringResource = Res.string.sudo_password_wrong_message
+    ) : AlertModel() {
+
+        override val type = Type.NEGATIVE
     }
 }

@@ -38,4 +38,8 @@ object SystemInteractor: BaseInteractor() {
             sudoPasswordState.password
         }
     }
+
+    fun clearSudoPassword() {
+        sudoPasswordState.password = null
+    }
 }

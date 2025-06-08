@@ -10,15 +10,46 @@ import pw.vintr.vintrless.domain.system.model.SudoPasswordRequestReason
 import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplication
 import pw.vintr.vintrless.domain.userApplications.model.common.application.UserApplicationPayload
 import pw.vintr.vintrless.domain.userApplications.model.common.process.SystemProcess
-import pw.vintr.vintrless.tools.command.BashCommandExecutor
 import java.awt.Image
 import java.awt.image.BufferedImage
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import javax.imageio.ImageIO
 
 class MacOSApplicationsInteractor : ApplicationsInteractor() {
 
-    private val commandExecutor = BashCommandExecutor()
+    private suspend fun executeWithSudo(
+        command: String,
+        password: String
+    ): String = withContext(Dispatchers.IO) {
+        val processBuilder = ProcessBuilder(
+            "/bin/bash", "-c", "echo '$password' | sudo -S $command"
+        )
+
+        val process = processBuilder.start()
+        val reader = BufferedReader(InputStreamReader(process.inputStream))
+        val errorReader = BufferedReader(InputStreamReader(process.errorStream))
+
+        val output = StringBuilder()
+        var line: String?
+
+        while (reader.readLine().also { line = it } != null) {
+            output.appendLine(line)
+        }
+
+        val errorOutput = StringBuilder()
+        while (errorReader.readLine().also { line = it } != null) {
+            errorOutput.appendLine(line)
+        }
+
+        val exitCode = process.waitFor()
+        if (exitCode != 0) {
+            throw RuntimeException("Command failed with exit code $exitCode: $errorOutput")
+        }
+
+        output.toString()
+    }
 
     override suspend fun getApplications(): List<UserApplication> = withContext(Dispatchers.IO) {
         val applications = mutableListOf<UserApplication>()
@@ -28,13 +59,14 @@ class MacOSApplicationsInteractor : ApplicationsInteractor() {
         if (password != null) {
             try {
                 // Use sudo to access protected directories
-                val systemAppsOutput = commandExecutor.executeWithSudo(
+                val systemAppsOutput = executeWithSudo(
                     "find /Applications -name '*.app' -maxdepth 3",
                     password
                 )
                 parseAppFinderOutput(systemAppsOutput, applications)
             } catch (e: Exception) {
                 // Fall back to regular scanning if sudo fails
+                SystemInteractor.clearSudoPassword()
                 scanApplicationsInDirectory("/Applications", applications)
             }
         } else {
@@ -118,12 +150,13 @@ class MacOSApplicationsInteractor : ApplicationsInteractor() {
         return@withContext if (password != null) {
             // Use ps with sudo for more detailed process info
             try {
-                val psOutput = commandExecutor.executeWithSudo(
+                val psOutput = executeWithSudo(
                     "ps -eo pid,user,comm,command | awk 'NR>1'",
                     password
                 )
                 parsePsOutput(psOutput)
             } catch (e: Exception) {
+                SystemInteractor.clearSudoPassword()
                 listOf()
             }
         } else {
