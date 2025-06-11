@@ -137,8 +137,8 @@ android {
         applicationId = "pw.vintr.vintrless"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 3
-        versionName = "1.2.0"
+        versionCode = 4
+        versionName = "1.3.0"
         multiDexEnabled = true
 
         splits {
@@ -297,7 +297,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Vintrless"
-            packageVersion = "1.2.0"
+            packageVersion = "1.3.0"
             vendor = "Vintrapps"
             modules("jdk.unsupported")
 
