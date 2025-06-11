@@ -8,16 +8,23 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import org.jetbrains.compose.resources.painterResource
+import org.koin.core.context.startKoin
+import org.koin.core.logger.PrintLogger
 import pw.vintr.vintrless.domain.system.interactor.SystemInteractor
 import pw.vintr.vintrless.v2ray.interactor.JvmV2RayInteractor
 import pw.vintr.vintrless.presentation.SudoPasswordWindow
+import pw.vintr.vintrless.tools.modules.appModule
 import vintrless.composeapp.generated.resources.Res
 import vintrless.composeapp.generated.resources.ic_app_icon
 import java.awt.Dimension
-import java.lang.System.setProperty
 
 fun main() {
-    setProperty("apple.awt.application.name", "Vintrless")
+    System.setProperty("apple.awt.application.name", "Vintrless")
+
+    startKoin {
+        logger(PrintLogger())
+        modules(appModule)
+    }
 
     application {
         SudoPasswordWindow(SystemInteractor.sudoPasswordState)

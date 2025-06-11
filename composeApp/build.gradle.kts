@@ -244,8 +244,45 @@ compose.desktop {
     }
 
     // IMPORTANT! Run this manually before building desktop
-    val prepareDesktopResources by tasks.register<Sync>("prepareDesktopResources") {
+    tasks.register<Sync>("prepareDesktopResources") {
         dependsOn(prepareDesktopCommonResources, prepareDesktopPlatformResources)
+    }
+
+    //  IMPORTANT! Run this manually after building macOS distributable
+    tasks.register("configureMacOSApp") {
+        group = "compose desktop"
+        description = "Fixes macOS .app launcher configuration"
+
+        doLast {
+            val buildDir = layout.buildDirectory.get()
+            val appDir = File("$buildDir/compose/binaries/main-release/app/Vintrless.app")
+
+            // 1. Create launcher script
+            File(appDir, "Contents/MacOS/macos-launcher.sh").run {
+                writeText("#!/bin/bash\n" +
+                        "cd \"\${0%/*}/../Resources\"\n" +
+                        "exec \"\${0%/*}/Vintrless\"".trimMargin()
+                )
+                setExecutable(true)
+            }
+
+            // 2. Backup original executable
+            val originalExec = File(appDir, "Contents/MacOS/Vintrless")
+            originalExec.setExecutable(true)
+
+            // 3. Update Info.plist
+            val plist = File(appDir, "Contents/Info.plist")
+                .takeIf { it.exists() }
+            plist?.let {
+                it.writeText(
+                    it.readText()
+                        .replace(
+                            "<key>CFBundleExecutable</key>\n    <string>Vintrless</string>",
+                            "<key>CFBundleExecutable</key>\n    <string>macos-launcher.sh</string>"
+                        )
+                )
+            }
+        }
     }
 
     composeExeManifest {
@@ -267,7 +304,7 @@ compose.desktop {
             // Desktop native libraries
             appResourcesRootDir = getTargetDesktopResourcesDir()
 
-            // Desktop native icons
+            // Native desktop config
             windows {
                 iconFile.set(rootDir.resolve("desktopIcons/windows/launcher.ico"))
             }

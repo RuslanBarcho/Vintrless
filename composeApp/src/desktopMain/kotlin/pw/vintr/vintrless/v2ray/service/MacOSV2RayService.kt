@@ -11,7 +11,7 @@ import pw.vintr.vintrless.tools.extensions.*
 import pw.vintr.vintrless.v2ray.interactor.JvmV2RayInteractor
 import java.io.*
 
-object MacosV2RayService : DesktopV2RayService {
+object MacOSV2RayService : DesktopV2RayService {
 
     enum class ProcType {
         TUN,
@@ -44,6 +44,9 @@ object MacosV2RayService : DesktopV2RayService {
                         json = singBoxConfig.toJson()
                     )
 
+                    val xrayFile = File(resourcesDir, "./xray")
+                    xrayFile.setExecutable(true)
+
                     // Start xray listener
                     val xrayProc = ProcessBuilder("./xray", "run", "-c", "config_xray.json")
                         .directory(resourcesDir)
@@ -57,6 +60,9 @@ object MacosV2RayService : DesktopV2RayService {
 
                     delay(PROCESS_START_DELAY_MILLIS)
 
+                    val singBoxFile = File(resourcesDir, "./sing-box")
+                    singBoxFile.setExecutable(true)
+
                     val tunProc = ProcessBuilder(
                         "sudo", "-S",
                         "env", "ENABLE_DEPRECATED_TUN_ADDRESS_X=true",
@@ -65,8 +71,8 @@ object MacosV2RayService : DesktopV2RayService {
                         .directory(resourcesDir)
                         .start()
 
-                    val passwordResult = tunProc.handleSudoPassword(password)
-                    if (!passwordResult) {
+                    val tunPasswordResult = tunProc.handleSudoPassword(password)
+                    if (!tunPasswordResult) {
                         throw WrongSudoPasswordException()
                     }
 
