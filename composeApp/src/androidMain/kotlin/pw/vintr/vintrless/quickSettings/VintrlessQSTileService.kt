@@ -5,7 +5,6 @@ import android.service.quicksettings.TileService
 import pw.vintr.vintrless.broadcast.V2RayBroadcastReceiver
 import pw.vintr.vintrless.domain.userApplications.model.filter.ApplicationFilterConfig
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
-import pw.vintr.vintrless.v2ray.interactor.AndroidV2RayInteractor
 import pw.vintr.vintrless.v2ray.storage.AppFilterConfigStorage
 import pw.vintr.vintrless.v2ray.storage.V2RayConfigStorage
 import pw.vintr.vintrless.v2ray.useCase.V2RayStartUseCase
@@ -14,97 +13,108 @@ import pw.vintr.vintrless.v2ray.useCase.V2RayStopUseCase
 
 class VintrlessQSTileService : TileService() {
 
-    private val v2RayReceiver = V2RayBroadcastReceiver()
+    private val receiver = V2RayBroadcastReceiver()
+    private var currentState: ConnectionState = ConnectionState.Disconnected
+    private var isReceiverRegistered = false
 
     override fun onCreate() {
         super.onCreate()
-
-        // Register service events receiver
         registerReceiver()
     }
 
     override fun onStartListening() {
         super.onStartListening()
-
-        // Update state immediately
-        val isServiceRunning = V2RayStatusUseCase(applicationContext)
-
-        updateTile(
-            connectionState = if (isServiceRunning) {
-                ConnectionState.Connected
-            } else {
-                AndroidV2RayInteractor.currentState
-            },
-        )
+        if (!isReceiverRegistered) {
+            registerReceiver()
+        }
+        syncCurrentState()
     }
 
     override fun onDestroy() {
-        // Unregister service events receiver
         unregisterReceiver()
-
         super.onDestroy()
     }
 
     override fun onClick() {
-        super.onClick()
-
-        when (qsTile.state) {
-            Tile.STATE_ACTIVE -> {
-                V2RayStopUseCase(applicationContext)
-                updateTile(ConnectionState.Disconnected)
-            }
-            Tile.STATE_INACTIVE -> {
-                val config = V2RayConfigStorage.getConfig(applicationContext)
-                val appFilterConfig = AppFilterConfigStorage
-                    .getConfig(applicationContext) ?: ApplicationFilterConfig.empty()
-
-                if (config != null) {
-                    V2RayStartUseCase(
-                        context = applicationContext,
-                        config = config,
-                        appFilterConfig = appFilterConfig,
-                    )
-                    updateTile(ConnectionState.Connecting)
-                }
-            }
+        when (currentState) {
+            ConnectionState.Connected,
+            ConnectionState.Connecting -> stopVpn()
+            else -> startVpn()
         }
     }
 
     private fun registerReceiver() {
-        v2RayReceiver.register(
-            context = applicationContext,
-            listener = object : V2RayBroadcastReceiver.Listener {
-                override fun onConnectionStateChanged(state: ConnectionState) {
-                    updateTile(state)
-                }
-            },
-        )
+        if (!isReceiverRegistered) {
+            receiver.register(
+                context = applicationContext,
+                listener = object : V2RayBroadcastReceiver.Listener {
+                    override fun onConnectionStateChanged(state: ConnectionState) {
+                        currentState = state
+                        updateTile()
+                    }
+                },
+                sendRegisterEvent = true
+            )
+            isReceiverRegistered = true
+        }
     }
 
     private fun unregisterReceiver() {
-        v2RayReceiver.unregister(applicationContext)
+        if (isReceiverRegistered) {
+            receiver.unregister(applicationContext)
+            isReceiverRegistered = false
+        }
     }
 
-    private fun updateTile(connectionState: ConnectionState) {
-        val config = V2RayConfigStorage.getConfig(applicationContext)
+    private fun syncCurrentState() {
+        currentState = if (V2RayStatusUseCase(applicationContext)) {
+            ConnectionState.Connected
+        } else {
+            ConnectionState.Disconnected
+        }
+        updateTile()
+    }
 
-        qsTile.label = config?.name ?: applicationInfo
-            .loadLabel(packageManager)
-            .toString()
-
-        qsTile.state = when {
-            config == null -> {
-                Tile.STATE_UNAVAILABLE
-            }
-            connectionState == ConnectionState.Connecting ||
-            connectionState == ConnectionState.Connected -> {
-                Tile.STATE_ACTIVE
-            }
-            else -> {
-                Tile.STATE_INACTIVE
-            }
+    private fun startVpn() {
+        val config = V2RayConfigStorage.getConfig(applicationContext) ?: run {
+            updateTile()
+            return
         }
 
-        qsTile.updateTile()
+        val appFilterConfig = AppFilterConfigStorage.getConfig(applicationContext)
+            ?: ApplicationFilterConfig.empty()
+
+        currentState = ConnectionState.Connecting
+        updateTile()
+
+        V2RayStartUseCase(
+            context = applicationContext,
+            config = config,
+            appFilterConfig = appFilterConfig
+        )
+    }
+
+    private fun stopVpn() {
+        currentState = ConnectionState.Disconnected
+        updateTile()
+
+        V2RayStopUseCase(applicationContext)
+    }
+
+    private fun updateTile() {
+        qsTile?.let { tile ->
+            val config = V2RayConfigStorage.getConfig(applicationContext)
+
+            tile.label = config?.name ?: applicationInfo.loadLabel(packageManager).toString()
+
+            tile.state = when {
+                config == null -> Tile.STATE_INACTIVE
+                currentState == ConnectionState.Connected ||
+                currentState == ConnectionState.Connecting -> Tile.STATE_ACTIVE
+                else -> Tile.STATE_INACTIVE
+            }
+
+            tile.updateTile()
+        }
     }
 }
