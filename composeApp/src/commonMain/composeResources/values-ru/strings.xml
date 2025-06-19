@@ -142,4 +142,11 @@
     <string name="logs_type_info">Информационные</string>
     <string name="logs_type_errors">Ошибки</string>
     <string name="logs_type_warnings">Предупреждения</string>
+
+    <string name="sudo_enter_password_auth_required">Необходима авторизация</string>
+    <string name="sudo_enter_password_reason_tun">Для корректной работы tun-движка, необходимо ввести root-пароль</string>
+    <string name="sudo_enter_password_reason_applications">Чтобы получить список всех приложений, необходимо ввести root-пароль</string>
+    <string name="sudo_enter_password_submit">Применить</string>
+    <string name="sudo_password_wrong_title">Неверный пароль</string>
+    <string name="sudo_password_wrong_message">Не удалось выполнить операцию - неверный root-пароль</string>
 </resources>

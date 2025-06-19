@@ -1,13 +1,12 @@
 package pw.vintr.vintrless.domain.v2ray.interactor
 
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import pw.vintr.vintrless.V2RayPlatformInteractor
 import pw.vintr.vintrless.domain.base.BaseInteractor
+import pw.vintr.vintrless.domain.base.InteractorEvent
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.routing.interactor.RoutingInteractor
 import pw.vintr.vintrless.domain.userApplications.interactor.UserApplicationsInteractor
@@ -21,6 +20,10 @@ class V2RayConnectionInteractor(
     private val routingInteractor: RoutingInteractor,
     private val userApplicationInteractor: UserApplicationsInteractor,
 ) : BaseInteractor() {
+
+    sealed class Event : InteractorEvent {
+        data object ShowWrongSudoPasswordError : Event()
+    }
 
     private sealed class Command {
         abstract val timestamp: Long
@@ -47,6 +50,11 @@ class V2RayConnectionInteractor(
     private var commandBufferSubscriptionJob: Job? = null
 
     val connectionState: Flow<ConnectionState> = v2rayInteractor.connectionState
+
+    override val event by lazy {
+        merge(super.event, v2rayInteractor.event)
+            .shareIn(this, started = SharingStarted.Lazily)
+    }
 
     init {
         subscribeCommandBuffer()

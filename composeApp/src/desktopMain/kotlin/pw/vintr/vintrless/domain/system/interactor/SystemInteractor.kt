@@ -1,10 +1,16 @@
 package pw.vintr.vintrless.domain.system.interactor
 
+import kotlinx.coroutines.suspendCancellableCoroutine
+import pw.vintr.vintrless.domain.base.BaseInteractor
 import pw.vintr.vintrless.domain.system.model.OS
+import pw.vintr.vintrless.domain.system.model.SudoPasswordRequestReason
+import pw.vintr.vintrless.domain.system.model.SudoPasswordState
 
-object SystemInteractor {
+object SystemInteractor: BaseInteractor() {
 
     private var detectedOS: OS? = null
+
+    val sudoPasswordState = SudoPasswordState()
 
     fun getOSType(): OS {
         return detectedOS ?: run {
@@ -18,5 +24,22 @@ object SystemInteractor {
                 detectedOS = it
             }
         }
+    }
+
+    suspend fun getSudoPassword(requestReason: SudoPasswordRequestReason): String? {
+        return if (sudoPasswordState.password == null) {
+            sudoPasswordState.requestReason = requestReason
+
+            suspendCancellableCoroutine { continuation ->
+                sudoPasswordState.continuation += continuation
+                sudoPasswordState.isWindowOpen = true
+            }
+        } else {
+            sudoPasswordState.password
+        }
+    }
+
+    fun clearSudoPassword() {
+        sudoPasswordState.password = null
     }
 }

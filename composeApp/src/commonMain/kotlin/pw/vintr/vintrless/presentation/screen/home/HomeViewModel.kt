@@ -1,7 +1,10 @@
 package pw.vintr.vintrless.presentation.screen.home
 
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import pw.vintr.vintrless.domain.alert.interactor.AlertInteractor
+import pw.vintr.vintrless.domain.alert.model.AlertModel
 import pw.vintr.vintrless.domain.v2ray.model.ConnectionState
 import pw.vintr.vintrless.domain.profile.interactor.ProfileInteractor
 import pw.vintr.vintrless.domain.profile.model.ProfileData
@@ -14,6 +17,7 @@ import pw.vintr.vintrless.presentation.navigation.NavigatorType
 
 class HomeViewModel(
     navigator: AppNavigator,
+    private val alertInteractor: AlertInteractor,
     private val profileInteractor: ProfileInteractor,
     private val v2RayConnectionInteractor: V2RayConnectionInteractor
 ) : BaseViewModel(navigator) {
@@ -34,6 +38,21 @@ class HomeViewModel(
             )
         )
     }.stateInThis(initialValue = BaseScreenState.Loading())
+
+    init {
+        subscribeV2RayConnectionEvents()
+    }
+
+    private fun subscribeV2RayConnectionEvents() = launch {
+        v2RayConnectionInteractor.event.collectLatest { event ->
+            when (event) {
+                is V2RayConnectionInteractor.Event.ShowWrongSudoPasswordError -> {
+                    alertInteractor.showAlert(AlertModel.WrongSudoPassword())
+                }
+                else -> Unit
+            }
+        }
+    }
 
     fun toggle() {
         when (connectionState.value) {

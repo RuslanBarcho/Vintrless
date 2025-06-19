@@ -2,7 +2,9 @@ package pw.vintr.vintrless.domain.base
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.shareIn
 import pw.vintr.vintrless.tools.closeable.Closeable
 
 abstract class BaseInteractor : CoroutineScope, Closeable {
@@ -13,7 +15,10 @@ abstract class BaseInteractor : CoroutineScope, Closeable {
 
     private val _event = Channel<InteractorEvent>()
 
-    val event by lazy { _event.receiveAsFlow() }
+    open val event by lazy {
+        _event.receiveAsFlow()
+            .shareIn(this, started = SharingStarted.Lazily)
+    }
 
     protected suspend fun sendEvent(event: InteractorEvent) = _event.send(event)
 

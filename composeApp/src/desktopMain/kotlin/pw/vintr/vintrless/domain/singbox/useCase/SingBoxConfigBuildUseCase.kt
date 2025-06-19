@@ -16,13 +16,13 @@ object SingBoxConfigBuildUseCase {
                 Inbound(
                     type = "tun",
                     tag = "tun-in",
-                    interfaceName = "singbox_tun",
+                    interfaceName = "utun768",
                     inet4Address = "172.19.0.1/30",
                     mtu = 9000,
                     autoRoute = true,
                     strictRoute = true,
-                    stack = "gvisor",
-                    sniff = true
+                    stack = "system",
+                    sniff = true,
                 )
             ),
             outbounds = listOf(

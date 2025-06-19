@@ -73,24 +73,20 @@ fun App() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            KoinApplication(application = {
-                modules(appModule)
-            }) {
-                ModalBottomSheetLayout(
-                    bottomSheetNavigator = bottomSheetNavigator,
-                    sheetContentColor = Color.Transparent,
-                    sheetBackgroundColor = Color.Transparent,
-                    scrimColor = MaterialTheme.colorScheme.background
-                        .copy(alpha = 0.9f),
-                    sheetElevation = 0.dp
-                ) {
-                    Navigation(
-                        navController = navController,
-                        rootScreen = AppScreen.Main,
-                    )
-                }
-                AlertHolder()
+            ModalBottomSheetLayout(
+                bottomSheetNavigator = bottomSheetNavigator,
+                sheetContentColor = Color.Transparent,
+                sheetBackgroundColor = Color.Transparent,
+                scrimColor = MaterialTheme.colorScheme.background
+                    .copy(alpha = 0.9f),
+                sheetElevation = 0.dp
+            ) {
+                Navigation(
+                    navController = navController,
+                    rootScreen = AppScreen.Main,
+                )
             }
+            AlertHolder()
         }
     }
 }

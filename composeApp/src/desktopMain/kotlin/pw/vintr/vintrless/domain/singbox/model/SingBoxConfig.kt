@@ -2,17 +2,16 @@ package pw.vintr.vintrless.domain.singbox.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Serializable
 data class SingBoxConfig(
     val log: Log,
-    val dns: Dns,
+    val dns: Dns?,
     val inbounds: List<Inbound>,
     val outbounds: List<Outbound>,
     val route: Route,
-    val experimental: Experimental
+    val experimental: Experimental? = null,
 ) {
     fun toJson(): String {
         val json = Json {
@@ -33,7 +32,9 @@ data class Log(
 data class Dns(
     val servers: List<Server>,
     val rules: List<Rule>,
-    val final: String
+    val final: String,
+    @SerialName("reverse_mapping") val reverseMapping: Boolean? = null,
+    val strategy: String? = null,
 )
 
 @Serializable
@@ -48,7 +49,9 @@ data class Server(
 data class Rule(
     @SerialName("server") val server: String,
     @SerialName("clash_mode") val clashMode: String? = null,
-    @SerialName("rule_set") val ruleSet: List<String>? = null
+    @SerialName("rule_set") val ruleSet: List<String>? = null,
+    @SerialName("domain") val domain: List<String>? = null,
+    @SerialName("process_name") val processName: List<String>? = null,
 )
 
 @Serializable
@@ -61,7 +64,7 @@ data class Inbound(
     @SerialName("auto_route") val autoRoute: Boolean,
     @SerialName("strict_route") val strictRoute: Boolean,
     val stack: String,
-    val sniff: Boolean
+    val sniff: Boolean,
 )
 
 @Serializable
@@ -93,7 +96,8 @@ data class RouteRule(
     @SerialName("port_range") val portRange: List<String>? = null,
     @SerialName("ip_is_private") val ipIsPrivate: Boolean? = null,
     @SerialName("ip_cidr") val ipCidr: List<String>? = null,
-    @SerialName("rule_set") val ruleSet: List<String>? = null
+    @SerialName("rule_set") val ruleSet: List<String>? = null,
+    @SerialName("ip_version") val ipVersion: Int? = null,
 )
 
 @Serializable

@@ -141,4 +141,11 @@
     <string name="logs_type_info">Info</string>
     <string name="logs_type_errors">Errors</string>
     <string name="logs_type_warnings">Warnings</string>
+
+    <string name="sudo_enter_password_auth_required">Authentication Required</string>
+    <string name="sudo_enter_password_reason_tun">For the tun engine to work correctly, you must enter the root password</string>
+    <string name="sudo_enter_password_reason_applications">To get all installed apps, you must enter the root password</string>
+    <string name="sudo_enter_password_submit">Submit</string>
+    <string name="sudo_password_wrong_title">Wrong password</string>
+    <string name="sudo_password_wrong_message">Operation failed - incorrect root password</string>
 </resources>

@@ -1,16 +1,7 @@
 package pw.vintr.vintrless.presentation.uikit.input
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -51,6 +42,7 @@ fun AppTextField(
     actionOnDone: ((String) -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    trailingSlot: @Composable (RowScope.() -> Unit)? = null,
 ) {
     val localFocusManager = LocalFocusManager.current
 
@@ -127,14 +119,21 @@ fun AppTextField(
                         innerTextField()
                     }
 
-                    // Clear button
-                    if (showClearButton) {
-                        Spacer(modifier = Modifier.width(10.dp))
-                        ButtonSimpleIcon(
-                            iconRes = Res.drawable.ic_clear,
-                            tint = VintrlessExtendedTheme.colors.textFieldHint,
-                            onClick = actionOnClear
-                        )
+                    when {
+                        showClearButton -> {
+                            // Clear button
+                            Spacer(modifier = Modifier.width(10.dp))
+                            ButtonSimpleIcon(
+                                iconRes = Res.drawable.ic_clear,
+                                tint = VintrlessExtendedTheme.colors.textFieldHint,
+                                onClick = actionOnClear
+                            )
+                        }
+                        trailingSlot != null -> {
+                            // Trailing
+                            Spacer(modifier = Modifier.width(10.dp))
+                            trailingSlot()
+                        }
                     }
                 }
             }
