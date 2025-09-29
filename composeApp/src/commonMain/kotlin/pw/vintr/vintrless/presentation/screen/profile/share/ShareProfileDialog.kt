@@ -1,6 +1,5 @@
 package pw.vintr.vintrless.presentation.screen.profile.share
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -43,7 +42,6 @@ fun ShareProfileDialog(
         modifier = Modifier
             .cardBackground(cornerRadius = 20.dp)
             .padding(vertical = 24.dp)
-            .animateContentSize()
     ) {
         Icon(
             modifier = Modifier

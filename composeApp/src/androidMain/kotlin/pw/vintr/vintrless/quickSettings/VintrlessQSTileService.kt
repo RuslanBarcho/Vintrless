@@ -24,10 +24,16 @@ class VintrlessQSTileService : TileService() {
 
     override fun onStartListening() {
         super.onStartListening()
+        syncCurrentState()
+
         if (!isReceiverRegistered) {
             registerReceiver()
         }
-        syncCurrentState()
+    }
+
+    override fun onStopListening() {
+        super.onStopListening()
+        unregisterReceiver()
     }
 
     override fun onDestroy() {
